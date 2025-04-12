@@ -2,13 +2,14 @@ plugins {
     id 'java'
     id "com.github.node-gradle.node" version "7.0.2"
     id "io.freefair.lombok" version "8.0.1"
-    id "run.halo.plugin.devtools" version "0.2.0"
+    id "run.halo.plugin.devtools" version "0.5.0"
 }
 
-group 'run.halo.starter'
+group 'com.webjing.issues'
 sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org/content/repositories/releases' }
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
@@ -18,7 +19,7 @@ repositories {
 dependencies {
     implementation platform('run.halo.tools.platform:plugin:2.20.0-SNAPSHOT')
     compileOnly 'run.halo.app:api'
-
+    compileOnly 'com.webjing.mandate:api:1.1.5'
     testImplementation 'run.halo.app:api'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -52,5 +53,30 @@ build {
 }
 
 halo {
-    version = '2.20'
+    version = '2.20.18'
+}
+
+haloPlugin {
+    openApi {
+        outputDir = file("$rootDir/api-docs/openapi/v3_0")
+        // 用于定义 API 分组规则
+        groupingRules {
+            // 此名称为 group name，定义后 groupedApiMappings 中的 /v3/api-docs/ 后的名称需要与之相同，要避免与 halo 中已经存在的 group 相同避免生成后出现与插件无关的 API
+            issuesApi {
+                // 分组显示名称
+                displayName = 'Extension API for issuesApi'
+                // 分组的 API 规则
+                pathsToMatch = ["/apis/issues.webjing.com/v1alpha1/**",
+                                "/apis/console.api.issueMessage.webjing.com/v1alpha1/**",
+                                "/apis/uc.api.issueMessage.webjing.com/v1alpha1/**",
+                                "/apis/console.api.issueTemplate.webjing.com/v1alpha1/**"
+                ]
+            }
+        }
+        groupedApiMappings = ['/v3/api-docs/issuesApi': 'issuesApi.json']
+        generator {
+            // 默认配置可缺省
+            outputDir = file("${projectDir}/ui/src/api/generated")
+        }
+    }
 }

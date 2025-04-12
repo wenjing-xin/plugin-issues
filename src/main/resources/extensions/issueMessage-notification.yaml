@@ -1,0 +1,68 @@
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: new-comment-on-issue-message
+spec:
+  displayName: "我发布的issue收到新评论"
+  description: "当你发布的issue收到新评论时，你将会收到一条通知，告诉你有新的评论。"
+  properties:
+    - name: issueMessageName
+      type: string
+      description: "The name of the issue."
+    - name: issueMessageCreatedAt
+      type: string
+    - name: issueMessageRawContent
+      type: string
+    - name: issueMessageHtmlContent
+      type: string
+    - name: issueMessageUrl
+      type: string
+    - name: commenter
+      type: string
+      description: "The display name of the commenter."
+    - name: commentName
+      type: string
+      description: "The name of the comment."
+    - name: content
+      type: string
+      description: "The content of the comment."
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: NotificationTemplate
+metadata:
+  name: template-new-comment-on-issue-message
+spec:
+  reasonSelector:
+    reasonType: new-comment-on-issue-message
+    language: default
+  template:
+    title: "[(${commenter})] 评论了你在 [(${issueMessageCreatedAt})] 时刻发布的issue"
+    rawBody: |
+      [(${subscriber.displayName})] 你好：
+
+      [(${commenter})] 评论了你的issue“[(${issueMessageRawContent})]”， 以下是评论的具体内容：
+
+      [(${content})]
+    htmlBody: |
+      <div class="notification-content">
+        <div class="head">
+          <p class="honorific" th:text="|${subscriber.displayName} 你好：|"></p>
+        </div>
+        <div class="body">
+          <div>
+            <div th:text="|${commenter} 评论了你的issue|"></div>
+            <div>
+              <a
+               th:href="${issueMessageUrl}"
+               target="_blank"
+               style="display: block;font-style: italic;"
+               th:utext="${issueMessageHtmlContent}"
+              >
+              </a>
+            </div>
+            <div>以下是评论的具体内容：</div>
+          </div>
+          <pre class="content" th:text="${content}"></pre>
+        </div>
+        <div></div>
+      </div>

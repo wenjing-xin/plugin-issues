@@ -1,0 +1,126 @@
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-view
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue留言"
+    rbac.authorization.halo.run/display-name: "Issue查看"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issues:view"]
+rules:
+  - apiGroups: ["issues.webjing.com"]
+    resources: ["issuemessages"]
+    verbs: ["get", "list"]
+  - apiGroups: ["console.api.issueMessage.webjing.com"]
+    resources: ["issues", "labels"]
+    verbs: ["get", "list"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-manage
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue留言"
+    rbac.authorization.halo.run/display-name: "Issue管理"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issues:manage"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-view"]
+rules:
+  - apiGroups: ["issues.webjing.com"]
+    resources: ["issuemessages"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+  - apiGroups: ["console.api.issueMessage.webjing.com"]
+    resources: ["issues", "labels"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-publish
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue留言"
+    rbac.authorization.halo.run/display-name: "允许发布自己的issue留言"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["uc:plugin:issues:publish"]
+rules:
+  - apiGroups: ["uc.api.issueMessage.webjing.com"]
+    resources: ["issues", "labels"]
+    verbs: ["get", "list", "create", "update"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-approved
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue留言"
+    rbac.authorization.halo.run/display-name: "发布issue无需审核"
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-uc-issues-publish"]
+rules:
+  - nonResourceURLs: ["*"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-delete
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue留言"
+    rbac.authorization.halo.run/display-name: "允许删除自己的issue留言"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["uc:plugin:issues:delete"]
+rules:
+  - apiGroups: ["uc.api.issueMessage.webjing.com"]
+    resources: ["issues", "labels"]
+    verbs: ["delete", "deletecollection"]
+---
+# Issue留言模版
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-template-view
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue留言模版"
+    rbac.authorization.halo.run/display-name: "Issue留言模版查看"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issueTemplates:view"]
+rules:
+  - apiGroups: ["issues.webjing.com"]
+    resources: ["issuetemplates"]
+    verbs: ["get", "list"]
+  - apiGroups: ["console.api.issueTemplate.webjing.com"]
+    resources: ["issuetemplates" ]
+    verbs: ["get", "list"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-template-manage
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue留言模版"
+    rbac.authorization.halo.run/display-name: "Issue留言模版管理"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issueTemplates:manage"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-template-view"]
+rules:
+  - apiGroups: ["issues.webjing.com"]
+    resources: ["issuetemplates"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+  - apiGroups: ["console.api.issueTemplate.webjing.com"]
+    resources: ["issuetemplates"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]

@@ -1,7 +1,6 @@
 apiVersion: plugin.halo.run/v1alpha1
 kind: Plugin
 metadata:
-  # The name defines how the plugin is invoked, A unique name
   name: issues
 spec:
   enabled: true
@@ -15,6 +14,10 @@ spec:
   issues: https://github.com/wenjing-xin/plugin-issues/issues
   displayName: "Issue留言"
   description: "这是一个专门为halo2.0提供的issue留言插件，可用于产品QA、问答交流"
+  configMapName: plugin-issues-configmap
+  settingName: plugin-issues-settings
+#  pluginDependencies:
+#  "WebjingMandateCore": ">=1.1.5"
   license:
-    - name: "GPL-3.0"
-      url: "https://github.com/wenjing-xin/plugin-issues/blob/main/LICENSE"
+    - name: "WEBJING-AUTH-LICENSE"
+      url: "https://webjing.com/docs/webjing-auth-license"
