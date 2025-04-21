@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layoutHtml(title, content)">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+    <meta charset="UTF-8">
+    <title th:text="${title}">Issues</title>
+</head>
+<body class="relative w-full">
+    <th:block th:replace="${content}" />
+</body>
+</html>
