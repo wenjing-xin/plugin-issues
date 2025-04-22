@@ -113,12 +113,12 @@ const onSubmit = async () => {
     };
 
     if (isUpdateMode.value) {
-      handleUpdate();
+      await handleUpdate();
       emit("update", formState.value);
     } else {
-      handleSave(formState.value);
-      handleReset();
+      await handleSave(formState.value);
     }
+    handleReset();
   } catch (error) {
     console.error(error);
   } finally {
@@ -127,17 +127,14 @@ const onSubmit = async () => {
   onVisibleChange(false);
   formState.value = cloneDeep(initIssueMessage);
 };
-const handleUpdate = () => {
-  issueMessageApiClient.issueMessage
-    .updateIssueMessage({
-      name: formState.value.metadata.name,
-      issueMessage: formState.value,
-    })
-    .then((res) => {
-      if (res.status == 200) {
-        Toast.success("更新成功!");
-      }
-    });
+const handleUpdate = async () => {
+  let res = await issueMessageApiClient.issueMessage.updateIssueMessage({
+    name: formState.value.metadata.name,
+    issueMessage: formState.value,
+  });
+  if (res.status == 200) {
+    Toast.success("更新成功!");
+  }
 };
 
 //处理issue template的筛选过滤条件
