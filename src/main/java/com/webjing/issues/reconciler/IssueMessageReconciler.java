@@ -4,13 +4,10 @@ import static run.halo.app.extension.index.query.QueryFactory.equal;
 
 import java.time.Instant;
 import java.util.Set;
-import com.webjing.issues.event.IssueMessageDeletedEvent;
-import com.webjing.issues.event.IssueMessageUpdatedEvent;
 import com.webjing.issues.extension.IssueMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import run.halo.app.core.extension.notification.Subscription;
 import run.halo.app.extension.DefaultExtensionMatcher;
 import run.halo.app.extension.ExtensionClient;
 import run.halo.app.extension.ExtensionUtil;
@@ -31,8 +28,11 @@ import run.halo.app.notification.NotificationCenter;
 public class IssueMessageReconciler implements Reconciler<Reconciler.Request> {
 
     private static final String FINALIZER = "issue-message-protection";
+
     private final ExtensionClient client;
+
     private final NotificationCenter notificationCenter;
+
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
@@ -41,13 +41,8 @@ public class IssueMessageReconciler implements Reconciler<Reconciler.Request> {
             if (ExtensionUtil.isDeleted(issueMessage)) {
                 if (ExtensionUtil.removeFinalizers(issueMessage.getMetadata(), Set.of(FINALIZER))) {
                     client.update(issueMessage);
-                    eventPublisher.publishEvent(new IssueMessageDeletedEvent(this, request.name()));
                 }
                 return;
-            }
-            if (ExtensionUtil.addFinalizers(issueMessage.getMetadata(), Set.of(FINALIZER))) {
-                // auto subscribe to new comment on issueMessage
-                createCommentSubscriptionForIssueMessage(issueMessage);
             }
             var status = issueMessage.getStatus();
             if (status == null) {
@@ -61,30 +56,20 @@ public class IssueMessageReconciler implements Reconciler<Reconciler.Request> {
             }
             if (issueMessage.getSpec().getApproved() && issueMessage.getSpec().getApprovedTime() == null) {
                 issueMessage.getSpec().setApprovedTime(Instant.now());
-                // set permalink
-                String permalink = "/issues/" + issueMessage.getMetadata().getName();
-                issueMessage.getStatus().setPermalink(permalink);
+            }
+            if(issueMessage.getSpec().getApproved() && issueMessage.getSpec().getReleaseTime() != null){
+                //设置发布的issue链接
+                issueMessage.getStatus().setPermalink("/issues/" + issueMessage.getMetadata().getName());
             }
             client.update(issueMessage);
-
-            eventPublisher.publishEvent(new IssueMessageUpdatedEvent(this, request.name()));
         });
         return Result.doNotRetry();
     }
 
-    void createCommentSubscriptionForIssueMessage(IssueMessage issueMessage) {
-        var owner = issueMessage.getSpec().getOwner();
-        var interestReason = new Subscription.InterestReason();
-        interestReason.setReasonType("new-comment-on-issueMessage");
-        interestReason.setExpression("props.issueMessageOwner == '%s'".formatted(owner));
-        var subscriber = new Subscription.Subscriber();
-        subscriber.setName(owner);
-        notificationCenter.subscribe(subscriber, interestReason).block();
-    }
 
     @Override
     public Controller setupWith(ControllerBuilder builder) {
-        final var issueMessage = new IssueMessage();
+        IssueMessage issueMessage = new IssueMessage();
         return builder
             .extension(issueMessage)
             .workerCount(5)

@@ -75,7 +75,7 @@ public class UcIssueMessageEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(IssueMessage.class))
             )
-            .POST("issues", this::createMyMoment,
+            .POST("issues", this::createMyIssue,
                 builder -> builder.operationId("CreateMyIssue")
                     .description("Create a My Issue.")
                     .tag(tag)
@@ -179,12 +179,12 @@ public class UcIssueMessageEndpoint implements CustomEndpoint {
             );
     }
 
-    private Mono<ServerResponse> createMyMoment(ServerRequest request) {
+    private Mono<ServerResponse> createMyIssue(ServerRequest request) {
         return getCurrentUser()
             .flatMap(user -> request.bodyToMono(IssueMessage.class)
-                .flatMap(post -> {
-                    post.getSpec().setApproved(false);
-                    post.getSpec().setOwner(user.getName());
+                .flatMap(issueMessage -> {
+                    issueMessage.getSpec().setApproved(false);
+                    issueMessage.getSpec().setOwner(user.getName());
                     var roles = AuthorityUtils.authoritiesToRoles(user.getAuthorities());
                     return roleService.joint(roles,
                             Set.of(AuthorityUtils.ISSUE_MESSAGE_PUBLISH_APPROVAL_ROLE_NAME,
@@ -192,11 +192,13 @@ public class UcIssueMessageEndpoint implements CustomEndpoint {
                         .doOnNext(result -> {
                             if (result) {
                                 // If it is a user with audit authority, there is no need to review.
-                                post.getSpec().setApproved(true);
-                                post.getSpec().setApprovedTime(Instant.now());
+                                issueMessage.getSpec().setApproved(true);
+                                issueMessage.getSpec().setApprovedTime(Instant.now());
+                                // 拥有发布issue无需审核权限的时候 则自动生成访问链接
+                                issueMessage.getStatus().setPermalink("/issues/" + issueMessage.getMetadata().getName());
                             }
                         })
-                        .thenReturn(post);
+                        .thenReturn(issueMessage);
                 })
             )
             .flatMap(issueMessageService::create)

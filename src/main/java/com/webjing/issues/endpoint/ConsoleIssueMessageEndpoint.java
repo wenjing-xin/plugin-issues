@@ -83,7 +83,7 @@ public class ConsoleIssueMessageEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementationArray(String.class)
                     ))
-            .POST("issues", this::createMoment,
+            .POST("issues", this::createIssueMessage,
                 builder -> builder.operationId("CreateIssueMessage")
                     .description("Create a IssueMessage.")
                     .tag(tag)
@@ -106,11 +106,13 @@ public class ConsoleIssueMessageEndpoint implements CustomEndpoint {
             .flatMap(issueMessage -> ServerResponse.ok().bodyValue(issueMessage));
     }
 
-    private Mono<ServerResponse> createMoment(ServerRequest serverRequest) {
+    private Mono<ServerResponse> createIssueMessage(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(IssueMessage.class)
             .map(issueMessage -> {
                 issueMessage.getSpec().setApproved(true);
                 issueMessage.getSpec().setApprovedTime(Instant.now());
+                // 控制台端增加issue 自动生成链接
+                issueMessage.getStatus().setPermalink("/issues/" + issueMessage.getMetadata().getName());
                 return issueMessage;
             })
             .flatMap(issueMessageService::create)
