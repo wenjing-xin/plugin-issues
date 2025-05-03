@@ -1,0 +1,150 @@
+package com.webjing.issues.endpoint;
+
+import static org.springdoc.core.fn.builders.apiresponse.Builder.responseBuilder;
+import static org.springdoc.core.fn.builders.content.Builder.contentBuilder;
+import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
+import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuilder;
+
+import com.webjing.issues.extension.Issue;
+import com.webjing.issues.query.IssueQuery;
+import com.webjing.issues.service.IssueService;
+import com.webjing.issues.entity.ListedIssue;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import java.time.Instant;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springdoc.core.fn.builders.schema.Builder;
+import org.springdoc.webflux.core.fn.SpringdocRouteBuilder;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+import run.halo.app.core.extension.endpoint.CustomEndpoint;
+import run.halo.app.extension.GroupVersion;
+import run.halo.app.extension.ListResult;
+
+/**
+ * 控制台端的issue留言
+ * @author: webjing
+ * @date: 2025年03月06日 14:41
+ */
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class ConsoleIssueEndpoint implements CustomEndpoint {
+
+    private final String tag = groupVersion() + "/Issue";
+
+    private final IssueService issueService;
+
+    @Override
+    public RouterFunction<ServerResponse> endpoint() {
+        return SpringdocRouteBuilder.route()
+            .GET("issues", this::listIssues, builder -> {
+                builder.operationId("ListIssues")
+                    .description("List issues.")
+                    .tag(tag)
+                    .response(responseBuilder()
+                        .implementation(ListResult.generateGenericClass(ListedIssue.class))
+                    );
+                IssueQuery.buildParameters(builder);
+            })
+            .GET("issues/{name}", this::getIssueMessage,
+                builder -> builder.operationId("GetIssue")
+                    .description("Get a issue message by name.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("name")
+                        .in(ParameterIn.PATH)
+                        .description("IssueMessage name")
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementation(ListedIssue.class)
+                    ))
+            .GET("labels", this::listMyLabels,
+                builder -> builder.operationId("ListLabels")
+                    .description("List all issue message labels.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("name")
+                        .in(ParameterIn.QUERY)
+                        .description("Label name to query")
+                        .required(false)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementationArray(String.class)
+                    ))
+            .POST("issues", this::createIssueMessage,
+                builder -> builder.operationId("CreateIssueMessage")
+                    .description("Create a IssueMessage.")
+                    .tag(tag)
+                    .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .content(contentBuilder()
+                            .mediaType(MediaType.APPLICATION_JSON_VALUE)
+                            .schema(Builder.schemaBuilder()
+                                .implementation(Issue.class))
+                        ))
+                    .response(responseBuilder()
+                        .implementation(Issue.class))
+            )
+            .build();
+    }
+
+    private Mono<ServerResponse> getIssueMessage(ServerRequest request) {
+        var name = request.pathVariable("name");
+        return issueService.findIssueByName(name)
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
+    }
+
+    private Mono<ServerResponse> createIssueMessage(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(Issue.class)
+            .map(issue -> {
+                issue.getSpec().setApproved(true);
+                issue.getSpec().setApprovedTime(Instant.now());
+                // 控制台端增加issue 自动生成链接
+                issue.getStatus().setPermalink("/issues/" + issue.getMetadata().getName());
+                return issue;
+            })
+            .flatMap(issueService::create)
+            .flatMap(issueMessage -> ServerResponse.ok().bodyValue(issueMessage));
+    }
+
+    private Mono<ServerResponse> listIssues(ServerRequest serverRequest) {
+        IssueQuery query = new IssueQuery(serverRequest.exchange());
+        return issueService.listIssue(query)
+            .flatMap(listedIssues -> ServerResponse.ok().bodyValue(listedIssues));
+    }
+
+    private Mono<ServerResponse> listMyLabels(ServerRequest request) {
+        String name = request.queryParam("name").orElse(null);
+        return getCurrentUser()
+            .map(username -> new IssueQuery(request.exchange(), username))
+            .flatMapMany(issueService::listAllLabels)
+            .filter(labelName -> StringUtils.isBlank(name) || StringUtils.containsIgnoreCase(labelName,
+                name))
+            .collectList()
+            .flatMap(result -> ServerResponse.ok().bodyValue(result));
+    }
+
+    private Mono<String> getCurrentUser() {
+        return ReactiveSecurityContextHolder.getContext()
+            .map(SecurityContext::getAuthentication)
+            .map(Authentication::getName);
+    }
+
+    @Override
+    public GroupVersion groupVersion() {
+        return GroupVersion.parseAPIVersion("console.api.issue.webjing.com/v1alpha1");
+    }
+
+}

@@ -40,7 +40,7 @@ export const IssueTemplateV1alpha1ApiAxiosParamCreator = function (configuration
          * @throws {RequiredError}
          */
         createIssueTemplate: async (issueTemplate?: IssueTemplate, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/apis/issues.webjing.com/v1alpha1/issuetemplates`;
+            const localVarPath = `/apis/issue.webjing.com/v1alpha1/issuetemplates`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -83,7 +83,7 @@ export const IssueTemplateV1alpha1ApiAxiosParamCreator = function (configuration
         deleteIssueTemplate: async (name: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'name' is not null or undefined
             assertParamExists('deleteIssueTemplate', 'name', name)
-            const localVarPath = `/apis/issues.webjing.com/v1alpha1/issuetemplates/{name}`
+            const localVarPath = `/apis/issue.webjing.com/v1alpha1/issuetemplates/{name}`
                 .replace(`{${"name"}}`, encodeURIComponent(String(name)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -124,7 +124,7 @@ export const IssueTemplateV1alpha1ApiAxiosParamCreator = function (configuration
         getIssueTemplate: async (name: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'name' is not null or undefined
             assertParamExists('getIssueTemplate', 'name', name)
-            const localVarPath = `/apis/issues.webjing.com/v1alpha1/issuetemplates/{name}`
+            const localVarPath = `/apis/issue.webjing.com/v1alpha1/issuetemplates/{name}`
                 .replace(`{${"name"}}`, encodeURIComponent(String(name)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -167,7 +167,7 @@ export const IssueTemplateV1alpha1ApiAxiosParamCreator = function (configuration
          * @throws {RequiredError}
          */
         listIssueTemplate: async (page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/apis/issues.webjing.com/v1alpha1/issuetemplates`;
+            const localVarPath = `/apis/issue.webjing.com/v1alpha1/issuetemplates`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -228,7 +228,7 @@ export const IssueTemplateV1alpha1ApiAxiosParamCreator = function (configuration
         patchIssueTemplate: async (name: string, jsonPatchInner?: Array<JsonPatchInner>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'name' is not null or undefined
             assertParamExists('patchIssueTemplate', 'name', name)
-            const localVarPath = `/apis/issues.webjing.com/v1alpha1/issuetemplates/{name}`
+            const localVarPath = `/apis/issue.webjing.com/v1alpha1/issuetemplates/{name}`
                 .replace(`{${"name"}}`, encodeURIComponent(String(name)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -273,7 +273,7 @@ export const IssueTemplateV1alpha1ApiAxiosParamCreator = function (configuration
         updateIssueTemplate: async (name: string, issueTemplate?: IssueTemplate, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'name' is not null or undefined
             assertParamExists('updateIssueTemplate', 'name', name)
-            const localVarPath = `/apis/issues.webjing.com/v1alpha1/issuetemplates/{name}`
+            const localVarPath = `/apis/issue.webjing.com/v1alpha1/issuetemplates/{name}`
                 .replace(`{${"name"}}`, encodeURIComponent(String(name)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);

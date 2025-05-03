@@ -17,37 +17,37 @@
 /**
  * 
  * @export
- * @interface ContributorVo
+ * @interface ContributorVO
  */
-export interface ContributorVo {
+export interface ContributorVO {
     /**
      * 
      * @type {string}
-     * @memberof ContributorVo
+     * @memberof ContributorVO
      */
     'avatar'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ContributorVo
+     * @memberof ContributorVO
      */
     'bio'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ContributorVo
+     * @memberof ContributorVO
      */
     'displayName'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ContributorVo
+     * @memberof ContributorVO
      */
     'email'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ContributorVo
+     * @memberof ContributorVO
      */
     'name'?: string;
 }

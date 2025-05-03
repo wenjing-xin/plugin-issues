@@ -8,6 +8,6 @@ package com.webjing.issues;
  */
 public enum Constant {
     ;
-    public static final String GROUP = "issues.webjing.com";
+    public static final String GROUP = "issue.webjing.com";
     public static final String VERSION = "v1alpha1";
 }

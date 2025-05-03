@@ -10,10 +10,10 @@ metadata:
     rbac.authorization.halo.run/ui-permissions: |
       ["plugin:issues:view"]
 rules:
-  - apiGroups: ["issues.webjing.com"]
-    resources: ["issuemessages"]
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issues"]
     verbs: ["get", "list"]
-  - apiGroups: ["console.api.issueMessage.webjing.com"]
+  - apiGroups: ["console.api.issue.webjing.com"]
     resources: ["issues", "labels"]
     verbs: ["get", "list"]
 ---
@@ -31,10 +31,10 @@ metadata:
     rbac.authorization.halo.run/dependencies: |
       ["role-template-issues-view"]
 rules:
-  - apiGroups: ["issues.webjing.com"]
-    resources: ["issuemessages"]
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issues"]
     verbs: ["create", "patch", "update", "delete", "deletecollection"]
-  - apiGroups: ["console.api.issueMessage.webjing.com"]
+  - apiGroups: ["console.api.issue.webjing.com"]
     resources: ["issues", "labels"]
     verbs: ["create", "patch", "update", "delete", "deletecollection"]
 ---
@@ -50,7 +50,7 @@ metadata:
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:publish"]
 rules:
-  - apiGroups: ["uc.api.issueMessage.webjing.com"]
+  - apiGroups: ["uc.api.issue.webjing.com"]
     resources: ["issues", "labels"]
     verbs: ["get", "list", "create", "update"]
 ---
@@ -80,7 +80,7 @@ metadata:
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:delete"]
 rules:
-  - apiGroups: ["uc.api.issueMessage.webjing.com"]
+  - apiGroups: ["uc.api.issueM.webjing.com"]
     resources: ["issues", "labels"]
     verbs: ["delete", "deletecollection"]
 ---
@@ -97,7 +97,7 @@ metadata:
     rbac.authorization.halo.run/ui-permissions: |
       ["plugin:issueTemplates:view"]
 rules:
-  - apiGroups: ["issues.webjing.com"]
+  - apiGroups: ["issue.webjing.com"]
     resources: ["issuetemplates"]
     verbs: ["get", "list"]
   - apiGroups: ["console.api.issueTemplate.webjing.com"]
@@ -118,7 +118,7 @@ metadata:
     rbac.authorization.halo.run/dependencies: |
       ["role-template-issues-template-view"]
 rules:
-  - apiGroups: ["issues.webjing.com"]
+  - apiGroups: ["issue.webjing.com"]
     resources: ["issuetemplates"]
     verbs: ["create", "patch", "update", "delete", "deletecollection"]
   - apiGroups: ["console.api.issueTemplate.webjing.com"]

@@ -1,4 +1,4 @@
-import { consoleIssueMessageApiClient, ucIssueMessageApiClient } from "@/api";
+import { consoleIssueApiClient, ucIssueApiClient } from "@/api";
 import { useQuery } from "@tanstack/vue-query";
 import type { Ref } from "vue";
 
@@ -26,14 +26,14 @@ export function useLabelQueryFetch(
     queryKey: ["issues-labels", props.keyword],
     queryFn: async () => {
       if (group === "console") {
-        const { data } = await consoleIssueMessageApiClient.issueMessage.listLabels({
+        const { data } = await consoleIssueApiClient.issue.listLabels({
           name: props.keyword?.value,
         });
         return data;
       }
 
       if (group === "uc") {
-        const { data } = await ucIssueMessageApiClient.issueMessage.listMyLabels({
+        const { data } = await ucIssueApiClient.issue.listMyLabels({
           name: props.keyword?.value,
         });
         return data;

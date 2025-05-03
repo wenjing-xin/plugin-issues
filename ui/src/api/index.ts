@@ -1,20 +1,20 @@
 import { axiosInstance } from "@halo-dev/api-client";
 import {
-  IssueMessageV1alpha1Api,
-  ConsoleApiIssueMessageWebjingComV1alpha1IssueMessageApi,
-  UcApiIssueMessageWebjingComV1alpha1IssueMessageApi,
-  IssueDetailV1alpha1Api,
+  IssueV1alpha1Api,
+  ConsoleApiIssueWebjingComV1alpha1IssueApi,
+  UcApiIssueWebjingComV1alpha1IssueApi,
+  IssueCommentV1alpha1Api,
   IssueTemplateV1alpha1Api,
   ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi
 } from "./generated";
 
-const issueMessageApiClient = {
-  issueMessage: new IssueMessageV1alpha1Api(undefined, "", axiosInstance),
+const issueApiClient = {
+  issue: new IssueV1alpha1Api(undefined, "", axiosInstance),
 };
 
 
-const issueDetailApiClient = {
-  issueDetail: new IssueDetailV1alpha1Api(undefined, "", axiosInstance),
+const issueCommentApiClient = {
+  issueComment: new IssueCommentV1alpha1Api(undefined, "", axiosInstance),
 };
 
 const issueTemplateApiClient = {
@@ -25,19 +25,19 @@ const consoleIssueTemplateApiClient = {
   issueTemplate: new ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi(undefined, "", axiosInstance),
 };
 
-const consoleIssueMessageApiClient = {
-  issueMessage: new ConsoleApiIssueMessageWebjingComV1alpha1IssueMessageApi(undefined, "", axiosInstance),
+const consoleIssueApiClient = {
+  issue: new ConsoleApiIssueWebjingComV1alpha1IssueApi(undefined, "", axiosInstance),
 };
 
-const ucIssueMessageApiClient = {
-  issueMessage: new UcApiIssueMessageWebjingComV1alpha1IssueMessageApi(undefined, "", axiosInstance),
+const ucIssueApiClient = {
+  issue: new UcApiIssueWebjingComV1alpha1IssueApi(undefined, "", axiosInstance),
 };
 
 export {
-  issueMessageApiClient,
-  consoleIssueMessageApiClient,
-  ucIssueMessageApiClient,
-  issueDetailApiClient,
+  issueApiClient,
+  consoleIssueApiClient,
+  ucIssueApiClient,
+  issueCommentApiClient,
   issueTemplateApiClient,
   consoleIssueTemplateApiClient
 };

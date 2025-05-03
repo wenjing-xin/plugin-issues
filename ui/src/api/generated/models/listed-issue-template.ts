@@ -15,7 +15,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { ContributorVo } from './contributor-vo';
+import type { ContributorVO } from './contributor-vo';
 // May contain unused imports in some cases
 // @ts-ignore
 import type { IssueTemplate } from './issue-template';
@@ -28,10 +28,10 @@ import type { IssueTemplate } from './issue-template';
 export interface ListedIssueTemplate {
     /**
      * 
-     * @type {ContributorVo}
+     * @type {ContributorVO}
      * @memberof ListedIssueTemplate
      */
-    'contributorVo': ContributorVo;
+    'contributorVo': ContributorVO;
     /**
      * 
      * @type {IssueTemplate}

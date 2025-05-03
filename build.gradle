@@ -66,10 +66,11 @@ haloPlugin {
                 // 分组显示名称
                 displayName = 'Extension API for issuesApi'
                 // 分组的 API 规则
-                pathsToMatch = ["/apis/issues.webjing.com/v1alpha1/**",
-                                "/apis/console.api.issueMessage.webjing.com/v1alpha1/**",
-                                "/apis/uc.api.issueMessage.webjing.com/v1alpha1/**",
-                                "/apis/console.api.issueTemplate.webjing.com/v1alpha1/**"
+                pathsToMatch = ["/apis/issue.webjing.com/v1alpha1/**",
+                                "/apis/console.api.issue.webjing.com/v1alpha1/**",
+                                "/apis/uc.api.issue.webjing.com/v1alpha1/**",
+                                "/apis/console.api.issueTemplate.webjing.com/v1alpha1/**",
+                                "/apis/console.api.issueSubject.webjing.com/v1alpha1/**"
                 ]
             }
         }

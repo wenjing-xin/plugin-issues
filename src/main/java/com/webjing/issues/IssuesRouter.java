@@ -1,9 +1,8 @@
 package com.webjing.issues;
 
-import com.webjing.issues.exception.NotFoundException;
-import com.webjing.issues.finder.IssueMessageFinder;
+import com.webjing.issues.finder.IssueFinder;
 import com.webjing.issues.service.SettingConfigGetter;
-import com.webjing.issues.vo.IssueMessageVo;
+import com.webjing.issues.vo.IssueVO;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +34,7 @@ public class IssuesRouter {
 
     private final SettingConfigGetter settingConfigGetter;
 
-    private final IssueMessageFinder issueMessageFinder;
+    private final IssueFinder issueMessageFinder;
 
     private final TemplateNameResolver templateNameResolver;
 
@@ -81,7 +80,7 @@ public class IssuesRouter {
         return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getTitle());
     }
 
-    private Mono<UrlContextListResult<IssueMessageVo>> issuePageList(ServerRequest request) {
+    private Mono<UrlContextListResult<IssueVO>> issuePageList(ServerRequest request) {
         String path = request.path();
         int pageNum = pageNumInPathVariable(request);
 
@@ -89,7 +88,7 @@ public class IssuesRouter {
             .map(SettingConfigGetter.IssuesBasic::getPageSize)
             .defaultIfEmpty(10)
             .flatMap(pageSize -> issueMessageFinder.list(pageNum, pageSize)
-                .map(list -> new UrlContextListResult.Builder<IssueMessageVo>()
+                .map(list -> new UrlContextListResult.Builder<IssueVO>()
                     .listResult(list)
                     .nextUrl(PageUrlUtils.nextPageUrl(path, totalPage(list)))
                     .prevUrl(PageUrlUtils.prevPageUrl(path))

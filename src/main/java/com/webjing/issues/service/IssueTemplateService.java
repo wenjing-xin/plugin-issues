@@ -2,7 +2,7 @@ package com.webjing.issues.service;
 
 import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.query.IssueTemplateQuery;
-import com.webjing.issues.vo.ListedIssueTemplate;
+import com.webjing.issues.entity.ListedIssueTemplate;
 import reactor.core.publisher.Mono;
 import run.halo.app.extension.ListResult;
 
@@ -13,7 +13,7 @@ import run.halo.app.extension.ListResult;
  */
 public interface IssueTemplateService {
 
-    Mono<IssueTemplate> create(IssueTemplate IssueTemplate);
+    Mono<IssueTemplate> create(IssueTemplate issueTemplate);
 
     Mono<ListResult<ListedIssueTemplate>> listIssueTemplate(IssueTemplateQuery query);
 

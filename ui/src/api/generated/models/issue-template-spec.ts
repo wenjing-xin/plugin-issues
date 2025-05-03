@@ -47,5 +47,11 @@ export interface IssueTemplateSpec {
      * @memberof IssueTemplateSpec
      */
     'owner'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof IssueTemplateSpec
+     */
+    'subjectUid'?: string;
 }
 

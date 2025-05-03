@@ -5,7 +5,7 @@
   import { useQueryClient } from "@tanstack/vue-query";
 
   import type { ListedIssueTemplate } from "@/api/generated";
-  import { consoleIssueTemplateApiClient, issueMessageApiClient, issueTemplateApiClient } from "@/api/index";
+  import { consoleIssueTemplateApiClient, issueApiClient, issueTemplateApiClient } from "@/api/index";
   import { useRouter } from "vue-router";
   const router = useRouter();
 
@@ -46,7 +46,7 @@
   };
 
   const handleEditIssueTemplate = async (issueTemplate: ListedIssueTemplate) => {
-    const curTmeplateIssueList = await issueMessageApiClient.issueMessage.listIssueMessage({ fieldSelector: ["spec.issueTemplate=" + issueTemplate.issueTemplate.metadata.name] });
+    const curTmeplateIssueList = await issueApiClient.issue.listIssue({ fieldSelector: ["spec.issueTemplate=" + issueTemplate.issueTemplate.metadata.name] });
     if (curTmeplateIssueList.data.items.length > 0) {
       Toast.warning("当前模版下已经存在留言，无法修改模版，请新建模版或删除该模版下的留言后进行修改！")
     } else {

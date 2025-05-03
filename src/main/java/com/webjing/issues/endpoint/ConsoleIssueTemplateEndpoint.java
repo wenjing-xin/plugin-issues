@@ -7,7 +7,7 @@ import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuil
 import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.query.IssueTemplateQuery;
 import com.webjing.issues.service.IssueTemplateService;
-import com.webjing.issues.vo.ListedIssueTemplate;
+import com.webjing.issues.entity.ListedIssueTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.fn.builders.schema.Builder;

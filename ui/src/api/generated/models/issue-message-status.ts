@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { StateTransition } from './state-transition';
 
 /**
  * 
@@ -39,6 +42,12 @@ export interface IssueMessageStatus {
      */
     'permalink'?: string;
     /**
+     * 优先级（P0-P3）
+     * @type {string}
+     * @memberof IssueMessageStatus
+     */
+    'priority'?: string;
+    /**
      * 
      * @type {number}
      * @memberof IssueMessageStatus
@@ -50,6 +59,12 @@ export interface IssueMessageStatus {
      * @memberof IssueMessageStatus
      */
     'state'?: IssueMessageStatusStateEnum;
+    /**
+     * 状态变更历史（时间+操作人）
+     * @type {Array<StateTransition>}
+     * @memberof IssueMessageStatus
+     */
+    'transitions'?: Array<StateTransition>;
 }
 
 export const IssueMessageStatusStateEnum = {

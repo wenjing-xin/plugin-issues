@@ -78,10 +78,22 @@ export interface IssueMessageSpec {
      */
     'releaseTime'?: string;
     /**
+     * 关联主体唯一标识
+     * @type {string}
+     * @memberof IssueMessageSpec
+     */
+    'subjectName'?: string;
+    /**
      * 
      * @type {string}
      * @memberof IssueMessageSpec
      */
     'title': string;
+    /**
+     * 关注者列表
+     * @type {Array<string>}
+     * @memberof IssueMessageSpec
+     */
+    'watchers'?: Array<string>;
 }
 

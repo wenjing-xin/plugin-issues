@@ -5,6 +5,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 import com.webjing.issues.Constant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Map;
+import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -30,6 +31,8 @@ public class IssueTemplate extends AbstractExtension {
 
     @Data
     public static class IssueTemplateSpec {
+
+        private String subjectUid;
 
         private String name;
 

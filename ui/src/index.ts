@@ -2,7 +2,7 @@ import { definePlugin} from "@halo-dev/console-shared";
 import PajamasIssueTypeRequirements from '~icons/pajamas/issue-type-requirements';
 import FluentMailTemplate20Regular from "~icons/fluent/mail-template-20-regular";
 import { markRaw} from "vue";
-import IssueMessageList from "@/views/IssueMessageList.vue";
+import IssueList from "@/views/IssueList.vue";
 import IssueTemplateList from "@/views/IssueTemplateList.vue";
 import IssueTemplateEditor from "@/views/IssueTemplateEditor.vue";
 import "./styles/index.css";
@@ -30,8 +30,8 @@ export default definePlugin({
         children: [
           {
             path: "",
-            name: "IssueMessage",
-            component: IssueMessageList,
+            name: "Issue",
+            component: IssueList,
           },
           {
             path: "template",

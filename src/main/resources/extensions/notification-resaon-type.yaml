@@ -1,0 +1,99 @@
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: someone-publish-new-issue
+spec:
+  displayName: "有人发布了新的 Issue 留言"
+  description: "当有用户发布了新的issue，站长和指定的用户会接受到通知"
+  properties:
+    - name: issueTitle
+      type: string
+      description: "The name of the issue."
+    - name: issueStatus
+      type: string
+      description: "The status of the issue."
+    - name: issueCreatedAt
+      type: string
+      description: "The created time of the issue."
+    - name: issueMessageRawContent
+      type: string
+      description: "The raw content of the issue."
+    - name: issueMessageHtmlContent
+      type: string
+      description: "The html content of the issue."
+    - name: issuePermalink
+      type: string
+      description: "The permanent link of the issue."
+    - name: issueOwner
+      type: string
+      description: "The username of the issue."
+    - name: issueDescription
+      type: string
+      description: "The description of the issue."
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: someone-assign-special-issue
+spec:
+  displayName: "有人参与指定的 Issue 留言"
+  description: "当有人评论了指定的 Issue留言，issue发布者将会收到一条通知"
+  properties:
+    - name: issueTitle
+      type: string
+      description: "The name of the issue."
+    - name: issueStatus
+      type: string
+      description: "The status of the issue detail."
+    - name: issueCreatedAt
+      type: string
+      description: "The created time of the issue detail."
+    - name: issueDetailRawContent
+      type: string
+      description: "The raw content of the issue detail."
+    - name: issueDetailHtmlContent
+      type: string
+      description: "The html content of the issue detail."
+    - name: issuePermalink
+      type: string
+      description: "The permanent link of the issue detail."
+    - name: issueOwner
+      type: string
+      description: "The username of the issue detail."
+    - name: issueAssignOwner
+      type: string
+      description: "The assign name of the issue detail."
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: someone-reply-special-issue-detail
+spec:
+  displayName: "有人回复指定的 Issue 评论"
+  description: "当有用户回复指定的 issue 评论的时候，评论者会收到通知"
+  properties:
+    - name: issueTitle
+      type: string
+      description: "The name of the issue."
+    - name: issueStatus
+      type: string
+      description: "The status of the issue detail."
+    - name: issueCreatedAt
+      type: string
+      description: "The created time of the issue detail."
+    - name: issueReplyDetailRawContent
+      type: string
+      description: "The raw content of the issue detail."
+    - name: issueReplyDetailHtmlContent
+      type: string
+      description: "The html content of the issue detail."
+    - name: issuePermalink
+      type: string
+      description: "The permanent link of the issue detail."
+    - name: issueOwner
+      type: string
+      description: "The username of the issue detail."
+    - name: issueReplayOwner
+      type: string
+      description: "The replier name of the issue detail."
+---

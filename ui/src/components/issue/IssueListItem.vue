@@ -15,14 +15,14 @@ import {
 import { computed, inject, type Ref, ref } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
 
-import type { IssueMessage, ListedIssueMessage } from "@/api/generated";
-import {issueMessageApiClient} from "@/api";
+import type { Issue, ListedIssue } from "@/api/generated";
+import {issueApiClient} from "@/api";
 
 const queryClient = useQueryClient();
 
 const props = withDefaults(
   defineProps<{
-    issue: ListedIssueMessage;
+    issue: ListedIssue;
     isSelected?: boolean;
   }>(),
   {
@@ -31,11 +31,11 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (event: "update", value: IssueMessage): void;
+  (event: "update", value: Issue): void;
 }>();
 const selectedIssueMessageNames = inject<Ref<string[]>>("selectedIssueMessageNames", ref([]));
 
-const handleDelete = async (issue: ListedIssueMessage) => {
+const handleDelete = async (issue: ListedIssue) => {
   Dialog.warning({
     title: "删除issue留言",
     description: "该操作会将issue留言删除，该操作不可恢复。",
@@ -44,7 +44,7 @@ const handleDelete = async (issue: ListedIssueMessage) => {
     cancelText: "取消",
     onConfirm: async () => {
       try {
-        await issueMessageApiClient.issueMessage.deleteIssueMessage({
+        await issueApiClient.issue.deleteIssue({
           name: issue.issueMessage.metadata.name,
         });
         Toast.success("删除成功");
@@ -62,11 +62,11 @@ const issueStatus = computed(() => {
   return status?.state === "AWAIT" ? "待处理" : status?.state == "PROGRESS" ? "进行中" : "已关闭";
 });
 
-const handlerViewDetail= (issue: ListedIssueMessage) =>{
+const handlerViewDetail= (issue: ListedIssue) =>{
   
 }
 // 编辑issue留言
-const handlerEditIssueMessage = (issue: ListedIssueMessage)=> {
+const handlerEditIssueMessage = (issue: ListedIssue)=> {
   emit("update", issue.issueMessage);
 }
 
@@ -78,7 +78,7 @@ const handleCloseIssue = async (name:string) => {
     cancelText: "取消",
     onConfirm: async () => {
       try {
-        await issueMessageApiClient.issueMessage.patchIssueMessage({
+        await issueApiClient.issue.patchIssue({
           name: name,
           jsonPatchInner: [
             {

@@ -25,7 +25,7 @@
   import { useRouteQuery } from "@vueuse/router";
 
   import { useCurrentUserDetailFetch } from "@/composables/use-consoleApiclient";
-  import { consoleIssueTemplateApiClient, issueDetailApiClient, issueTemplateApiClient } from "@/api";
+  import { consoleIssueTemplateApiClient, issueCommentApiClient, issueTemplateApiClient } from "@/api";
   const currentEditTempalte = useRouteQuery<string | undefined>("name");
 
   interface Component {
@@ -38,7 +38,7 @@
 
   const router = useRouter();
   const initIssueTemplate = ref<IssueTemplate>({
-    apiVersion: "microimmersion.webjing.cn/v1alpha1",
+    apiVersion: "issue.webjing.com/v1alpha1",
     kind: "IssueTemplate",
     metadata: {
       generateName: "issue-template-",

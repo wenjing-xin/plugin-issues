@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
 import { computed, nextTick, onMounted, ref, toRaw, watchEffect } from "vue";
-import type { IssueMessage } from "@/api/generated";
+import type { Issue } from "@/api/generated";
 import cloneDeep from "lodash.clonedeep";
-import { consoleIssueMessageApiClient, issueMessageApiClient, issueTemplateApiClient } from "@/api";
+import { consoleIssueApiClient, issueApiClient, issueTemplateApiClient } from "@/api";
 import { submitForm } from "@formkit/core";
 const modalTitle = ref("新增issue留言");
 const saving = ref<boolean>(false);
 const props = withDefaults(
   defineProps<{
     visible: boolean;
-    issueMessage?: IssueMessage | undefined;
+    issueMessage?: Issue | undefined;
   }>(),
   {
     visible: false,
@@ -20,17 +20,17 @@ const props = withDefaults(
 const emit = defineEmits<{
   (event: "update:visible", value: boolean): void;
   (event: "close", value: boolean): void;
-  (event: "save", issueMessage: IssueMessage): void;
-  (event: "update", issueMessage: IssueMessage): void;
+  (event: "save", issueMessage: Issue): void;
+  (event: "update", issueMessage: Issue): void;
 }>();
 
 const issueTemplateFilterOptions = ref<Array<{ label: string | undefined; value: string }>>([]);
 
-const initIssueMessage: IssueMessage = {
-  kind: "IssueMessage",
-  apiVersion: "microimmersion.webjing.cn/v1alpha1",
+const initIssue: Issue = {
+  kind: "Issue",
+  apiVersion: "issue.webjing.com/v1alpha1",
   metadata: {
-    generateName: "issue-message-",
+    generateName: "issue-",
     name: "",
   },
   spec: {
@@ -56,7 +56,7 @@ const initIssueMessage: IssueMessage = {
   },
 };
 
-const formState = ref<IssueMessage>(cloneDeep(initIssueMessage));
+const formState = ref<Issue>(cloneDeep(initIssue));
 
 watchEffect(() => {
   if (props.issueMessage) {
@@ -72,7 +72,7 @@ onMounted(() => {
 
 const labelOptions = ref<Array<{ label: string; value: string }>>([]);
 const handlerLabelOptions = () => {
-  consoleIssueMessageApiClient.issueMessage
+  consoleIssueApiClient.issue
     .listLabels({
       name: "",
     })
@@ -125,12 +125,12 @@ const onSubmit = async () => {
     saving.value = false;
   }
   onVisibleChange(false);
-  formState.value = cloneDeep(initIssueMessage);
+  formState.value = cloneDeep(initIssue);
 };
 const handleUpdate = async () => {
-  let res = await issueMessageApiClient.issueMessage.updateIssueMessage({
+  let res = await issueApiClient.issue.updateIssue({
     name: formState.value.metadata.name,
-    issueMessage: formState.value,
+    issue: formState.value,
   });
   if (res.status == 200) {
     Toast.success("更新成功!");
@@ -148,18 +148,18 @@ const handlerIssueTemplateOptions = () => {
 };
 
 // 新增 issue
-const handleSave = async (issueMessage: IssueMessage) => {
-  issueMessage.spec.releaseTime = new Date().toISOString();
-  issueMessage.spec.approved = true;
+const handleSave = async (issue: Issue) => {
+  issue.spec.releaseTime = new Date().toISOString();
+  issue.spec.approved = true;
 
-  const { data } = await consoleIssueMessageApiClient.issueMessage.createIssueMessage({
-    issueMessage: issueMessage,
+  const { data } = await consoleIssueApiClient.issue.createIssueMessage({
+    issue: issue,
   });
   emit("save", data);
   Toast.success("发布成功");
 };
 const handleReset = () => {
-  formState.value = toRaw(cloneDeep(initIssueMessage));
+  formState.value = toRaw(cloneDeep(initIssue));
   isEditorEmpty.value = true;
 };
 </script>
@@ -224,8 +224,8 @@ const handleReset = () => {
           :key="formState.metadata.name"
           ref="annotationsFormRef"
           :value="formState.metadata.annotations"
-          kind="IssueMessage"
-          group="microimmersion.webjing.cn"
+          kind="Issue"
+          group="issue.webjing.com"
         />
       </div>
     </div>

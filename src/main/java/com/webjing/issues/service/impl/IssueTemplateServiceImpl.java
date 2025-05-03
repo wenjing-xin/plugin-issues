@@ -3,8 +3,8 @@ package com.webjing.issues.service.impl;
 import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.query.IssueTemplateQuery;
 import com.webjing.issues.service.IssueTemplateService;
-import com.webjing.issues.vo.ContributorVo;
-import com.webjing.issues.vo.ListedIssueTemplate;
+import com.webjing.issues.vo.ContributorVO;
+import com.webjing.issues.entity.ListedIssueTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,8 +15,7 @@ import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
 
 /**
- * 功能描述
- *
+ * issue 模版功能
  * @author: webjing
  * @date: 2025年03月17日 11:40
  */
@@ -54,7 +53,7 @@ public class IssueTemplateServiceImpl implements IssueTemplateService {
 
     private Mono<ListedIssueTemplate> setOwner(String owner, ListedIssueTemplate issueTemplate) {
         return client.fetch(User.class, owner)
-            .map(user -> ContributorVo.from(user))
+            .map(user -> ContributorVO.from(user))
             .doOnNext(issueTemplate::setContributorVo)
             .thenReturn(issueTemplate);
     }
