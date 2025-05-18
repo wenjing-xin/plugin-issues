@@ -45,7 +45,7 @@ const handleDelete = async (issue: ListedIssue) => {
     onConfirm: async () => {
       try {
         await issueApiClient.issue.deleteIssue({
-          name: issue.issueMessage.metadata.name,
+          name: issue.issue.metadata.name,
         });
         Toast.success("删除成功");
       } catch (error) {
@@ -58,7 +58,7 @@ const handleDelete = async (issue: ListedIssue) => {
 };
 
 const issueStatus = computed(() => {
-  const { status } = props.issue.issueMessage;
+  const { status } = props.issue.issue;
   return status?.state === "AWAIT" ? "待处理" : status?.state == "PROGRESS" ? "进行中" : "已关闭";
 });
 
@@ -67,12 +67,12 @@ const handlerViewDetail= (issue: ListedIssue) =>{
 }
 // 编辑issue留言
 const handlerEditIssueMessage = (issue: ListedIssue)=> {
-  emit("update", issue.issueMessage);
+  emit("update", issue.issue);
 }
 
 const handleCloseIssue = async (name:string) => {
   Dialog.warning({
-    title: `确定关闭Issue留言「${props.issue.issueMessage.spec.title}」?`,
+    title: `确定关闭Issue留言「${props.issue.issue.spec.title}」?`,
     confirmType: "primary",
     confirmText: "确定",
     cancelText: "取消",
@@ -106,19 +106,19 @@ function handleRouteToUserDetail() {}
       <HasPermission :permissions="['plugin:issue:manage']">
         <input
           v-model="selectedIssueMessageNames"
-          :value="issue.issueMessage.metadata.name"
+          :value="issue.issue.metadata.name"
           name="issue-checkbox"
           type="checkbox"
         />
       </HasPermission>
     </template>
     <template #start>
-      <VEntityField :title="issue.issueMessage.spec.title" width="27rem">
+      <VEntityField :title="issue.issue.spec.title" width="27rem">
         <template #extra>
           <VSpace class="mt-1 sm:mt-0">
             <a
               target="_blank"
-              :href="issue.issueMessage?.status?.permalink"
+              :href="issue.issue?.status?.permalink"
               class="hidden text-gray-600 transition-all group-hover:inline-block hover:text-gray-900"
             >
               <IconExternalLinkLine class="h-3 w-3" />
@@ -138,12 +138,12 @@ function handleRouteToUserDetail() {}
     <template #end>
       <VEntityField>
         <template #description>
-          <VStatusDot v-if="issue.issueMessage.status?.state == 'AWAIT'" state="warning" animate>
+          <VStatusDot v-if="issue.issue.status?.state == 'AWAIT'" state="warning" animate>
             <template #text>
               <p class="text-xs">{{ issueStatus }}</p>
             </template>
           </VStatusDot>
-          <VStatusDot v-else-if="issue.issueMessage.status?.state == 'PROGRESS'" state="default" animate>
+          <VStatusDot v-else-if="issue.issue.status?.state == 'PROGRESS'" state="default" animate>
             <template #text>
               <p class="text-xs">{{ issueStatus }}</p>
             </template>
@@ -167,14 +167,14 @@ function handleRouteToUserDetail() {}
           ></VAvatar>
         </template>
       </VEntityField>
-      <VEntityField v-if="issue.issueMessage.metadata.deletionTimestamp">
+      <VEntityField v-if="issue.issue.metadata.deletionTimestamp">
         <template #description>
           <VStatusDot v-tooltip="`删除中`" state="warning" animate />
         </template>
       </VEntityField>
-      <VEntityField v-if="issue.issueMessage.metadata.creationTimestamp">
+      <VEntityField v-if="issue.issue.metadata.creationTimestamp">
         <template #description>
-          <span class="truncate text-xs text-gray-500 tabular-nums">{{formatDatetime(issue.issueMessage.metadata.creationTimestamp)}}</span>
+          <span class="truncate text-xs text-gray-500 tabular-nums">{{formatDatetime(issue.issue.metadata.creationTimestamp)}}</span>
         </template>
       </VEntityField>
     </template>
@@ -182,7 +182,7 @@ function handleRouteToUserDetail() {}
       <VDropdownItem @click="handlerViewDetail(issue)"> 详情 </VDropdownItem>
       <VDropdownItem @click="handlerEditIssueMessage(issue)"> 编辑 </VDropdownItem>
       <HasPermission :permissions="['plugin:issues:manage']">
-        <VDropdownItem v-if="issue.issueMessage.status?.state != 'CLOSED'" @click="handleCloseIssue(issue.issueMessage.metadata.name)">
+        <VDropdownItem v-if="issue.issue.status?.state != 'CLOSED'" @click="handleCloseIssue(issue.issue.metadata.name)">
           关闭
         </VDropdownItem>
         <VDropdownDivider />

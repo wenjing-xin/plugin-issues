@@ -80,7 +80,7 @@ metadata:
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:delete"]
 rules:
-  - apiGroups: ["uc.api.issueM.webjing.com"]
+  - apiGroups: ["uc.api.issue.webjing.com"]
     resources: ["issues", "labels"]
     verbs: ["delete", "deletecollection"]
 ---

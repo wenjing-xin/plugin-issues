@@ -49,6 +49,6 @@ export interface IssueSubject {
      * @type {IssueSubjectSpec}
      * @memberof IssueSubject
      */
-    'spec'?: IssueSubjectSpec;
+    'spec': IssueSubjectSpec;
 }
 

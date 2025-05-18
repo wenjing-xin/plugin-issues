@@ -1,5 +1,7 @@
 import { axiosInstance } from "@halo-dev/api-client";
 import {
+  IssueSubjectV1alpha1Api,
+  ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi,
   IssueV1alpha1Api,
   ConsoleApiIssueWebjingComV1alpha1IssueApi,
   UcApiIssueWebjingComV1alpha1IssueApi,
@@ -7,6 +9,14 @@ import {
   IssueTemplateV1alpha1Api,
   ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi
 } from "./generated";
+
+const issueSubjectApiClient = {
+  issueSubject: new IssueSubjectV1alpha1Api(undefined, "", axiosInstance),
+};
+
+const consoleIssueSubjectApiClient = {
+  issueSubject: new ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi(undefined, "", axiosInstance),
+};
 
 const issueApiClient = {
   issue: new IssueV1alpha1Api(undefined, "", axiosInstance),
@@ -34,6 +44,8 @@ const ucIssueApiClient = {
 };
 
 export {
+  issueSubjectApiClient,
+  consoleIssueSubjectApiClient,
   issueApiClient,
   consoleIssueApiClient,
   ucIssueApiClient,

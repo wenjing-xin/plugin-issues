@@ -17,8 +17,8 @@ import {
 import { useRouter } from "vue-router";
 import UserFilterDropdown from "@/components/common/UserFilterDropdown.vue";
 import { useRouteQuery } from "@vueuse/router";
-import { computed, provide, type Ref, ref } from "vue";
-import type { ListedIssueTemplate } from "@/api/generated";
+import {computed, provide, type Ref, ref, watch} from "vue";
+import type {ListedIssueSubject, ListedIssueTemplate} from "@/api/generated";
 import { issueTemplateApiClient } from "@/api";
 import { useIssueTemplateListFetch } from "@/composables/use-consoleIssueTemplate";
 
@@ -59,27 +59,31 @@ const handlerNewIssueTemplate = () => {
 };
 const handleCheckAllChange = (e: Event) => {
   const { checked } = e.target as HTMLInputElement;
-  checkedAll.value = checked;
-  if (checkedAll.value) {
+  if (checked) {
     selectedIssueTemplateNames.value =
       issueTemplates.value?.map((listedIssueTemplate: ListedIssueTemplate) => {
         return listedIssueTemplate.issueTemplate.metadata.name;
       }) || [];
   } else {
-    selectedIssueTemplateNames.value.length = 0;
+    selectedIssueTemplateNames.value = [];
   }
 };
-
+watch(
+  () => selectedIssueTemplateNames.value,
+  (newValue) => {
+    checkedAll.value = newValue.length === issueTemplates.value?.length;
+  }
+);
 const onEditingModalClose = async () => {
   selectedIssueTemplate.value = undefined;
   editingModal.value = false;
   await refetch();
 };
 const checkSelection = (listedIssueTemplate: ListedIssueTemplate) => {
-  if (listedIssueTemplate.issueTemplate.metadata.name) {
-    return selectedIssueTemplateNames.value.includes(listedIssueTemplate.issueTemplate.metadata.name);
-  }
-  return false;
+  return (
+    listedIssueTemplate.issueTemplate.metadata.name === selectedIssueTemplate.value?.issueTemplate.metadata.name ||
+    selectedIssueTemplateNames.value.includes(listedIssueTemplate.issueTemplate.metadata.name)
+  );
 };
 
 const handleDeleteInBatch = async () => {

@@ -18,7 +18,7 @@
 import type { SubjectContent } from './subject-content';
 
 /**
- * 
+ * 依托对象详情
  * @export
  * @interface IssueSubjectSpec
  */

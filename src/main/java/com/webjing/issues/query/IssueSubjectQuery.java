@@ -48,13 +48,13 @@ public class IssueSubjectQuery extends SortableRequest {
 
     @Schema(description = "Owner name.")
     public String getOwnerName() {
-        String ownerName = queryParams.getFirst("ownerName");
+        String ownerName = queryParams.getFirst("owner");
         return StringUtils.isBlank(ownerName) ? null : ownerName;
     }
 
     @Schema(description = "subject type.")
     public String getSubjectType() {
-        String subjectType = queryParams.getFirst("type");
+        String subjectType = queryParams.getFirst("subjectType");
         return StringUtils.isBlank(subjectType) ? null : subjectType;
     }
 

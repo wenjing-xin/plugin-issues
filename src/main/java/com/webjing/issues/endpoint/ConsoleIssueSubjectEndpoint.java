@@ -48,7 +48,7 @@ public class ConsoleIssueSubjectEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(ListResult.generateGenericClass(ListedIssueSubject.class))
                     );
-                IssueTemplateQuery.buildParameters(builder);
+                IssueSubjectQuery.buildParameters(builder);
             })
             .POST("issuesubjects", this::createIssueSubject, builder ->
                 builder.operationId("CreateIssueSubject")
@@ -61,7 +61,7 @@ public class ConsoleIssueSubjectEndpoint implements CustomEndpoint {
                             .schema(Builder.schemaBuilder().implementation(IssueSubject.class))
                         ))
                     .response(responseBuilder()
-                        .implementation(IssueTemplate.class))
+                        .implementation(IssueSubject.class))
             )
             .build();
     }

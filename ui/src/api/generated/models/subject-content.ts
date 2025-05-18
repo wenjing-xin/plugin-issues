@@ -21,17 +21,17 @@
  */
 export interface SubjectContent {
     /**
-     * 
+     * 依托的html内容
      * @type {string}
      * @memberof SubjectContent
      */
-    'htmlContent'?: string;
+    'htmlContent': string;
     /**
-     * 
+     * 依托的原内容
      * @type {string}
      * @memberof SubjectContent
      */
-    'rawContent'?: string;
+    'rawContent': string;
     /**
      * 依托内容UID，文章类型必须有
      * @type {string}

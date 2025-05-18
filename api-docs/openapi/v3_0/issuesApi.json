@@ -5,7 +5,7 @@
     "version" : "2.20.18"
   },
   "servers" : [ {
-    "url" : "http://localhost:50208",
+    "url" : "http://localhost:45472",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -287,6 +287,14 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "description" : "subject type.",
+          "in" : "query",
+          "name" : "subjectType",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          }
         } ],
         "responses" : {
           "default" : {
@@ -320,7 +328,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/IssueTemplate"
+                  "$ref" : "#/components/schemas/IssueSubject"
                 }
               }
             },
@@ -1965,7 +1973,7 @@
         }
       },
       "IssueSubject" : {
-        "required" : [ "apiVersion", "kind", "metadata" ],
+        "required" : [ "apiVersion", "kind", "metadata", "spec" ],
         "type" : "object",
         "properties" : {
           "apiVersion" : {
@@ -2064,7 +2072,8 @@
             "description" : "依托对象类型",
             "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
           }
-        }
+        },
+        "description" : "依托对象详情"
       },
       "IssueTemplate" : {
         "required" : [ "apiVersion", "kind", "metadata" ],
@@ -2518,13 +2527,16 @@
         }
       },
       "SubjectContent" : {
+        "required" : [ "htmlContent", "rawContent" ],
         "type" : "object",
         "properties" : {
           "htmlContent" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "依托的html内容"
           },
           "rawContent" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "依托的原内容"
           },
           "uid" : {
             "type" : "string",

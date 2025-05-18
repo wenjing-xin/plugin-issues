@@ -21,7 +21,7 @@ import { computed, provide, type Ref, ref, onMounted } from "vue";
 import DatePicker from "vue-datepicker-next";
 import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
-import { useIssueMessageListFetch } from "@/composables/use-consoleIssue";
+import {useIssueListFetch} from "@/composables/use-consoleIssue";
 import IssueEditModal from "@/components/issue/IssueEditModal.vue";
 import type { Issue, ListedIssue } from "@/api/generated";
 import LabelFilterDropdown from "../components/issue/LabelFilterDropdown.vue";
@@ -29,13 +29,15 @@ import { issueApiClient, issueTemplateApiClient } from "@/api";
 
 const label = useRouteQuery<string | undefined>("label");
 const ownerName = useRouteQuery<string | undefined>("ownerName");
-const selectedTempalte = useRouteQuery<string | undefined>("issueTemplate");
+const selectedTemplate = useRouteQuery<string | undefined>("issueTemplate");
 const selectedSort = useRouteQuery<string | undefined>("sort");
 const selectedApprovedStatus = useRouteQuery<string | undefined, boolean | undefined>("approved", undefined, {
   transform: (value) => {
     return value ? value === "true" : undefined;
   },
 });
+const currentIssueSubjectName = useRouteQuery<string>("subjectName");
+
 const hasFilters = computed(() => {
   return (
     selectedApprovedStatus.value == true ||
@@ -43,7 +45,7 @@ const hasFilters = computed(() => {
     label.value ||
     ownerName.value ||
     selectedSort.value ||
-    selectedTempalte.value
+    selectedTemplate.value
   );
 });
 function handleClearFilters() {
@@ -51,7 +53,7 @@ function handleClearFilters() {
   label.value = undefined;
   ownerName.value = undefined;
   selectedSort.value = undefined;
-  selectedTempalte.value = undefined;
+  selectedTemplate.value = undefined;
 }
 
 const updateIssueMessage = ref<Issue>();
@@ -78,9 +80,10 @@ const endDate = computed(() => {
   return toISODayEndOfTime(endTime);
 });
 
-const { issueMessages, isLoading, isFetching, refetch, total } = useIssueMessageListFetch(
+const { issues, isLoading, isFetching, refetch, total } = useIssueListFetch(
   page,
   size,
+  currentIssueSubjectName,
   keyword,
   selectedSort,
   ownerName,
@@ -88,7 +91,7 @@ const { issueMessages, isLoading, isFetching, refetch, total } = useIssueMessage
   startDate,
   endDate,
   label,
-  selectedTempalte,
+  selectedTemplate
 );
 
 const handlerNewIssue = () => {
@@ -96,7 +99,7 @@ const handlerNewIssue = () => {
 };
 
 //处理issue template的筛选过滤条件
-const hanlderIssueTemplateOptions = () => {
+const handlerIssueTemplateOptions = () => {
   issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
     data.items.forEach((it) => {
       const itemOption = { label: it.spec?.name, value: it.metadata.name };
@@ -114,8 +117,8 @@ const handleCheckAllChange = (e: Event) => {
   checkedAll.value = checked;
   if (checkedAll.value) {
     selectedIssueMessageNames.value =
-      issueMessages.value?.map((listedIssueMessage: ListedIssue) => {
-        return listedIssueMessage.issueMessage.metadata.name;
+      issues.value?.map((listedIssueMessage: ListedIssue) => {
+        return listedIssueMessage.issue.metadata.name;
       }) || [];
   } else {
     selectedIssueMessageNames.value.length = 0;
@@ -128,9 +131,9 @@ const onEditingModalClose = async () => {
   editingModal.value = false;
   await refetch();
 };
-const checkSelection = (listedIssueMessage: ListedIssue) => {
-  if (listedIssueMessage.issueMessage.metadata.name) {
-    return selectedIssueMessageNames.value.includes(listedIssueMessage.issueMessage.metadata.name);
+const checkSelection = (listedIssue: ListedIssue) => {
+  if (listedIssue.issue.metadata.name) {
+    return selectedIssueMessageNames.value.includes(listedIssue.issue.metadata.name);
   }
   return false;
 };
@@ -204,7 +207,7 @@ const handlerUpdateIssueMessage  = ()=>{
   refetch();
 }
 onMounted(() => {
-  hanlderIssueTemplateOptions();
+  handlerIssueTemplateOptions();
 });
 </script>
 
@@ -253,7 +256,7 @@ onMounted(() => {
                 <div class="w-auto sm:w-auto">
                   <VSpace spacing="sm" class="flex flex-wrap">
                     <FilterCleanButton v-if="hasFilters" @click="handleClearFilters" />
-                    <FilterDropdown v-model="selectedTempalte" label="模版" :items="issueTemplateFilterOptions" />
+                    <FilterDropdown v-model="selectedTemplate" label="模版" :items="issueTemplateFilterOptions" />
                     <LabelFilterDropdown v-model="label" :label="'标签'" />
                     <FilterDropdown
                       v-model="selectedApprovedStatus"
@@ -317,7 +320,7 @@ onMounted(() => {
             </div>
           </template>
           <VLoading v-if="isLoading" />
-          <Transition v-else-if="!issueMessages?.length" appear name="fade">
+          <Transition v-else-if="!issues?.length" appear name="fade">
             <VEmpty message="你可以尝试刷新或者新建issue留言" title="当前没有任何Issue留言">
               <template #actions>
                 <VSpace>
@@ -334,10 +337,10 @@ onMounted(() => {
           </Transition>
           <Transition v-else appear name="fade">
             <ul class="box-border h-auto w-full divide-y divide-gray-100" role="list">
-              <li v-for="listedIssueMessage in issueMessages" :key="listedIssueMessage.issueMessage.metadata.name">
+              <li v-for="listedIssue in issues" :key="listedIssue.issue.metadata.name">
                 <IssueListItem
-                  :issue="listedIssueMessage"
-                  :is-selected="checkSelection(listedIssueMessage)"
+                  :issue="listedIssue"
+                  :is-selected="checkSelection(listedIssue)"
                   @update="handlerUpdateIssue"
                 />
               </li>

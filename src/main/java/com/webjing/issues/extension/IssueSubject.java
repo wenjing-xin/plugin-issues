@@ -24,6 +24,7 @@ public class IssueSubject extends AbstractExtension {
 
     public static final String KIND = "IssueSubject";
 
+    @Schema(description = "依托对象详情", requiredMode = REQUIRED)
     private IssueSubjectSpec spec;
 
     @Data
@@ -58,8 +59,10 @@ public class IssueSubject extends AbstractExtension {
         @Schema(description = "依托内容UID，文章类型必须有")
         private String uid;
 
+        @Schema(description = "依托的html内容", requiredMode = REQUIRED)
         private String htmlContent;
 
+        @Schema(description = "依托的原内容", requiredMode = REQUIRED)
         private  String rawContent;
 
     }
