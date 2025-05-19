@@ -33,7 +33,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 node {
-    nodeProjectDir = file("${project.projectDir}/ui")
+    nodeProjectDir = file("${project.projectDir}")
 }
 
 tasks.register('buildFrontend', PnpmTask) {
@@ -54,6 +54,9 @@ build {
 
 halo {
     version = '2.20.18'
+    containerName = 'plugin-issues'
+    debug = false
+    suspend = true
 }
 
 haloPlugin {

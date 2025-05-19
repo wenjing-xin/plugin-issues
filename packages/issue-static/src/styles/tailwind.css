@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base{
+  :root{
+    --mi-primary-color: 210deg 40% 98%;
+    --mi-secondary-color: 217deg 32.6% 17.5%;
+    --mi-bg-wechat: 255 255 255;
+    --mi-bg-wechat-comment: 247 247 247;
+  }
+  :root[data-color-scheme="dark"]{
+    --mi-primary-color: 210deg 40% 98%;
+    --mi-secondary-color: 217deg 32.6% 17.5%;
+    --mi-bg-wechat: 25 25 25;
+    --mi-bg-wechat-comment: 32 32 32;
+  }
+}
