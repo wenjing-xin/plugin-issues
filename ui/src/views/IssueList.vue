@@ -36,6 +36,7 @@ const selectedApprovedStatus = useRouteQuery<string | undefined, boolean | undef
     return value ? value === "true" : undefined;
   },
 });
+
 const currentIssueSubjectName = useRouteQuery<string>("subjectName");
 
 const hasFilters = computed(() => {

@@ -1,16 +1,22 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
 import { computed, nextTick, onMounted, ref, toRaw, watchEffect } from "vue";
-import type { IssueSubject} from "@/api/generated";
+import type { IssueSubject } from "@/api/generated";
 import { subjectTypeOptions } from "@/dictionary";
 import cloneDeep from "lodash.clonedeep";
-import { issueSubjectApiClient, consoleIssueSubjectApiClient } from "@/api";
+import {
+  issueSubjectApiClient,
+  consoleIssueSubjectApiClient,
+  issueTemplateApiClient,
+} from "@/api";
+import { consoleApiClient } from "@halo-dev/api-client";
 import TextEditor from "@/components/editor/index.vue";
 import { submitForm } from "@formkit/core";
 const modalTitle = ref("新增 Issue 依托主体");
-import {accepts} from "@/dictionary/index";
-import type {AttachmentLike} from "@halo-dev/console-shared";
+import { accepts } from "@/dictionary/index";
+import type { AttachmentLike } from "@halo-dev/console-shared";
 const saving = ref<boolean>(false);
+
 const props = withDefaults(
   defineProps<{
     visible: boolean;
@@ -28,6 +34,9 @@ const emit = defineEmits<{
   (event: "update", issueSubject: IssueSubject): void;
 }>();
 
+const issueTemplateFilterOptions = ref<
+  Array<{ label: string | undefined; value: string }>
+>([]);
 const attachmentSelectorModal = ref(false);
 
 const initIssueSubject: IssueSubject = {
@@ -41,13 +50,14 @@ const initIssueSubject: IssueSubject = {
     displayName: "",
     content: {
       rawContent: "",
-      htmlContent: ""
+      htmlContent: "",
+      uid: "",
     },
     subjectType: "TOPIC",
     issueTemplates: [],
     owner: "",
     description: "",
-  }
+  },
 };
 
 const formState = ref<IssueSubject>(cloneDeep(initIssueSubject));
@@ -60,11 +70,12 @@ watchEffect(() => {
 });
 
 onMounted(() => {
- 
+  handlerIssueTemplateOptions();
 });
 
-
-const isUpdateMode = computed(() => !!formState.value.metadata.creationTimestamp);
+const isUpdateMode = computed(
+  () => !!formState.value.metadata.creationTimestamp,
+);
 const isEditorEmpty = ref<boolean>(true);
 
 const onVisibleChange = (visible: boolean) => {
@@ -81,7 +92,12 @@ const onSubmit = async () => {
     annotationsFormRef.value?.handleSubmit();
     await nextTick();
 
-    const { customAnnotations, annotations, customFormInvalid, specFormInvalid } = annotationsFormRef.value || {};
+    const {
+      customAnnotations,
+      annotations,
+      customFormInvalid,
+      specFormInvalid,
+    } = annotationsFormRef.value || {};
     if (customFormInvalid || specFormInvalid) {
       return;
     }
@@ -106,7 +122,7 @@ const onSubmit = async () => {
   formState.value = cloneDeep(initIssueSubject);
 };
 const handleUpdate = async () => {
-  let res = await issueSubjectApiClient.issueSubject.updateIssueSubject({
+  const res = await issueSubjectApiClient.issueSubject.updateIssueSubject({
     name: formState.value.metadata.name,
     issueSubject: formState.value,
   });
@@ -117,9 +133,10 @@ const handleUpdate = async () => {
 
 // 新增 issue 依托主体对象
 const handleSave = async (issueSubject: IssueSubject) => {
-  const { data } = await consoleIssueSubjectApiClient.issueSubject.createIssueSubject({
-    issueSubject: issueSubject,
-  });
+  const { data } =
+    await consoleIssueSubjectApiClient.issueSubject.createIssueSubject({
+      issueSubject: issueSubject,
+    });
   emit("save", data);
   Toast.success("操作成功");
 };
@@ -127,12 +144,26 @@ const handleReset = () => {
   formState.value = toRaw(cloneDeep(initIssueSubject));
   isEditorEmpty.value = true;
 };
-const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
-  
-}
+const handlerIssueTemplateOptions = () => {
+  issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
+    data.items.forEach((it) => {
+      const itemOption = { label: it.spec?.name, value: it.metadata.name };
+      issueTemplateFilterOptions.value.push(itemOption);
+    });
+  });
+};
+
+
+
+const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
 </script>
 <template>
-  <VModal :title="modalTitle" :visible="visible" :width="760" @update:visible="onVisibleChange">
+  <VModal
+    :title="modalTitle"
+    :visible="visible"
+    :width="760"
+    @update:visible="onVisibleChange"
+  >
     <template #actions>
       <slot name="append-actions" />
     </template>
@@ -148,21 +179,39 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
           id="issue-subject"
           type="form"
           name="issue-subject"
-          v-model="formState.spec"
           :config="{ validationVisibility: 'submit' }"
           @submit="onSubmit"
         >
-          <FormKit type="text" label="展示名称" name="displayName" validation="required" />
+          <FormKit
+            type="text"
+            label="展示名称"
+            v-model="formState.spec.displayName"
+            validation="required"
+          />
           <FormKit
             type="select"
-            name="subjectType"
+            v-model="formState.spec.subjectType"
             validation="required"
             label="Issue依托主体类型"
             :options="subjectTypeOptions"
-            multiple
             clearable
-            searchable
-            allow-create
+          />
+          <template v-if="formState.spec.subjectType == 'POST'">
+            <FormKit
+              v-model="formState.spec.content.uid"
+              placeholder="请选择文章"
+              label="依托的文章内容"
+              type="postSelect"
+            />
+          </template>
+          <FormKit
+            type="select"
+            v-model="formState.spec.issueTemplates"
+            clearable
+            validation="required"
+            label="Issue留言模版"
+            multiple
+            :options="issueTemplateFilterOptions"
           />
           <AttachmentSelectorModal
             v-model:visible="attachmentSelectorModal"
@@ -172,21 +221,24 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
             :accepts="accepts"
             @select="onAttachmentsSelect"
           />
-          <FormKit label="描述" name="description" type="textarea" rows="1" />
+          <FormKit label="描述" v-model="formState.spec.description" type="textarea" rows="1" />
         </FormKit>
-        <div class="space-y-2 my-2 py-2">
+        <div
+          v-if="formState.spec.subjectType !== 'POST'"
+          class="space-y-2 my-2 py-2"
+        >
           <p class="text-sm font-bold text-gray-600">主体内容</p>
           <TextEditor
             v-model:raw="formState.spec.content.rawContent"
             v-model:html="formState.spec.content.htmlContent"
-            v-model:isEmpty="isEditorEmpty"
+            v-model:is-empty="isEditorEmpty"
             class="min-h-[15rem] p-3.5 rounded-md"
             tabindex="-1"
           />
         </div>
       </div>
     </div>
-  
+
     <div class="py-5">
       <div class="border-t border-gray-200"></div>
     </div>
@@ -196,7 +248,9 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
           <span class="text-base text-gray-900 font-medium"> 元数据 </span>
         </div>
       </div>
-      <div class="divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y">
+      <div
+        class="divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y"
+      >
         <AnnotationsForm
           v-if="visible"
           :key="formState.metadata.name"
@@ -209,7 +263,13 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
     </div>
     <template #footer>
       <VSpace>
-        <VButton :loading="saving" type="secondary" @click="submitForm('issue-subject')"> 提交 </VButton>
+        <VButton
+          :loading="saving"
+          type="secondary"
+          @click="submitForm('issue-subject')"
+        >
+          提交
+        </VButton>
         <VButton @click="onVisibleChange(false)"> 取消 </VButton>
       </VSpace>
     </template>

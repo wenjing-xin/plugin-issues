@@ -56,7 +56,7 @@ public class IssueSubject extends AbstractExtension {
     @Data
     public static class SubjectContent {
 
-        @Schema(description = "依托内容UID，文章类型必须有")
+        @Schema(description = "依托内容UID，文章、产品等类型会存在一个ID")
         private String uid;
 
         @Schema(description = "依托的html内容", requiredMode = REQUIRED)

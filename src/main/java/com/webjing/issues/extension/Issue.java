@@ -63,7 +63,7 @@ public class Issue extends AbstractExtension {
         @Schema(description = "Release timestamp. This field can be customized by owner")
         private Instant releaseTime;
 
-        @Schema(description = "关联主体唯一标识")
+        @Schema(description = "关联主体唯一标识", requiredMode = REQUIRED)
         private String subjectName;
 
         @Schema(description = "关注者列表")
@@ -97,17 +97,11 @@ public class Issue extends AbstractExtension {
     @Data
     public static class IssueContent {
 
-        @Schema(description = "Raw of content")
+        @Schema(description = "Raw of content", requiredMode = REQUIRED)
         private String raw;
 
-        @Schema(description = "Rendered result with HTML format")
+        @Schema(description = "Rendered result with HTML format", requiredMode = REQUIRED)
         private String html;
-
-        @ArraySchema(
-            uniqueItems = true,
-            arraySchema = @Schema(description = "Medium of issueMessage"),
-            schema = @Schema(description = "Media item of issueMessage"))
-        private List<IssueMedia> medium;
     }
 
     @Data

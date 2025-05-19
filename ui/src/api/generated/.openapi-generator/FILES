@@ -26,7 +26,6 @@ models/issue-content.ts
 models/issue-detail-content.ts
 models/issue-detail-media.ts
 models/issue-list.ts
-models/issue-media.ts
 models/issue-message-spec.ts
 models/issue-message-status.ts
 models/issue-subject-list.ts

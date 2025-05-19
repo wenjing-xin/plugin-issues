@@ -1,7 +1,11 @@
 import { ref, type Ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { consoleIssueApiClient, consoleIssueSubjectApiClient } from "@/api";
-import type {IssueSubjectSpecSubjectTypeEnum, ListedIssue, ListedIssueSubject} from "@/api/generated";
+import type {
+  IssueSubjectSpecSubjectTypeEnum,
+  ListedIssue,
+  ListedIssueSubject,
+} from "@/api/generated";
 export function useIssueListFetch(
   page: Ref<number>,
   size: Ref<number>,
@@ -13,7 +17,7 @@ export function useIssueListFetch(
   startDate?: Ref<string>,
   endDate?: Ref<string>,
   label?: Ref<string | undefined>,
-  selectedTemplate?: Ref<string | undefined>
+  selectedTemplate?: Ref<string | undefined>,
 ) {
   const total = ref(0);
   const {
@@ -22,7 +26,20 @@ export function useIssueListFetch(
     isFetching,
     refetch,
   } = useQuery<ListedIssue[]>({
-    queryKey: ["issues", page, size, subjectName, keyword, selectedSort, ownerName, selectedApprovedStatus, startDate, endDate, label, selectedTemplate],
+    queryKey: [
+      "issues",
+      page,
+      size,
+      subjectName,
+      keyword,
+      selectedSort,
+      ownerName,
+      selectedApprovedStatus,
+      startDate,
+      endDate,
+      label,
+      selectedTemplate,
+    ],
     queryFn: async () => {
       const { data } = await consoleIssueApiClient.issue.listIssues({
         subjectName: subjectName.value,
@@ -35,13 +52,15 @@ export function useIssueListFetch(
         startDate: startDate?.value,
         endDate: endDate?.value,
         approved: selectedApprovedStatus?.value,
-        issueTemplate: selectedTemplate?.value
+        issueTemplate: selectedTemplate?.value,
       });
       total.value = data.total;
       return data.items;
     },
     refetchInterval: (data) => {
-      const hasDeletingData = data?.some((item: ListedIssue) => !!item.issue.metadata?.deletionTimestamp);
+      const hasDeletingData = data?.some(
+        (item: ListedIssue) => !!item.issue.metadata?.deletionTimestamp,
+      );
       return hasDeletingData ? 1000 : false;
     },
     refetchOnWindowFocus: false,
@@ -51,7 +70,7 @@ export function useIssueListFetch(
     isLoading,
     isFetching,
     refetch,
-    total
+    total,
   };
 }
 
@@ -62,7 +81,7 @@ export function useIssueSubjectListFetch(
   selectedSort?: Ref<string | undefined>,
   ownerName?: Ref<string | undefined>,
   selectedSubjectType?: Ref<IssueSubjectSpecSubjectTypeEnum | undefined>,
-  ){
+) {
   const total = ref(0);
   const {
     data: issueSubjects,
@@ -70,21 +89,33 @@ export function useIssueSubjectListFetch(
     isFetching,
     refetch,
   } = useQuery<ListedIssueSubject[]>({
-    queryKey: ["issueSubjects", page, size, keyword, selectedSort, ownerName, selectedSubjectType],
+    queryKey: [
+      "issueSubjects",
+      page,
+      size,
+      keyword,
+      selectedSort,
+      ownerName,
+      selectedSubjectType,
+    ],
     queryFn: async () => {
-      const { data } = await consoleIssueSubjectApiClient.issueSubject.listIssueSubjects({
-        page: page.value,
-        size: size.value,
-        sort: [selectedSort?.value].filter(Boolean) as string[],
-        keyword: keyword?.value,
-        owner: ownerName?.value,
-        subjectType: selectedSubjectType?.value,
-      });
+      const { data } =
+        await consoleIssueSubjectApiClient.issueSubject.listIssueSubjects({
+          page: page.value,
+          size: size.value,
+          sort: [selectedSort?.value].filter(Boolean) as string[],
+          keyword: keyword?.value,
+          owner: ownerName?.value,
+          subjectType: selectedSubjectType?.value,
+        });
       total.value = data.total;
       return data.items;
     },
     refetchInterval: (data) => {
-      const hasDeletingData = data?.some((item: ListedIssueSubject) => !!item.issueSubject.metadata?.deletionTimestamp);
+      const hasDeletingData = data?.some(
+        (item: ListedIssueSubject) =>
+          !!item.issueSubject.metadata?.deletionTimestamp,
+      );
       return hasDeletingData ? 1000 : false;
     },
     refetchOnWindowFocus: false,
@@ -94,6 +125,6 @@ export function useIssueSubjectListFetch(
     isLoading,
     isFetching,
     refetch,
-    total
+    total,
   };
 }

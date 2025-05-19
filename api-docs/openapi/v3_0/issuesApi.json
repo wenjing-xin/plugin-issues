@@ -5,7 +5,7 @@
     "version" : "2.20.18"
   },
   "servers" : [ {
-    "url" : "http://localhost:45472",
+    "url" : "http://localhost:53299",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -1745,19 +1745,12 @@
         }
       },
       "IssueContent" : {
+        "required" : [ "html", "raw" ],
         "type" : "object",
         "properties" : {
           "html" : {
             "type" : "string",
             "description" : "Rendered result with HTML format"
-          },
-          "medium" : {
-            "uniqueItems" : true,
-            "type" : "array",
-            "description" : "Medium of issueMessage",
-            "items" : {
-              "$ref" : "#/components/schemas/IssueMedia"
-            }
           },
           "raw" : {
             "type" : "string",
@@ -1854,27 +1847,8 @@
           }
         }
       },
-      "IssueMedia" : {
-        "type" : "object",
-        "properties" : {
-          "originType" : {
-            "type" : "string",
-            "description" : "Origin type of media."
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "Type of media",
-            "enum" : [ "PHOTO", "POST" ]
-          },
-          "url" : {
-            "type" : "string",
-            "description" : "External URL of media"
-          }
-        },
-        "description" : "Media item of issueMessage"
-      },
       "IssueMessageSpec" : {
-        "required" : [ "content", "owner", "title" ],
+        "required" : [ "content", "owner", "subjectName", "title" ],
         "type" : "object",
         "properties" : {
           "approved" : {

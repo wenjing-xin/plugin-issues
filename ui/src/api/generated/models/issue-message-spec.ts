@@ -82,7 +82,7 @@ export interface IssueMessageSpec {
      * @type {string}
      * @memberof IssueMessageSpec
      */
-    'subjectName'?: string;
+    'subjectName': string;
     /**
      * 
      * @type {string}

@@ -9,7 +9,6 @@ export * from './issue-content';
 export * from './issue-detail-content';
 export * from './issue-detail-media';
 export * from './issue-list';
-export * from './issue-media';
 export * from './issue-message-spec';
 export * from './issue-message-status';
 export * from './issue-subject';
