@@ -1,5 +1,0 @@
-{
-    "scripts": {
-        "build": "pnpm --filter \"packages/**\" build && pnpm --filter ./ui build"
-    }
-}

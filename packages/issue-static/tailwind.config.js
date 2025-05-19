@@ -4,7 +4,7 @@ import { addDynamicIconSelectors } from "@iconify/tailwind";
 module.exports = {
   content: ["../../src/main/resources/templates/**/*.html", "./src/**/*.ts"],
   darkMode: ['selector', '[data-color-scheme="dark"]'],
-  // prefix: "piw-",
+  prefix: "piw-",
   theme: {
     container: {
       padding: {
