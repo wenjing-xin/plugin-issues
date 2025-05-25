@@ -28,8 +28,10 @@ models/issue-detail-media.ts
 models/issue-list.ts
 models/issue-message-spec.ts
 models/issue-message-status.ts
+models/issue-stats.ts
 models/issue-subject-list.ts
 models/issue-subject-spec.ts
+models/issue-subject-stats.ts
 models/issue-subject.ts
 models/issue-template-list.ts
 models/issue-template-spec.ts
@@ -47,7 +49,6 @@ models/move-operation.ts
 models/remove-operation.ts
 models/replace-operation.ts
 models/state-transition.ts
-models/stats.ts
 models/subject-content.ts
 models/template-field.ts
 models/test-operation.ts

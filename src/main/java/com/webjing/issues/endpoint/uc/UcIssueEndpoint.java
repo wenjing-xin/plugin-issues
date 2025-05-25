@@ -222,7 +222,7 @@ public class UcIssueEndpoint implements CustomEndpoint {
         return getCurrentUser()
             .map(user -> new IssueQuery(request.exchange(), user.getName()))
             .flatMapMany(issueMessageService::listAllLabels)
-            .filter(tagName -> StringUtils.isBlank(name) || StringUtils.containsIgnoreCase(tagName,
+            .filter(labelName -> StringUtils.isBlank(name) || StringUtils.containsIgnoreCase(labelName,
                 name))
             .collectList()
             .flatMap(result -> ServerResponse.ok().bodyValue(result));

@@ -1,5 +1,6 @@
 package com.webjing.issues.service.impl;
 
+import com.webjing.issues.entity.IssueStats;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.exception.NotFoundException;
 import com.webjing.issues.extension.Issue;
@@ -7,7 +8,6 @@ import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueService;
 import com.webjing.issues.vo.ContributorVO;
 import com.webjing.issues.entity.ListedIssue;
-import com.webjing.issues.entity.Stats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -66,9 +66,9 @@ public class IssueServiceImpl implements IssueService {
     public Flux<String> listAllLabels(IssueQuery query) {
         return client.listAll(Issue.class, query.toListOptions(),
                 Sort.by("metadata.name").descending())
-            .flatMapIterable(moment -> {
-                var tags = moment.getSpec().getLabels();
-                return Objects.requireNonNullElseGet(tags, List::of);
+            .flatMapIterable(issue -> {
+                var labels = issue.getSpec().getLabels();
+                return Objects.requireNonNullElseGet(labels, List::of);
             })
             .distinct();
     }
@@ -102,8 +102,8 @@ public class IssueServiceImpl implements IssueService {
             .issue(issue);
         return Mono.just(issueBuilder)
             .map(ListedIssue.ListedIssueBuilder::build)
-            .flatMap(li -> fetchStats(issue)
-                .doOnNext(li::setStats)
+            .flatMap(li -> fetchIssueStats(issue)
+                .doOnNext(li::setIssueStats)
                 .thenReturn(li))
             .flatMap(li -> setOwner(issue.getSpec().getOwner(), li));
     }
@@ -115,16 +115,17 @@ public class IssueServiceImpl implements IssueService {
             .thenReturn(issue);
     }
 
-    private Mono<Stats> fetchStats(Issue issue) {
+    private Mono<IssueStats> fetchIssueStats(Issue issue) {
         Assert.notNull(issue, "The issue must not be null.");
         String name = issue.getMetadata().getName();
         return client.fetch(Counter.class, MeterUtils.nameOf(Issue.class, name))
-            .map(counter -> Stats.builder()
+            .map(counter -> IssueStats.builder()
                 .upvote(counter.getUpvote())
-                .totalComment(counter.getTotalComment())
-                .approvedComment(counter.getApprovedComment())
+                .downvote(counter.getDownvote())
+                .totalIssueComment(counter.getTotalComment())
+                .approvedIssueComment(counter.getApprovedComment())
                 .build())
-            .defaultIfEmpty(Stats.empty());
+            .defaultIfEmpty(IssueStats.empty());
 
     }
 

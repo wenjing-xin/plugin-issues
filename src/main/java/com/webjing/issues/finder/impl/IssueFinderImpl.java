@@ -1,5 +1,6 @@
 package com.webjing.issues.finder.impl;
 
+import com.webjing.issues.entity.IssueStats;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.finder.IssueFinder;
@@ -25,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static run.halo.app.extension.index.query.QueryFactory.*;
 
 /**
@@ -33,7 +35,7 @@ import static run.halo.app.extension.index.query.QueryFactory.*;
  * @author: webjing
  * @date: 2025年03月10日 14:54
  */
-@Finder("issueMessageFinder")
+@Finder("issuesFinder")
 @RequiredArgsConstructor
 public class IssueFinderImpl implements IssueFinder {
 
@@ -142,8 +144,8 @@ public class IssueFinderImpl implements IssueFinder {
     private Mono<IssueVO> getIssueMessageVo(@Nonnull Issue issueMessage) {
         IssueVO issueMessageVo = IssueVO.from(issueMessage);
         return Mono.just(issueMessageVo)
-            .flatMap(imv -> populateStats(issueMessageVo)
-                .doOnNext(imv::setStats)
+            .flatMap(imv -> fetchIssueStats(issueMessageVo)
+                .doOnNext(imv::setIssueStats)
                 .thenReturn(imv)
             )
             .flatMap(imv -> {
@@ -156,15 +158,17 @@ public class IssueFinderImpl implements IssueFinder {
             .defaultIfEmpty(issueMessageVo);
     }
 
-    private Mono<Stats> populateStats(IssueVO issueMessageVo) {
+    private Mono<IssueStats> fetchIssueStats(IssueVO issueMessageVo) {
         String name = issueMessageVo.getMetadata().getName();
         return client.fetch(Counter.class, MeterUtils.nameOf(Issue.class, name))
-            .map(counter -> Stats.builder()
+            .map(counter -> IssueStats.builder()
+                .visit(counter.getVisit())
                 .upvote(counter.getUpvote())
-                .totalComment(counter.getTotalComment())
-                .approvedComment(counter.getApprovedComment())
+                .downvote(counter.getDownvote())
+                .totalIssueComment(counter.getTotalComment())
+                .approvedIssueComment(counter.getApprovedComment())
                 .build())
-            .defaultIfEmpty(Stats.empty());
+            .defaultIfEmpty(IssueStats.empty());
     }
 
     int pageNullSafe(Integer page) {

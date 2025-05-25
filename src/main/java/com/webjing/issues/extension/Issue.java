@@ -68,6 +68,9 @@ public class Issue extends AbstractExtension {
 
         @Schema(description = "关注者列表")
         private Set<String> watchers;
+
+        @Schema(requiredMode = REQUIRED, defaultValue = "false", description = "是否置顶")
+        private Boolean top;
     }
 
     @Data

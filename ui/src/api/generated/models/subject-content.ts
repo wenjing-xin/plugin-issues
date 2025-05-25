@@ -33,7 +33,7 @@ export interface SubjectContent {
      */
     'rawContent': string;
     /**
-     * 依托内容UID，文章类型必须有
+     * 依托内容UID，文章、产品等类型会存在一个ID
      * @type {string}
      * @memberof SubjectContent
      */

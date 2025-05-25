@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import run.halo.app.extension.ListResult;
 
 /**
- *
+ * issue 相关的接口
  * @author: webjing
  * @date: 2025年03月06日 14:54
  */
@@ -28,4 +28,7 @@ public interface IssueService {
     Mono<Issue> updateBy(Issue issue);
 
     Mono<Issue> deleteBy(Issue issue);
+
+
+
 }

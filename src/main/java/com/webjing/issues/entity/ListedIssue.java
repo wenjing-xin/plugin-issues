@@ -15,6 +15,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ListedIssue {
+
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private Issue issue;
 
@@ -22,5 +23,5 @@ public class ListedIssue {
     private ContributorVO contributorVo;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-    private Stats stats;
+    private IssueStats issueStats;
 }

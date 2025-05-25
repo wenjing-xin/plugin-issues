@@ -43,7 +43,7 @@ const initIssueSubject: IssueSubject = {
   kind: "IssueSubject",
   apiVersion: "issue.webjing.com/v1alpha1",
   metadata: {
-    generateName: "issueSubject-",
+    generateName: "subject-",
     name: "",
   },
   spec: {

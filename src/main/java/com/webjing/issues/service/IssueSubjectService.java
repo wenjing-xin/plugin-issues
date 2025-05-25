@@ -17,5 +17,4 @@ public interface IssueSubjectService {
 
     Mono<ListResult<ListedIssueSubject>> listIssueSubject(IssueSubjectQuery query);
 
-
 }

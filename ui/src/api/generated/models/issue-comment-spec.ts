@@ -48,6 +48,18 @@ export interface IssueCommentSpec {
      */
     'content': IssueDetailContent;
     /**
+     * 是否隐藏
+     * @type {boolean}
+     * @memberof IssueCommentSpec
+     */
+    'hidden': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof IssueCommentSpec
+     */
+    'ipAddress'?: string;
+    /**
      * 
      * @type {string}
      * @memberof IssueCommentSpec
@@ -64,6 +76,18 @@ export interface IssueCommentSpec {
      * @type {string}
      * @memberof IssueCommentSpec
      */
-    'parentCommentUid'?: string;
+    'quoteCommentUid'?: string;
+    /**
+     * 是否置顶
+     * @type {boolean}
+     * @memberof IssueCommentSpec
+     */
+    'top': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof IssueCommentSpec
+     */
+    'userAgent'?: string;
 }
 

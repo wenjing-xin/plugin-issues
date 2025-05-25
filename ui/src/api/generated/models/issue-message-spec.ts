@@ -90,6 +90,12 @@ export interface IssueMessageSpec {
      */
     'title': string;
     /**
+     * 是否置顶
+     * @type {boolean}
+     * @memberof IssueMessageSpec
+     */
+    'top': boolean;
+    /**
      * 关注者列表
      * @type {Array<string>}
      * @memberof IssueMessageSpec

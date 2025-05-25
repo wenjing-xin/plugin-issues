@@ -127,19 +127,11 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
 
     private Mono<ServerResponse> listMyLabels(ServerRequest request) {
         String name = request.queryParam("name").orElse(null);
-        return getCurrentUser()
-            .map(username -> new IssueQuery(request.exchange(), username))
-            .flatMapMany(issueService::listAllLabels)
-            .filter(labelName -> StringUtils.isBlank(name) || StringUtils.containsIgnoreCase(labelName,
-                name))
+        IssueQuery issueQuery = new IssueQuery(request.exchange());
+        return issueService.listAllLabels(issueQuery)
+            .filter(labelName -> StringUtils.isBlank(name) || StringUtils.containsIgnoreCase(labelName, name))
             .collectList()
             .flatMap(result -> ServerResponse.ok().bodyValue(result));
-    }
-
-    private Mono<String> getCurrentUser() {
-        return ReactiveSecurityContextHolder.getContext()
-            .map(SecurityContext::getAuthentication)
-            .map(Authentication::getName);
     }
 
     @Override

@@ -22,6 +22,6 @@ public class ListedIssueSubject {
     private ContributorVO contributorVo;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-    private Stats stats;
+    private IssueSubjectStats issueSubjectStats;
 
 }

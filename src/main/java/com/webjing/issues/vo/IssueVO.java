@@ -1,6 +1,6 @@
 package com.webjing.issues.vo;
 
-import com.webjing.issues.entity.Stats;
+import com.webjing.issues.entity.IssueStats;
 import com.webjing.issues.extension.Issue;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +29,7 @@ public class IssueVO {
 
     private ContributorVO contributorVo;
 
-    private Stats stats;
+    private IssueStats issueStats;
 
     public static IssueVO from(Issue issueMessage) {
         Assert.notNull(issueMessage, "The issue message must not be null.");

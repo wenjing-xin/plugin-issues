@@ -1,5 +1,6 @@
 package com.webjing.issues.vo;
 
+import com.webjing.issues.entity.IssueSubjectStats;
 import com.webjing.issues.entity.Stats;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueSubject;
@@ -27,7 +28,7 @@ public class IssueSubjectVO {
 
     private ContributorVO contributorVo;
 
-    private Stats stats;
+    private IssueSubjectStats issueSubjectStats;
 
     public static IssueSubjectVO from(IssueSubject issueSubject) {
         Assert.notNull(issueSubject, "The issue subject must not be null.");

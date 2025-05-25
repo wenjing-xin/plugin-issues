@@ -12,16 +12,16 @@ import lombok.Value;
 @Builder
 public class Stats {
 
-    Integer upvote;
+    private Integer view;
 
-    Integer totalComment;
+    private Integer upvote;
 
-    Integer approvedComment;
+    private Integer downvote;
 
     public static Stats empty() {
-        return Stats.builder().upvote(0)
-            .totalComment(0)
-            .approvedComment(0)
+        return Stats.builder().view(0)
+            .upvote(0)
+            .downvote(0)
             .build();
     }
 }

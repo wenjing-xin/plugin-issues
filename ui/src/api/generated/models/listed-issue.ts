@@ -21,7 +21,7 @@ import type { ContributorVO } from './contributor-vo';
 import type { Issue } from './issue';
 // May contain unused imports in some cases
 // @ts-ignore
-import type { Stats } from './stats';
+import type { IssueStats } from './issue-stats';
 
 /**
  * A chunk of items.
@@ -43,9 +43,9 @@ export interface ListedIssue {
     'issue': Issue;
     /**
      * 
-     * @type {Stats}
+     * @type {IssueStats}
      * @memberof ListedIssue
      */
-    'stats': Stats;
+    'issueStats': IssueStats;
 }
 

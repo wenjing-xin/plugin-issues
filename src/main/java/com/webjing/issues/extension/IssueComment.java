@@ -39,7 +39,11 @@ public class IssueComment extends AbstractExtension {
         private String issueName;
 
         @Schema(description = "父评论 UID（为空表示顶层评论）")
-        private String parentCommentUid;
+        private String quoteCommentUid;
+
+        private String userAgent;
+
+        private String ipAddress;
 
         @Schema(requiredMode = REQUIRED, description = "Owner of the issue message")
         private String owner;
@@ -55,6 +59,12 @@ public class IssueComment extends AbstractExtension {
 
         @Schema(defaultValue = "true", description = "是否允许通知")
         private Boolean allowNotification;
+
+        @Schema(requiredMode = REQUIRED, defaultValue = "false", description = "是否置顶")
+        private Boolean top;
+
+        @Schema(requiredMode = REQUIRED, defaultValue = "false", description = "是否隐藏")
+        private Boolean hidden;
 
     }
 

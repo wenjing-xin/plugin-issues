@@ -5,7 +5,7 @@
     "version" : "2.20.18"
   },
   "servers" : [ {
-    "url" : "http://localhost:53299",
+    "url" : "http://localhost:58355",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -1711,7 +1711,7 @@
         }
       },
       "IssueCommentSpec" : {
-        "required" : [ "content", "issueName", "owner" ],
+        "required" : [ "content", "hidden", "issueName", "owner", "top" ],
         "type" : "object",
         "properties" : {
           "allowNotification" : {
@@ -1731,6 +1731,14 @@
           "content" : {
             "$ref" : "#/components/schemas/IssueDetailContent"
           },
+          "hidden" : {
+            "type" : "boolean",
+            "description" : "是否隐藏",
+            "default" : false
+          },
+          "ipAddress" : {
+            "type" : "string"
+          },
           "issueName" : {
             "type" : "string"
           },
@@ -1738,9 +1746,17 @@
             "type" : "string",
             "description" : "Owner of the issue message"
           },
-          "parentCommentUid" : {
+          "quoteCommentUid" : {
             "type" : "string",
             "description" : "父评论 UID（为空表示顶层评论）"
+          },
+          "top" : {
+            "type" : "boolean",
+            "description" : "是否置顶",
+            "default" : false
+          },
+          "userAgent" : {
+            "type" : "string"
           }
         }
       },
@@ -1848,7 +1864,7 @@
         }
       },
       "IssueMessageSpec" : {
-        "required" : [ "content", "owner", "subjectName", "title" ],
+        "required" : [ "content", "owner", "subjectName", "title", "top" ],
         "type" : "object",
         "properties" : {
           "approved" : {
@@ -1900,6 +1916,11 @@
           "title" : {
             "type" : "string"
           },
+          "top" : {
+            "type" : "boolean",
+            "description" : "是否置顶",
+            "default" : false
+          },
           "watchers" : {
             "uniqueItems" : true,
             "type" : "array",
@@ -1943,6 +1964,31 @@
             "items" : {
               "$ref" : "#/components/schemas/StateTransition"
             }
+          }
+        }
+      },
+      "IssueStats" : {
+        "type" : "object",
+        "properties" : {
+          "approvedIssueComment" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "downvote" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalIssueComment" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "upvote" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "visit" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -2048,6 +2094,35 @@
           }
         },
         "description" : "依托对象详情"
+      },
+      "IssueSubjectStats" : {
+        "type" : "object",
+        "properties" : {
+          "awaitApproved" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "awaitIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "closedIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "labels" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "progressIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
       },
       "IssueTemplate" : {
         "required" : [ "apiVersion", "kind", "metadata" ],
@@ -2161,7 +2236,7 @@
         }
       },
       "ListedIssue" : {
-        "required" : [ "contributorVo", "issue", "stats" ],
+        "required" : [ "contributorVo", "issue", "issueStats" ],
         "type" : "object",
         "properties" : {
           "contributorVo" : {
@@ -2170,8 +2245,8 @@
           "issue" : {
             "$ref" : "#/components/schemas/Issue"
           },
-          "stats" : {
-            "$ref" : "#/components/schemas/Stats"
+          "issueStats" : {
+            "$ref" : "#/components/schemas/IssueStats"
           }
         },
         "description" : "A chunk of items."
@@ -2226,7 +2301,7 @@
         }
       },
       "ListedIssueSubject" : {
-        "required" : [ "contributorVo", "issueSubject", "stats" ],
+        "required" : [ "contributorVo", "issueSubject", "issueSubjectStats" ],
         "type" : "object",
         "properties" : {
           "contributorVo" : {
@@ -2235,8 +2310,8 @@
           "issueSubject" : {
             "$ref" : "#/components/schemas/IssueSubject"
           },
-          "stats" : {
-            "$ref" : "#/components/schemas/Stats"
+          "issueSubjectStats" : {
+            "$ref" : "#/components/schemas/IssueSubjectStats"
           }
         },
         "description" : "A chunk of items."
@@ -2483,23 +2558,6 @@
         },
         "description" : "状态变更历史（时间+操作人）"
       },
-      "Stats" : {
-        "type" : "object",
-        "properties" : {
-          "approvedComment" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "totalComment" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "upvote" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
       "SubjectContent" : {
         "required" : [ "htmlContent", "rawContent" ],
         "type" : "object",
@@ -2514,7 +2572,7 @@
           },
           "uid" : {
             "type" : "string",
-            "description" : "依托内容UID，文章类型必须有"
+            "description" : "依托内容UID，文章、产品等类型会存在一个ID"
           }
         },
         "description" : "依托内容"

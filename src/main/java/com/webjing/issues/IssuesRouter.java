@@ -41,7 +41,9 @@ public class IssuesRouter {
     @Bean
     RouterFunction<ServerResponse> selectedRouterFunction() {
         return route(GET("/issues/{name}"), this::issueDetailRouter)
-            .andRoute(GET("/issues").or(GET("/issues/page/{page:\\d+}")), this::handlerIssuePageFunction);
+            .andRoute(GET("/subject/{subjectName}"), this::handlerIssueSubjectFunction)
+            .andRoute(GET("/subject/{subjectName}/issues")
+                .or(GET("/subject/{subjectName}/issues/page/{page:\\d+}")), this::handlerIssuePageFunction);
     }
 
     private Mono<ServerResponse> issueDetailRouter(ServerRequest request) {
@@ -64,6 +66,16 @@ public class IssuesRouter {
         //     });
     }
 
+    private Mono<ServerResponse> handlerIssueSubjectFunction(ServerRequest request) {
+        final var subjectName = request.pathVariable("subjectName");
+        return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"subject")
+            .flatMap(templateName -> {
+                Map<String, Object> model = new HashMap<>(2);
+                model.put("title",  getIssuesTitle());
+                model.put("issueItems", issuePageList(request));
+                return ServerResponse.ok().render(templateName, model);
+            });
+    }
 
     private Mono<ServerResponse> handlerIssuePageFunction(ServerRequest request) {
 
