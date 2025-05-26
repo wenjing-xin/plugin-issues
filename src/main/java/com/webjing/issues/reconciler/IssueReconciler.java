@@ -46,7 +46,7 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
             }
             var status = issueMessage.getStatus();
             if (status == null) {
-                status = new Issue.IssueMessageStatus();
+                status = new Issue.IssueStatus();
                 issueMessage.setStatus(status);
             }
             status.setObservedVersion(issueMessage.getMetadata().getVersion() + 1);

@@ -14,6 +14,7 @@
 
 
 
+export * from './api/console-api-issue-comment-webjing-com-v1alpha1-issue-api';
 export * from './api/console-api-issue-subject-webjing-com-v1alpha1-issue-subject-api';
 export * from './api/console-api-issue-template-webjing-com-v1alpha1-issue-template-api';
 export * from './api/console-api-issue-webjing-com-v1alpha1-issue-api';
@@ -21,5 +22,6 @@ export * from './api/issue-comment-v1alpha1-api';
 export * from './api/issue-subject-v1alpha1-api';
 export * from './api/issue-template-v1alpha1-api';
 export * from './api/issue-v1alpha1-api';
+export * from './api/uc-api-issue-comment-webjing-com-v1alpha1-issue-comment-api';
 export * from './api/uc-api-issue-webjing-com-v1alpha1-issue-api';
 

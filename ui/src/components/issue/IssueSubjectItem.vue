@@ -1,6 +1,12 @@
 <script lang="ts" setup>
+import MaterialSymbolsTagRounded from '~icons/material-symbols/tag-rounded';
+import MdiProgressClock from '~icons/mdi/progress-clock';
+import TdesignCollection from '~icons/tdesign/collection';
+import IxProject from '~icons/ix/project';
+import CarbonProduct from '~icons/carbon/product';
+import IconParkOutlineTopicDiscussion from '~icons/icon-park-outline/topic-discussion';
+import EpMessage from '~icons/ep/message';
 import {
-  computed,
   type FunctionalComponent,
   inject,
   type Ref,
@@ -13,7 +19,7 @@ import type {
   IssueSubjectSpecSubjectTypeEnum,
   ListedIssueSubject,
 } from "@/api/generated";
-import { Dialog, Toast, VAvatar } from "@halo-dev/components";
+import { Dialog, Toast, VAvatar, VStatusDot } from "@halo-dev/components";
 import { issueSubjectApiClient } from "@/api";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
@@ -69,13 +75,13 @@ const handlerIssueSubjectType = (
     case "POST":
       return { name: "文章", icon: MaterialSymbolsLightPostAdd };
     case "PROJECT":
-      return { name: "项目", icon: MaterialSymbolsLightPostAdd };
+      return { name: "项目", icon: IxProject };
     case "PRODUCT":
-      return { name: "产品", icon: MaterialSymbolsLightPostAdd };
+      return { name: "产品", icon: CarbonProduct };
     case "TOPIC":
-      return { name: "话题", icon: MaterialSymbolsLightPostAdd };
+      return { name: "话题", icon: IconParkOutlineTopicDiscussion };
     case "LEAVE_MESSAGE":
-      return { name: "留言", icon: MaterialSymbolsLightPostAdd };
+      return { name: "留言", icon: EpMessage };
   }
 };
 const goIssuePage = (name:string) => {
@@ -98,7 +104,7 @@ const goIssuePage = (name:string) => {
         >
           {{ listedIssueSubject.issueSubject.spec.displayName }}
         </p>
-        <VTag theme="primary">
+        <VTag theme="default" class="cursor-auto">
           {{
             handlerIssueSubjectType(
               listedIssueSubject.issueSubject.spec.subjectType,
@@ -131,6 +137,44 @@ const goIssuePage = (name:string) => {
         {{ listedIssueSubject.issueSubject.spec?.description }}
       </p>
       <p v-else class="text-sm text-gray-500">暂无描述</p>
+    </div>
+    <!--  统计  -->
+    <div class="flex flex-wrap gap-2 px-2 py-1">
+      <div class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+        <TdesignCollection class="mr-1.5" />
+        <span class="mr-1">Total</span>
+        <span>{{listedIssueSubject.issueSubjectStats.totalIssue}}</span>
+      </div>
+      <div class="bg-blue-100 text-blue-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+        <MdiProgressClock class="mr-1.5" />
+        <span class="mr-1">进行中</span>
+        <span>{{listedIssueSubject.issueSubjectStats.progressIssue}}</span>
+      </div>
+      <div class="bg-yellow-100 text-yellow-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+        <VStatusDot state="warning" animate>
+          <template #text>
+            <span class="mr-1">待处理</span>
+            <span>{{listedIssueSubject.issueSubjectStats.awaitIssue}}</span>
+          </template>
+        </VStatusDot>
+      </div>
+      <div class="bg-green-100 text-green-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+        <VStatusDot state="success">
+          <template #text>
+            <span class="mr-1">已关闭</span>
+            <span>{{listedIssueSubject.issueSubjectStats.closedIssue}}</span>
+          </template>
+        </VStatusDot>
+      </div>
+      <div class="bg-purple-100 text-purple-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+        <span class="mr-1">待审核</span>
+        <span>{{listedIssueSubject.issueSubjectStats.awaitApproved}}</span>
+      </div>
+      <div class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+        <MaterialSymbolsTagRounded class="mr-1.5" />
+        <span>{{listedIssueSubject.issueSubjectStats.labels}}</span>
+        <span class="ml-1">标签</span>
+      </div>
     </div>
     <div class="w-full flex justify-between items-center">
       <div class="flex items-center gap-x-2 text-xs text-gray-500">

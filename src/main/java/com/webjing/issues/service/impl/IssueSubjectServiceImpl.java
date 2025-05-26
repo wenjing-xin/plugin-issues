@@ -2,30 +2,24 @@ package com.webjing.issues.service.impl;
 
 import com.webjing.issues.entity.IssueSubjectStats;
 import com.webjing.issues.entity.ListedIssueSubject;
-import com.webjing.issues.entity.Stats;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.query.IssueSubjectQuery;
 import com.webjing.issues.service.IssueSubjectService;
-import com.webjing.issues.util.MeterUtils;
+import com.webjing.issues.service.RoleService;
 import com.webjing.issues.vo.ContributorVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import run.halo.app.core.extension.Counter;
 import run.halo.app.core.extension.User;
 import run.halo.app.extension.ListOptions;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
 import run.halo.app.extension.index.query.QueryFactory;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,9 +36,11 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
 
     private final ReactiveExtensionClient client;
 
+    private final RoleService roleService;
+
     @Override
     public Mono<IssueSubject> create(IssueSubject issueSubject) {
-        return getContextUser()
+        return roleService.getContextUser()
             .flatMap(user -> {
                 issueSubject.getSpec().setOwner(user.getMetadata().getName());
                 return client.create(issueSubject);
@@ -61,14 +57,6 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
                     listResult.getTotal(), list)
                 )
             );
-    }
-
-    protected Mono<User> getContextUser() {
-        return ReactiveSecurityContextHolder.getContext()
-            .flatMap(ctx -> {
-                var name = ctx.getAuthentication().getName();
-                return client.fetch(User.class, name);
-            });
     }
 
     private Mono<ListedIssueSubject> toListedIssueSubject(IssueSubject issueSubject) {

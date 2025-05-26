@@ -23,9 +23,9 @@ public class IssueVO {
 
     private MetadataOperator metadata;
 
-    private Issue.IssueMessageSpec spec;
+    private Issue.IssueSpec spec;
 
-    private Issue.IssueMessageStatus status;
+    private Issue.IssueStatus status;
 
     private ContributorVO contributorVo;
 

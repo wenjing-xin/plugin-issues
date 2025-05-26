@@ -20,85 +20,85 @@ import type { IssueContent } from './issue-content';
 /**
  * 
  * @export
- * @interface IssueMessageSpec
+ * @interface IssueSpec
  */
-export interface IssueMessageSpec {
+export interface IssueSpec {
     /**
      * 
      * @type {boolean}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'approved'?: boolean;
     /**
      * approvedTime of the issue message
      * @type {string}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'approvedTime'?: string;
     /**
      * 
      * @type {Array<string>}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'assignees'?: Array<string>;
     /**
      * closed time of the issue message
      * @type {string}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'closedAt'?: string;
     /**
      * 
      * @type {IssueContent}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'content': IssueContent;
     /**
      * 
      * @type {string}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'issueTemplate'?: string;
     /**
      * 
      * @type {Array<string>}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'labels'?: Array<string>;
     /**
      * Owner of the issue message
      * @type {string}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'owner': string;
     /**
      * Release timestamp. This field can be customized by owner
      * @type {string}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'releaseTime'?: string;
     /**
      * 关联主体唯一标识
      * @type {string}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'subjectName': string;
     /**
      * 
      * @type {string}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'title': string;
     /**
      * 是否置顶
      * @type {boolean}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'top': boolean;
     /**
      * 关注者列表
      * @type {Array<string>}
-     * @memberof IssueMessageSpec
+     * @memberof IssueSpec
      */
     'watchers'?: Array<string>;
 }

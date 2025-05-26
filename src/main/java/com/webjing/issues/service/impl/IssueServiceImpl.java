@@ -1,6 +1,7 @@
 package com.webjing.issues.service.impl;
 
 import com.webjing.issues.entity.IssueStats;
+import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.exception.NotFoundException;
 import com.webjing.issues.extension.Issue;
@@ -11,7 +12,6 @@ import com.webjing.issues.entity.ListedIssue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
@@ -37,6 +37,8 @@ public class IssueServiceImpl implements IssueService {
 
     private final ReactiveExtensionClient client;
 
+    private final RoleService roleService;
+
     @Override
     public Mono<ListResult<ListedIssue>> listIssue(IssueQuery query) {
         return client.listBy(Issue.class, query.toListOptions(), query.toPageRequest())
@@ -55,7 +57,7 @@ public class IssueServiceImpl implements IssueService {
             issue.getSpec().setReleaseTime(Instant.now());
         }
 
-        return getContextUser()
+        return roleService.getContextUser()
             .flatMap(user -> {
                 issue.getSpec().setOwner(user.getMetadata().getName());
                 return client.create(issue);
@@ -126,15 +128,6 @@ public class IssueServiceImpl implements IssueService {
                 .approvedIssueComment(counter.getApprovedComment())
                 .build())
             .defaultIfEmpty(IssueStats.empty());
-
-    }
-
-    protected Mono<User> getContextUser() {
-        return ReactiveSecurityContextHolder.getContext()
-            .flatMap(ctx -> {
-                var name = ctx.getAuthentication().getName();
-                return client.fetch(User.class, name);
-            });
     }
 
 }

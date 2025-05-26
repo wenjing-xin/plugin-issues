@@ -20,59 +20,59 @@ import type { StateTransition } from './state-transition';
 /**
  * 
  * @export
- * @interface IssueMessageStatus
+ * @interface IssueStatus
  */
-export interface IssueMessageStatus {
+export interface IssueStatus {
     /**
      * 
      * @type {string}
-     * @memberof IssueMessageStatus
+     * @memberof IssueStatus
      */
     'closeReason'?: string;
     /**
      * 
      * @type {number}
-     * @memberof IssueMessageStatus
+     * @memberof IssueStatus
      */
     'observedVersion'?: number;
     /**
      * 
      * @type {string}
-     * @memberof IssueMessageStatus
+     * @memberof IssueStatus
      */
     'permalink'?: string;
     /**
      * 优先级（P0-P3）
      * @type {string}
-     * @memberof IssueMessageStatus
+     * @memberof IssueStatus
      */
     'priority'?: string;
     /**
      * 
      * @type {number}
-     * @memberof IssueMessageStatus
+     * @memberof IssueStatus
      */
     'replayCount'?: number;
     /**
      * 
      * @type {string}
-     * @memberof IssueMessageStatus
+     * @memberof IssueStatus
      */
-    'state'?: IssueMessageStatusStateEnum;
+    'state'?: IssueStatusStateEnum;
     /**
      * 状态变更历史（时间+操作人）
      * @type {Array<StateTransition>}
-     * @memberof IssueMessageStatus
+     * @memberof IssueStatus
      */
     'transitions'?: Array<StateTransition>;
 }
 
-export const IssueMessageStatusStateEnum = {
+export const IssueStatusStateEnum = {
     Await: 'AWAIT',
     Progress: 'PROGRESS',
     Closed: 'CLOSED'
 } as const;
 
-export type IssueMessageStatusStateEnum = typeof IssueMessageStatusStateEnum[keyof typeof IssueMessageStatusStateEnum];
+export type IssueStatusStateEnum = typeof IssueStatusStateEnum[keyof typeof IssueStatusStateEnum];
 
 

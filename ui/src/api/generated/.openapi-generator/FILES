@@ -2,6 +2,7 @@
 .npmignore
 .openapi-generator-ignore
 api.ts
+api/console-api-issue-comment-webjing-com-v1alpha1-issue-api.ts
 api/console-api-issue-subject-webjing-com-v1alpha1-issue-subject-api.ts
 api/console-api-issue-template-webjing-com-v1alpha1-issue-template-api.ts
 api/console-api-issue-webjing-com-v1alpha1-issue-api.ts
@@ -9,6 +10,7 @@ api/issue-comment-v1alpha1-api.ts
 api/issue-subject-v1alpha1-api.ts
 api/issue-template-v1alpha1-api.ts
 api/issue-v1alpha1-api.ts
+api/uc-api-issue-comment-webjing-com-v1alpha1-issue-comment-api.ts
 api/uc-api-issue-webjing-com-v1alpha1-issue-api.ts
 base.ts
 common.ts
@@ -26,9 +28,9 @@ models/issue-content.ts
 models/issue-detail-content.ts
 models/issue-detail-media.ts
 models/issue-list.ts
-models/issue-message-spec.ts
-models/issue-message-status.ts
+models/issue-spec.ts
 models/issue-stats.ts
+models/issue-status.ts
 models/issue-subject-list.ts
 models/issue-subject-spec.ts
 models/issue-subject-stats.ts
@@ -38,6 +40,8 @@ models/issue-template-spec.ts
 models/issue-template.ts
 models/issue.ts
 models/json-patch-inner.ts
+models/listed-issue-comment-list.ts
+models/listed-issue-comment.ts
 models/listed-issue-list.ts
 models/listed-issue-subject-list.ts
 models/listed-issue-subject.ts
@@ -49,6 +53,7 @@ models/move-operation.ts
 models/remove-operation.ts
 models/replace-operation.ts
 models/state-transition.ts
+models/stats.ts
 models/subject-content.ts
 models/template-field.ts
 models/test-operation.ts

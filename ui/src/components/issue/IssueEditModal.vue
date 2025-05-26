@@ -56,6 +56,7 @@ const initIssue: Issue = {
     approved: true,
     approvedTime: "",
     subjectName: currentIssueSubjectName.value,
+    top: false
   },
   status: {
     closeReason: "",

@@ -3,7 +3,6 @@ package com.webjing.issues.extension;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import com.webjing.issues.Constant;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.util.List;
@@ -29,12 +28,12 @@ public class Issue extends AbstractExtension {
     public static final String REQUIRE_SYNC_ON_STARTUP_INDEX_NAME = "requireSyncOnStartup";
 
     @Schema(requiredMode = REQUIRED)
-    private IssueMessageSpec spec;
+    private IssueSpec spec;
 
-    private IssueMessageStatus status;
+    private IssueStatus status;
 
     @Data
-    public static class IssueMessageSpec {
+    public static class IssueSpec {
 
         @Schema(requiredMode = REQUIRED)
         private String title;
@@ -74,7 +73,7 @@ public class Issue extends AbstractExtension {
     }
 
     @Data
-    public static class IssueMessageStatus {
+    public static class IssueStatus {
         private IssueState state =  IssueState.AWAIT;
         private Integer replayCount; // 动态计算的回复数
         private String closeReason; // CLOSED 状态的关闭原因

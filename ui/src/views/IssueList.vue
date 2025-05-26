@@ -173,8 +173,8 @@ const handleEndIssueInBatch = async () => {
 
 const handleDeleteInBatch = async () => {
   Dialog.warning({
-    title: "删除所选issue留言",
-    description: "删除所选issue留言",
+    title: "删除所选issue",
+    description: "删除所选issue",
     confirmType: "danger",
     confirmText: "确定",
     cancelText: "取消",
@@ -202,7 +202,7 @@ const handlerUpdateIssue = (issue: Issue) => {
   updateIssueMessage.value = issue;
   editingModal.value = true;
 };
-// 更新issue留言
+// 更新issue
 const handlerUpdateIssueMessage  = ()=>{
   updateIssueMessage.value = undefined;
   refetch();
@@ -220,7 +220,7 @@ onMounted(() => {
     @update="handlerUpdateIssueMessage"
     @close="onEditingModalClose"
   />
-  <VPageHeader title="Issue留言">
+  <VPageHeader title="全部 Issue">
     <template #icon>
       <SystemUiconsMessage class="mr-2 self-center" />
     </template>
@@ -322,7 +322,7 @@ onMounted(() => {
           </template>
           <VLoading v-if="isLoading" />
           <Transition v-else-if="!issues?.length" appear name="fade">
-            <VEmpty message="你可以尝试刷新或者新建issue留言" title="当前没有任何Issue留言">
+            <VEmpty message="你可以尝试刷新或者新建issue" title="当前没有任何Issue">
               <template #actions>
                 <VSpace>
                   <VButton @click="refetch"> 刷新</VButton>

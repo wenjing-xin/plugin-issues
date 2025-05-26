@@ -7,18 +7,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.Role;
+import run.halo.app.core.extension.User;
 import run.halo.app.extension.MetadataUtil;
 import run.halo.app.extension.ReactiveExtensionClient;
 import run.halo.app.infra.utils.JsonUtils;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import static run.halo.app.extension.Comparators.compareCreationTimestamp;
 
 /**
@@ -44,6 +47,22 @@ public class RoleServiceImpl implements RoleService {
             .collect(Collectors.toSet())
             .map(roleNames -> !Collections.disjoint(roleNames, candidates));
     }
+
+    @Override
+    public Mono<User> getContextUser() {
+        return ReactiveSecurityContextHolder.getContext()
+            .flatMap(ctx -> {
+                var name = ctx.getAuthentication().getName();
+                return client.fetch(User.class, name);
+            });
+    }
+
+    @Override
+    public Mono<Authentication> getCurrentUser() {
+        return ReactiveSecurityContextHolder.getContext()
+            .map(SecurityContext::getAuthentication);
+    }
+
 
     private Flux<Role> listDependencies(Set<String> names) {
         var visited = new HashSet<String>();

@@ -56,7 +56,6 @@ const handleDelete = async (issue: ListedIssue) => {
     },
   });
 };
-
 const issueStatus = computed(() => {
   const { status } = props.issue.issue;
   return status?.state === "AWAIT" ? "待处理" : status?.state == "PROGRESS" ? "进行中" : "已关闭";
@@ -70,7 +69,7 @@ const handlerEditIssueMessage = (issue: ListedIssue)=> {
   emit("update", issue.issue);
 }
 
-const handleCloseIssue = async (name:string) => {
+const handleCloseIssue = async (issue:Issue) => {
   Dialog.warning({
     title: `确定关闭Issue留言「${props.issue.issue.spec.title}」?`,
     confirmType: "primary",
@@ -79,13 +78,13 @@ const handleCloseIssue = async (name:string) => {
     onConfirm: async () => {
       try {
         await issueApiClient.issue.patchIssue({
-          name: name,
+          name: issue.metadata.name,
           jsonPatchInner: [
             {
               op: "add",
               path: "/status/state",
               value: "CLOSED",
-            },
+            }
           ],
         });
         Toast.success("关闭Issue成功");
@@ -128,8 +127,8 @@ function handleRouteToUserDetail() {}
         <template #description>
           <div class="flex flex-col gap-1.5">
             <VSpace class="flex-wrap !gap-y-1">
-              <span class="text-xs text-gray-500"> 点赞：{{ issue.stats.upvote }} </span>
-              <span class="text-xs text-gray-500">评论数：{{ issue.stats.totalComment }}</span>
+              <span class="text-xs text-gray-500"> 点赞：{{ issue.issueStats.upvote }} </span>
+              <span class="text-xs text-gray-500">评论数：{{ issue.issueStats.totalIssueComment }}</span>
             </VSpace>
           </div>
         </template>
@@ -182,7 +181,7 @@ function handleRouteToUserDetail() {}
       <VDropdownItem @click="handlerViewDetail(issue)"> 详情 </VDropdownItem>
       <VDropdownItem @click="handlerEditIssueMessage(issue)"> 编辑 </VDropdownItem>
       <HasPermission :permissions="['plugin:issues:manage']">
-        <VDropdownItem v-if="issue.issue.status?.state != 'CLOSED'" @click="handleCloseIssue(issue.issue.metadata.name)">
+        <VDropdownItem v-if="issue.issue.status?.state != 'CLOSED'" @click="handleCloseIssue(issue.issue)">
           关闭
         </VDropdownItem>
         <VDropdownDivider />

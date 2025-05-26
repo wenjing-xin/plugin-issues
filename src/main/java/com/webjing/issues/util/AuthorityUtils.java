@@ -16,7 +16,7 @@ public enum AuthorityUtils {
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String SUPER_ROLE_NAME = "super-role";
 
-    public static final String ISSUE_MESSAGE_PUBLISH_APPROVAL_ROLE_NAME =
+    public static final String ISSUE_PUBLISH_APPROVAL_ROLE_NAME =
         "role-template-uc-issues-approved";
 
     public static final String ISSUE_MESSAGE_MANAGEMENT_ROLE_NAME = "role-template-issues-manage";

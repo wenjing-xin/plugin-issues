@@ -15,49 +15,37 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { IssueSpec } from './issue-spec';
+import type { ContributorVO } from './contributor-vo';
 // May contain unused imports in some cases
 // @ts-ignore
-import type { IssueStatus } from './issue-status';
+import type { IssueComment } from './issue-comment';
 // May contain unused imports in some cases
 // @ts-ignore
-import type { Metadata } from './metadata';
+import type { Stats } from './stats';
 
 /**
- * 
+ * A chunk of items.
  * @export
- * @interface Issue
+ * @interface ListedIssueComment
  */
-export interface Issue {
+export interface ListedIssueComment {
     /**
      * 
-     * @type {string}
-     * @memberof Issue
+     * @type {ContributorVO}
+     * @memberof ListedIssueComment
      */
-    'apiVersion': string;
+    'contributorVo': ContributorVO;
     /**
      * 
-     * @type {string}
-     * @memberof Issue
+     * @type {IssueComment}
+     * @memberof ListedIssueComment
      */
-    'kind': string;
+    'issueComment': IssueComment;
     /**
      * 
-     * @type {Metadata}
-     * @memberof Issue
+     * @type {Stats}
+     * @memberof ListedIssueComment
      */
-    'metadata': Metadata;
-    /**
-     * 
-     * @type {IssueSpec}
-     * @memberof Issue
-     */
-    'spec': IssueSpec;
-    /**
-     * 
-     * @type {IssueStatus}
-     * @memberof Issue
-     */
-    'status'?: IssueStatus;
+    'stats': Stats;
 }
 

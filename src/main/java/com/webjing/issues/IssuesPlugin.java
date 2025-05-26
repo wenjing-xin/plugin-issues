@@ -104,7 +104,7 @@ public class IssuesPlugin extends BasePlugin {
                 .setName(Issue.REQUIRE_SYNC_ON_STARTUP_INDEX_NAME)
                 .setIndexFunc(simpleAttribute(Issue.class, issue -> {
                     var observedVersion = Optional.ofNullable(issue.getStatus())
-                        .map(Issue.IssueMessageStatus::getObservedVersion)
+                        .map(Issue.IssueStatus::getObservedVersion)
                         .orElse(-1L);
                     if (observedVersion < issue.getMetadata().getVersion()) {
                         return BooleanUtils.TRUE;
@@ -141,6 +141,12 @@ public class IssuesPlugin extends BasePlugin {
                 .setName("spec.owner")
                 .setIndexFunc(simpleAttribute(IssueComment.class, issueComment ->
                     issueComment.getSpec().getOwner())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.issueName")
+                .setIndexFunc(simpleAttribute(IssueComment.class, issueComment ->
+                    issueComment.getSpec().getIssueName())
                 )
             );
         });
