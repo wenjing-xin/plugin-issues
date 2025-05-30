@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import run.halo.app.extension.AbstractExtension;
 import run.halo.app.extension.GVK;
 
+import java.util.List;
 import java.util.Set;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
@@ -48,6 +49,8 @@ public class IssueSubject extends AbstractExtension {
         @Schema(description = "创建者", requiredMode = REQUIRED)
         private String owner;
 
+        @Schema(description = "参与用户")
+        private List<String> participateUsers;
     }
 
     /**

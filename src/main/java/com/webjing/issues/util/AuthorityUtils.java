@@ -19,6 +19,8 @@ public enum AuthorityUtils {
     public static final String ISSUE_PUBLISH_APPROVAL_ROLE_NAME =
         "role-template-uc-issues-approved";
 
+    public static final String ISSUE_COMMENT_PUBLISH_APPROVAL_ROLE_NAME = "role-template-uc-issues-comment-approved";
+
     public static final String ISSUE_MESSAGE_MANAGEMENT_ROLE_NAME = "role-template-issues-manage";
 
     /**

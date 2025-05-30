@@ -1,10 +1,13 @@
 package com.webjing.issues.reconciler;
 
+import static run.halo.app.extension.ExtensionUtil.addFinalizers;
 import static run.halo.app.extension.index.query.QueryFactory.equal;
 
 import java.time.Instant;
 import java.util.Set;
+import com.webjing.issues.event.IssueCreatedEvent;
 import com.webjing.issues.extension.Issue;
+import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -35,45 +38,52 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
 
     private final ApplicationEventPublisher eventPublisher;
 
+    private final NotificationSubscriptionHelper notificationSubscriptionHelper;
+
     @Override
     public Result reconcile(Request request) {
-        client.fetch(Issue.class, request.name()).ifPresent(issueMessage -> {
-            if (ExtensionUtil.isDeleted(issueMessage)) {
-                if (ExtensionUtil.removeFinalizers(issueMessage.getMetadata(), Set.of(FINALIZER))) {
-                    client.update(issueMessage);
+        client.fetch(Issue.class, request.name()).ifPresent(issue -> {
+            if (ExtensionUtil.isDeleted(issue)) {
+                if (ExtensionUtil.removeFinalizers(issue.getMetadata(), Set.of(FINALIZER))) {
+                    client.update(issue);
                 }
                 return;
             }
-            var status = issueMessage.getStatus();
+            if (addFinalizers(issue.getMetadata(), Set.of(FINALIZER))) {
+                notificationSubscriptionHelper.subscribeNewCommentReasonForIssue(issue);
+                client.update(issue);
+                eventPublisher.publishEvent(new IssueCreatedEvent(this, issue.getMetadata().getName()));
+            }
+
+            var status = issue.getStatus();
             if (status == null) {
                 status = new Issue.IssueStatus();
-                issueMessage.setStatus(status);
+                issue.setStatus(status);
             }
-            status.setObservedVersion(issueMessage.getMetadata().getVersion() + 1);
+            status.setObservedVersion(issue.getMetadata().getVersion() + 1);
             // add approved marks to the old data by default.
-            if (issueMessage.getSpec().getApproved() == null) {
-                issueMessage.getSpec().setApproved(true);
+            if (issue.getSpec().getApproved() == null) {
+                issue.getSpec().setApproved(true);
             }
-            if (issueMessage.getSpec().getApproved() && issueMessage.getSpec().getApprovedTime() == null) {
-                issueMessage.getSpec().setApprovedTime(Instant.now());
+            if (issue.getSpec().getApproved() && issue.getSpec().getApprovedTime() == null) {
+                issue.getSpec().setApprovedTime(Instant.now());
             }
-            if(issueMessage.getSpec().getApproved() && issueMessage.getSpec().getReleaseTime() != null){
+            if(issue.getSpec().getApproved() && issue.getSpec().getReleaseTime() != null){
                 //设置发布的issue链接
-                issueMessage.getStatus().setPermalink("/issues/" + issueMessage.getMetadata().getName());
+                issue.getStatus().setPermalink("/issues/" + issue.getMetadata().getName());
             }
-            client.update(issueMessage);
+            client.update(issue);
         });
         return Result.doNotRetry();
     }
 
-
     @Override
     public Controller setupWith(ControllerBuilder builder) {
-        Issue issueMessage = new Issue();
+        Issue issue = new Issue();
         return builder
-            .extension(issueMessage)
+            .extension(issue)
             .workerCount(5)
-            .onAddMatcher(DefaultExtensionMatcher.builder(client, issueMessage.groupVersionKind())
+            .onAddMatcher(DefaultExtensionMatcher.builder(client, issue.groupVersionKind())
                 .fieldSelector(
                     FieldSelector.of(equal(Issue.REQUIRE_SYNC_ON_STARTUP_INDEX_NAME, "true"))
                 )

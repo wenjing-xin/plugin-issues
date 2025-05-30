@@ -236,7 +236,7 @@ onMounted(() => {
     </template>
   </VPageHeader>
   <div class="m-0 md:m-4">
-    <div class="flex flex-col gap-2 sm:flex-row">
+    <div class="flex flex-col gap-2 sm:flex-row bg-transparent">
       <div class="w-full">
         <VCard :body-class="['!p-0']">
           <template #header>

@@ -5,6 +5,7 @@ import com.webjing.issues.vo.ContributorVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import java.util.List;
 
 /**
  * issue 主体列表对象
@@ -19,7 +20,10 @@ public class ListedIssueSubject {
     private IssueSubject issueSubject;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-    private ContributorVO contributorVo;
+    private ContributorVO createOwner;
+
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+    private List<ContributorVO> participateUsers;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private IssueSubjectStats issueSubjectStats;

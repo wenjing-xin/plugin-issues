@@ -54,6 +54,12 @@ export interface IssueSubjectSpec {
      */
     'owner': string;
     /**
+     * 参与用户
+     * @type {Array<string>}
+     * @memberof IssueSubjectSpec
+     */
+    'participateUsers'?: Array<string>;
+    /**
      * 依托对象类型
      * @type {string}
      * @memberof IssueSubjectSpec

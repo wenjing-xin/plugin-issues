@@ -19,7 +19,7 @@ import type {
   IssueSubjectSpecSubjectTypeEnum,
   ListedIssueSubject,
 } from "@/api/generated";
-import { Dialog, Toast, VAvatar, VStatusDot } from "@halo-dev/components";
+import { Dialog, Toast, VAvatarGroup, VAvatar, VStatusDot } from "@halo-dev/components";
 import { issueSubjectApiClient } from "@/api";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
@@ -94,7 +94,7 @@ const goIssuePage = (name:string) => {
 <template>
   <div
     class="relative space-y-3 border border-neutral-100 rounded-md p-4 my-2 bg-white transition-shadow duration-300"
-    :class="{ 'border-blue-500': isSelected }"
+    :class="{ 'border border-neutral-300': isSelected }"
   >
     <div class="flex justify-between items-center">
       <div class="w-full flex items-center gap-x-2">
@@ -139,52 +139,59 @@ const goIssuePage = (name:string) => {
       <p v-else class="text-sm text-gray-500">暂无描述</p>
     </div>
     <!--  统计  -->
-    <div class="flex flex-wrap gap-2 px-2 py-1">
+    <div class="flex flex-wrap gap-2 py-1">
       <div class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center">
         <TdesignCollection class="mr-1.5" />
-        <span class="mr-1">Total</span>
-        <span>{{listedIssueSubject.issueSubjectStats.totalIssue}}</span>
+        <span class="mr-1 text-sm">Total</span>
+        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.totalIssue}}</span>
       </div>
       <div class="bg-blue-100 text-blue-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
         <MdiProgressClock class="mr-1.5" />
-        <span class="mr-1">进行中</span>
-        <span>{{listedIssueSubject.issueSubjectStats.progressIssue}}</span>
+        <span class="mr-1 text-sm">进行中</span>
+        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.progressIssue}}</span>
       </div>
       <div class="bg-yellow-100 text-yellow-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
         <VStatusDot state="warning" animate>
           <template #text>
-            <span class="mr-1">待处理</span>
-            <span>{{listedIssueSubject.issueSubjectStats.awaitIssue}}</span>
+            <span class="mr-1 text-sm">待处理</span>
+            <span class="text-sm">{{listedIssueSubject.issueSubjectStats.awaitIssue}}</span>
           </template>
         </VStatusDot>
       </div>
       <div class="bg-green-100 text-green-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
         <VStatusDot state="success">
           <template #text>
-            <span class="mr-1">已关闭</span>
-            <span>{{listedIssueSubject.issueSubjectStats.closedIssue}}</span>
+            <span class="mr-1 text-sm">已关闭</span>
+            <span class="text-sm">{{listedIssueSubject.issueSubjectStats.closedIssue}}</span>
           </template>
         </VStatusDot>
       </div>
       <div class="bg-purple-100 text-purple-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
-        <span class="mr-1">待审核</span>
-        <span>{{listedIssueSubject.issueSubjectStats.awaitApproved}}</span>
+        <span class="mr-1 text-sm">待审核</span>
+        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.awaitApproved}}</span>
       </div>
       <div class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center">
         <MaterialSymbolsTagRounded class="mr-1.5" />
-        <span>{{listedIssueSubject.issueSubjectStats.labels}}</span>
-        <span class="ml-1">标签</span>
+        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.labels}}</span>
+        <span class="ml-1 text-sm">个标签</span>
       </div>
     </div>
     <div class="w-full flex justify-between items-center">
       <div class="flex items-center gap-x-2 text-xs text-gray-500">
-        <VAvatar
-          v-tooltip="listedIssueSubject.contributorVo.displayName"
-          :src="listedIssueSubject.contributorVo.avatar"
-          :alt="listedIssueSubject.contributorVo.displayName"
-          size="xs"
-          circle
-        ></VAvatar>
+        <VAvatarGroup size="xs" circle>
+          <VAvatar
+            v-tooltip="'创建者：' + listedIssueSubject.createOwner.displayName"
+            :src="listedIssueSubject.createOwner.avatar"
+            :alt="listedIssueSubject.createOwner.displayName"
+          />
+          <VAvatar
+            v-for="contributor in listedIssueSubject.participateUsers"
+            :key="contributor.name"
+            v-tooltip="'参与者：' + contributor.displayName"
+            :src="contributor.avatar"
+            :alt="contributor.displayName"
+          ></VAvatar>
+        </VAvatarGroup>
         <span>{{
           formatDatetime(
             listedIssueSubject.issueSubject.metadata.creationTimestamp,
@@ -192,7 +199,7 @@ const goIssuePage = (name:string) => {
         }}</span>
       </div>
       <span
-        class="inline-flex items-center gap-x-1.5 rounded-lg bg-gray-100 px-2 py-1 text-xs font-medium outline-none bg-neutral-100"
+        class="inline-flex items-center gap-x-1.5 rounded-base bg-neutral-100 px-2 py-1 text-xs font-medium outline-none bg-neutral-100"
       >
         <VDropdown>
           <BiThreeDots

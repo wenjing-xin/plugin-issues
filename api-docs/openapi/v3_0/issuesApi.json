@@ -5,7 +5,7 @@
     "version" : "2.20.18"
   },
   "servers" : [ {
-    "url" : "http://localhost:35438",
+    "url" : "http://localhost:30484",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -2355,6 +2355,14 @@
             "type" : "string",
             "description" : "创建者"
           },
+          "participateUsers" : {
+            "type" : "array",
+            "description" : "参与用户",
+            "items" : {
+              "type" : "string",
+              "description" : "参与用户"
+            }
+          },
           "subjectType" : {
             "type" : "string",
             "description" : "依托对象类型",
@@ -2634,10 +2642,10 @@
         }
       },
       "ListedIssueSubject" : {
-        "required" : [ "contributorVo", "issueSubject", "issueSubjectStats" ],
+        "required" : [ "createOwner", "issueSubject", "issueSubjectStats", "participateUsers" ],
         "type" : "object",
         "properties" : {
-          "contributorVo" : {
+          "createOwner" : {
             "$ref" : "#/components/schemas/ContributorVO"
           },
           "issueSubject" : {
@@ -2645,6 +2653,12 @@
           },
           "issueSubjectStats" : {
             "$ref" : "#/components/schemas/IssueSubjectStats"
+          },
+          "participateUsers" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ContributorVO"
+            }
           }
         },
         "description" : "A chunk of items."

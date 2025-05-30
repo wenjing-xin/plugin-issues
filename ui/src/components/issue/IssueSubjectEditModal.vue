@@ -9,7 +9,7 @@ import {
   consoleIssueSubjectApiClient,
   issueTemplateApiClient,
 } from "@/api";
-import { consoleApiClient } from "@halo-dev/api-client";
+
 import TextEditor from "@/components/editor/index.vue";
 import { submitForm } from "@formkit/core";
 const modalTitle = ref("新增 Issue 依托主体");
@@ -57,6 +57,7 @@ const initIssueSubject: IssueSubject = {
     issueTemplates: [],
     owner: "",
     description: "",
+    participateUsers: []
   },
 };
 
@@ -222,6 +223,26 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
             @select="onAttachmentsSelect"
           />
           <FormKit label="描述" v-model="formState.spec.description" type="textarea" rows="1" />
+          <FormKit 
+            label="参与者" 
+            v-model="formState.spec.participateUsers" 
+            type="select" 
+            multiple
+            clearable
+            searchable
+            action="/apis/api.console.halo.run/v1alpha1/users?fieldSelector=name!=anonymousUser&fieldSelector=name!=ghost"
+            :requestOption="{
+              method: 'get',
+              pageField: 'page',
+              sizeField: 'size',
+              totalField: 'total',
+              itemsField: 'items',
+              labelField: 'user.spec.displayName',
+              valueField: 'user.metadata.name',
+              fieldSelectorKey: 'metadata.name'
+            }"
+            help="创建者和参与者将会在有新issue时收到通知"
+          />
         </FormKit>
         <div
           v-if="formState.spec.subjectType !== 'POST'"

@@ -146,12 +146,11 @@ public class UcIssueEndpoint implements CustomEndpoint {
     private Mono<ServerResponse> updateMyIssue(ServerRequest request) {
         var name = request.pathVariable("name");
         return getMyIssueDetail(name)
-            .flatMap(oldIssueMessage -> {
-                Issue.IssueSpec oldSpec = oldIssueMessage.getSpec();
-
+            .flatMap(oldIssue -> {
+                Issue.IssueSpec oldSpec = oldIssue.getSpec();
                 return request.bodyToMono(Issue.class)
-                    .doOnNext(newMoment -> {
-                        Issue.IssueSpec newSpec = newMoment.getSpec();
+                    .doOnNext(newIssue -> {
+                        Issue.IssueSpec newSpec = newIssue.getSpec();
                         newSpec.setOwner(oldSpec.getOwner());
                         newSpec.setReleaseTime(oldSpec.getReleaseTime());
                         // Every update needs to be re-reviewed.

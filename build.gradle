@@ -55,7 +55,7 @@ build {
 halo {
     version = '2.20.18'
     containerName = 'plugin-issues'
-    debug = false
+    debug = true
     suspend = true
 }
 

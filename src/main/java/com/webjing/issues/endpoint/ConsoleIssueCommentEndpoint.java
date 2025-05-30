@@ -67,18 +67,10 @@ public class ConsoleIssueCommentEndpoint implements CustomEndpoint {
     private Mono<ServerResponse> createIssueComment(ServerRequest serverRequest) {
         return roleService.getCurrentUser()
             .flatMap(curUser -> serverRequest.bodyToMono(IssueComment.class)
-                .flatMap(issueComment -> {
-                    var roles = AuthorityUtils.authoritiesToRoles(curUser.getAuthorities());
-                    return roleService.joint(roles,
-                            Set.of(AuthorityUtils.ISSUE_PUBLISH_APPROVAL_ROLE_NAME,
-                                AuthorityUtils.SUPER_ROLE_NAME))
-                        .doOnNext(result -> {
-                            if (result) {
-                                // If it is a user with audit authority, there is no need to review.
-                                issueComment.getSpec().setApproved(true);
-                                issueComment.getSpec().setApprovedTime(Instant.now());
-                            }
-                        }).thenReturn(issueComment);
+                .map(issueComment -> {
+                    issueComment.getSpec().setApproved(true);
+                    issueComment.getSpec().setApprovedTime(Instant.now());
+                    return issueComment;
                 }))
             .flatMap(issueCommentService::create)
             .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));

@@ -34,7 +34,7 @@ export interface ListedIssueSubject {
      * @type {ContributorVO}
      * @memberof ListedIssueSubject
      */
-    'contributorVo': ContributorVO;
+    'createOwner': ContributorVO;
     /**
      * 
      * @type {IssueSubject}
@@ -47,5 +47,11 @@ export interface ListedIssueSubject {
      * @memberof ListedIssueSubject
      */
     'issueSubjectStats': IssueSubjectStats;
+    /**
+     * 
+     * @type {Array<ContributorVO>}
+     * @memberof ListedIssueSubject
+     */
+    'participateUsers': Array<ContributorVO>;
 }
 

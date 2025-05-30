@@ -13,11 +13,11 @@ import run.halo.app.core.extension.content.Comment;
 @Getter
 public class IssueHasNewCommentEvent extends ApplicationEvent {
 
-    private final IssueComment issueComment;
+    private final String issueCommentName;
 
-    public IssueHasNewCommentEvent(Object source, IssueComment issueComment) {
+    public IssueHasNewCommentEvent(Object source, String issueCommentName) {
         super(source);
-        this.issueComment = issueComment;
+        this.issueCommentName = issueCommentName;
     }
 
 }

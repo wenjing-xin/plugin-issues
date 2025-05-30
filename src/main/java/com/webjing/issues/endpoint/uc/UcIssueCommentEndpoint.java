@@ -178,7 +178,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                     issueComment.getSpec().setOwner(user.getName());
                     var roles = AuthorityUtils.authoritiesToRoles(user.getAuthorities());
                     return roleService.joint(roles,
-                            Set.of(AuthorityUtils.ISSUE_PUBLISH_APPROVAL_ROLE_NAME,
+                            Set.of(AuthorityUtils.ISSUE_COMMENT_PUBLISH_APPROVAL_ROLE_NAME,
                                 AuthorityUtils.SUPER_ROLE_NAME))
                         .doOnNext(result -> {
                             if (result) {

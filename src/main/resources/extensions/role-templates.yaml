@@ -5,7 +5,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue权限"
     rbac.authorization.halo.run/display-name: "Issue查看"
     rbac.authorization.halo.run/ui-permissions: |
       ["plugin:issues:view"]
@@ -24,7 +24,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue权限"
     rbac.authorization.halo.run/display-name: "Issue管理"
     rbac.authorization.halo.run/ui-permissions: |
       ["plugin:issues:manage"]
@@ -45,7 +45,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue权限"
     rbac.authorization.halo.run/display-name: "允许用户发布issue"
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:publish"]
@@ -61,7 +61,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue权限"
     rbac.authorization.halo.run/display-name: "允许删除自己的Issue"
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:delete"]
@@ -77,7 +77,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue评论权限"
     rbac.authorization.halo.run/display-name: "Issue评论查看"
     rbac.authorization.halo.run/ui-permissions: |
       ["plugin:issues:comment:view"]
@@ -96,7 +96,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue评论权限"
     rbac.authorization.halo.run/display-name: "Issue评论管理"
     rbac.authorization.halo.run/ui-permissions: |
       ["plugin:issues:comment:manage"]
@@ -117,7 +117,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue评论权限"
     rbac.authorization.halo.run/display-name: "允许用户发布issue评论"
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:comment:publish"]
@@ -133,7 +133,7 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
+    rbac.authorization.halo.run/module: "Issue评论权限"
     rbac.authorization.halo.run/display-name: "允许删除自己的Issue评论"
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:comment:delete"]
@@ -149,10 +149,24 @@ metadata:
   labels:
     halo.run/role-template: "true"
   annotations:
-    rbac.authorization.halo.run/module: "Issue"
-    rbac.authorization.halo.run/display-name: "发布issue和评论issue无需审核"
+    rbac.authorization.halo.run/module: "Issue权限"
+    rbac.authorization.halo.run/display-name: "发布issue无需审核"
     rbac.authorization.halo.run/dependencies: |
-      ["role-template-uc-issues-publish", "role-template-uc-issues-comment-publish"]
+      ["role-template-uc-issues-publish"]
+rules:
+  - nonResourceURLs: ["*"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-comment-approved
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue评论权限"
+    rbac.authorization.halo.run/display-name: "发布issue评论无需审核"
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-uc-issues-comment-publish"]
 rules:
   - nonResourceURLs: ["*"]
 ---

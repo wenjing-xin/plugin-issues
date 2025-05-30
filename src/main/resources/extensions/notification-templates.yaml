@@ -1,39 +1,129 @@
 apiVersion: notification.halo.run/v1alpha1
 kind: NotificationTemplate
 metadata:
-  name: template-new-comment-on-issue-message
+  name: template-someone-publish-new-issue
 spec:
   reasonSelector:
-    reasonType: new-comment-on-issue-message
+    reasonType: someone-publish-new-issue
     language: default
   template:
-    title: "[(${commenter})] 评论了你在 [(${issueMessageCreatedAt})] 时刻发布的issue"
+    title: "[(${issueOwner})]在【[(${subjectType})]】—— [(${subjectDisplayName})] 中创建了新的issue"
+    rawBody: |
+      [(${receiveOwner})] 你好：
+
+      [(${issueOwner})] 创建了新的issue“[(${issueMessageRawContent})]”， 以下是Issue的具体内容：
+
+      [(${issueHtmlContent})]
+    htmlBody: |
+      <div style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7f9fc;">
+        <!-- 外层容器 -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f7f9fc">
+          <tr>
+            <td align="center" style="padding: 40px 0;">
+              <!-- 内容容器 -->
+              <table width="100%" max-width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                <!-- 头部 -->
+                <tr>
+                  <td bgcolor="#4f46e5" style="padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <h1 style="margin: 0; color: white; font-size: 24px;">【[(${subjectType})]】[(${subjectDisplayName})] 有新的Issue</h1>
+                    <p style="color: rgba(255,255,255,0.8); margin: 10px 0 0; font-size: 16px;">
+                      <span th:text="${receiveOwner} + '，您好！您关注的' + ${subjectType} + 'issue有更新'"></span>
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 30px;">
+                    <!-- 状态标签 -->
+                    <div th:style="${approved} ? 
+                        'background-color: #dcfce7; color: #166534; padding: 10px 15px; border-radius: 6px; display: inline-block; margin-bottom: 20px;' : 
+                        'background-color: #fee2e2; color: #b91c1c; padding: 10px 15px; border-radius: 6px; display: inline-block; margin-bottom: 20px;'">
+                        <strong>状态：</strong>
+                        <span th:text="${issueStatus}"></span>
+                        <span th:if="${approved}" style="margin-left: 10px;">✓ 已审核通过</span>
+                        <span th:unless="${approved}" style="margin-left: 10px;">Ⓥ 待审核</span>
+                    </div>
+                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="30%" style="padding: 8px 0; color: #6b7280;">标题</td>
+                                <td style="padding: 8px 0; font-weight: 500;" th:text="${issueTitle}"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #6b7280;">创建者</td>
+                                <td style="padding: 8px 0;" th:text="${issueOwner}"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #6b7280;">创建时间</td>
+                                <td style="padding: 8px 0;" th:text="${issueCreatedAt}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td align="center">
+                            <a th:href="${issuePermalink}" style="display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: 500; margin: 10px 0 20px;">
+                                查看完整内容
+                            </a>
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- 原始内容 -->
+                    <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin-top: 15px;">
+                      <h3 style="margin-top: 0; color: #4b5563;">原始内容</h3>
+                      <div style="background-color: white; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; font-family: monospace; white-space: pre-wrap; font-size: 14px; max-height: 150px; overflow: auto;" th:utext="${issueHtmlContent}"></div>
+                    </div>
+                  </td>
+                </tr>
+                <!-- 页脚 -->
+                <tr>
+                  <td bgcolor="#f9fafb" style="padding: 20px 30px; text-align: center; border-radius: 0 0 12px 12px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
+                    <p style="margin: 0;">此邮件由系统自动发送，请勿直接回复</p>
+                    <a th:href="${site.url}" style="margin: 5px 0 0;">[[${site.title}]] 保留所有权利</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: NotificationTemplate
+metadata:
+  name: template-someone-comment-issue
+spec:
+  reasonSelector:
+    reasonType: someone-comment-issue
+    language: default
+  template:
+    title: "[(${issueOwner})] 于 [(${issueMessageCreatedAt})] 时刻创建的issue"
     rawBody: |
       [(${subscriber.displayName})] 你好：
 
-      [(${commenter})] 评论了你的issue“[(${issueMessageRawContent})]”， 以下是评论的具体内容：
+      [(${receiveOwner})] 创建了新的issue“[(${issueMessageRawContent})]”， 以下是Issue的具体内容：
 
-      [(${content})]
+      [(${issueHtmlContent})]
     htmlBody: |
       <div class="notification-content">
         <div class="head">
-          <p class="honorific" th:text="|${subscriber.displayName} 你好：|"></p>
+          <p class="honorific" th:text="|${receiveOwner} 你好：|"></p>
         </div>
         <div class="body">
           <div>
-            <div th:text="|${commenter} 评论了你的issue|"></div>
+            <div th:text="|${issueOwner} 创建了新的issue|"></div>
             <div>
               <a
-               th:href="${issueMessageUrl}"
+               th:href="${issuePermalink}"
                target="_blank"
                style="display: block;font-style: italic;"
-               th:utext="${issueMessageHtmlContent}"
+               th:utext="${issueHtmlContent}"
               >
               </a>
             </div>
             <div>以下是评论的具体内容：</div>
           </div>
-          <pre class="content" th:text="${content}"></pre>
+          <pre class="content" th:text="${issueHtmlContent}"></pre>
         </div>
         <div></div>
       </div>
+---

@@ -20,6 +20,7 @@ import run.halo.app.extension.ListOptions;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
 import run.halo.app.extension.index.query.QueryFactory;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,8 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
             .flatMap(li -> fetchIssueSubjectStats(issueSubject)
                 .doOnNext(li::setIssueSubjectStats)
                 .thenReturn(li))
-            .flatMap(li -> setOwner(issueSubject.getSpec().getOwner(), li));
+            .flatMap(li -> setOwner(issueSubject.getSpec().getOwner(), li))
+            .flatMap(li -> setParticipateUsers(issueSubject.getSpec().getParticipateUsers(), li));
     }
 
     /**
@@ -79,7 +81,23 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
     private Mono<ListedIssueSubject> setOwner(String owner, ListedIssueSubject issueSubject) {
         return client.fetch(User.class, owner)
             .map(user -> ContributorVO.from(user))
-            .doOnNext(issueSubject::setContributorVo)
+            .doOnNext(issueSubject::setCreateOwner)
+            .thenReturn(issueSubject);
+    }
+
+    /**
+     * 查询参与用户信息
+     * @param participateUsers
+     * @param issueSubject
+     * @return
+     */
+    private Mono<ListedIssueSubject> setParticipateUsers(List<String> participateUsers, ListedIssueSubject issueSubject){
+        return Flux.fromIterable(participateUsers)
+            .flatMap(participateUser -> client.fetch(User.class, participateUser)
+                .map(user -> ContributorVO.from(user))
+            )
+            .collectList()
+            .doOnNext(issueSubject::setParticipateUsers)
             .thenReturn(issueSubject);
     }
 
