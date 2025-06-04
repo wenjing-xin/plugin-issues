@@ -4,10 +4,13 @@ import static run.halo.app.extension.ExtensionUtil.addFinalizers;
 import static run.halo.app.extension.index.query.QueryFactory.equal;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.Set;
+import com.webjing.issues.event.IssueClosedEvent;
 import com.webjing.issues.event.IssueCreatedEvent;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
+import com.webjing.issues.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -49,6 +52,7 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
                 }
                 return;
             }
+
             if (addFinalizers(issue.getMetadata(), Set.of(FINALIZER))) {
                 notificationSubscriptionHelper.subscribeNewCommentReasonForIssue(issue);
                 client.update(issue);
@@ -61,6 +65,7 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
                 issue.setStatus(status);
             }
             status.setObservedVersion(issue.getMetadata().getVersion() + 1);
+
             // add approved marks to the old data by default.
             if (issue.getSpec().getApproved() == null) {
                 issue.getSpec().setApproved(true);

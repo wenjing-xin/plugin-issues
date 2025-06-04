@@ -13,9 +13,15 @@ public class IssueClosedEvent extends ApplicationEvent {
 
     private final String issueName;
 
-    public IssueClosedEvent(Object source, String issueName) {
+    private final String closedComment;
+
+    private final String closedOwner;
+
+    public IssueClosedEvent(Object source, String issueName, String closedComment, String closedOwner) {
         super(source);
         this.issueName = issueName;
+        this.closedComment = closedComment;
+        this.closedOwner = closedOwner;
     }
 
 }

@@ -1,6 +1,5 @@
 package com.webjing.issues.service;
 
-
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.entity.ListedIssue;
@@ -29,6 +28,6 @@ public interface IssueService {
 
     Mono<Issue> deleteBy(Issue issue);
 
-
+    Mono<Issue> closeIssue(Issue issue,  String closedComment, String closedOwner);
 
 }

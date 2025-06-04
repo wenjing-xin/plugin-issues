@@ -25,12 +25,6 @@ import type { StateTransition } from './state-transition';
 export interface IssueStatus {
     /**
      * 
-     * @type {string}
-     * @memberof IssueStatus
-     */
-    'closeReason'?: string;
-    /**
-     * 
      * @type {number}
      * @memberof IssueStatus
      */
@@ -47,12 +41,6 @@ export interface IssueStatus {
      * @memberof IssueStatus
      */
     'priority'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof IssueStatus
-     */
-    'replayCount'?: number;
     /**
      * 
      * @type {string}

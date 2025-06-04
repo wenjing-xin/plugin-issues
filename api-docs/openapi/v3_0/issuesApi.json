@@ -5,7 +5,7 @@
     "version" : "2.20.18"
   },
   "servers" : [ {
-    "url" : "http://localhost:30484",
+    "url" : "http://localhost:38396",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -140,6 +140,43 @@
       "post" : {
         "description" : "Create a IssueMessage.",
         "operationId" : "CreateIssueMessage",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/issues/closed" : {
+      "put" : {
+        "description" : "Closed the Issue",
+        "operationId" : "ClosedIssue",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "closedComment",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -1470,6 +1507,43 @@
         "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
       }
     },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/closed" : {
+      "put" : {
+        "description" : "Closed the myself of owner",
+        "operationId" : "closedMyIssue",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "closedComment",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
     "/apis/uc.api.issue.webjing.com/v1alpha1/issues/{name}" : {
       "delete" : {
         "description" : "Delete a My Issue.",
@@ -2228,9 +2302,6 @@
       "IssueStatus" : {
         "type" : "object",
         "properties" : {
-          "closeReason" : {
-            "type" : "string"
-          },
           "observedVersion" : {
             "type" : "integer",
             "format" : "int64"
@@ -2242,10 +2313,6 @@
             "type" : "string",
             "description" : "优先级（P0-P3）",
             "default" : "P2"
-          },
-          "replayCount" : {
-            "type" : "integer",
-            "format" : "int32"
           },
           "state" : {
             "type" : "string",

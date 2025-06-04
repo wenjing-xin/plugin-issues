@@ -120,12 +120,24 @@ spec:
     - name: issueClosedTime
       type: string
       description: "issue的关闭时间"
+    - name: closedComment
+      type: string
+      description: "issue的关闭原因"
     - name: issuePermalink
       type: string
       description: "issue永久链接"
+    - name: issueOwner
+      type: string
+      description: "issue的创建者"
     - name: closedOwner
       type: string
-      description: "Issue关闭的用户"
+      description: "关闭Issue的用户"
     - name: receiveOwner
       type: string
       description: "Issue关闭的通知接收者"
+    - name: subjectDisplayName
+      type: string
+      description: "issue依托主体的标题"
+    - name: subjectType
+      type: string
+      description: "issue依托主体的类型"

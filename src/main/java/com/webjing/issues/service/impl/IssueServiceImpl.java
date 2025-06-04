@@ -1,16 +1,24 @@
 package com.webjing.issues.service.impl;
 
+import com.webjing.issues.Constant;
 import com.webjing.issues.entity.IssueStats;
+import com.webjing.issues.event.IssueClosedEvent;
+import com.webjing.issues.extension.IssueSubject;
+import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.exception.NotFoundException;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueService;
+import com.webjing.issues.util.ReasonDataConverterUtils;
 import com.webjing.issues.vo.ContributorVO;
 import com.webjing.issues.entity.ListedIssue;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -18,12 +26,21 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.Counter;
 import run.halo.app.core.extension.User;
+import run.halo.app.core.extension.notification.Reason;
+import run.halo.app.core.extension.notification.Subscription;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
+import run.halo.app.infra.ExternalLinkProcessor;
+import run.halo.app.notification.NotificationCenter;
+import run.halo.app.notification.NotificationReasonEmitter;
+import run.halo.app.notification.UserIdentity;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+
+import static run.halo.app.extension.MetadataUtil.nullSafeAnnotations;
 
 /**
  * Issue extensions for apis implemention
@@ -38,6 +55,12 @@ public class IssueServiceImpl implements IssueService {
     private final ReactiveExtensionClient client;
 
     private final RoleService roleService;
+
+    private final NotificationReasonEmitter notificationReasonEmitter;
+
+    private final ExternalLinkProcessor externalLinkProcessor;
+
+    private final NotificationCenter notificationCenter;
 
     @Override
     public Mono<ListResult<ListedIssue>> listIssue(IssueQuery query) {
@@ -128,6 +151,125 @@ public class IssueServiceImpl implements IssueService {
                 .approvedIssueComment(counter.getApprovedComment())
                 .build())
             .defaultIfEmpty(IssueStats.empty());
+    }
+
+    @Override
+    public Mono<Issue> closeIssue(Issue issue, String closedComment, String closedOwner) {
+        Issue.StateTransition stateTransition = new Issue.StateTransition();
+        Issue.IssueState oldState = issue.getStatus().getState();
+        stateTransition.setFromState(oldState);
+        stateTransition.setToState(Issue.IssueState.CLOSED);
+        stateTransition.setTime(Instant.now());
+        stateTransition.setOperator(closedOwner);
+        stateTransition.setComment(closedComment);
+        issue.getStatus().getTransitions().add(stateTransition);
+        // 设置状态为关闭
+        issue.getStatus().setState(Issue.IssueState.CLOSED);
+        issue.getSpec().setClosedAt(Instant.now());
+        // 更新状态
+        var issueAnnotations = nullSafeAnnotations(issue);
+        var newIssueNotified = issueAnnotations.getOrDefault(Constant.CLOSED_ISSUE_NOTIFIED_ANNO,"false");
+        if (Objects.equals(newIssueNotified,"false")) {
+            Set<String> issueWatchers = issue.getSpec().getWatchers();
+            issueWatchers.add(issue.getSpec().getOwner());
+            return client.fetch(IssueSubject.class, issue.getSpec().getSubjectName())
+                .map(issueSubject -> {
+                    String issueSubjectTypeName = switch (issueSubject.getSpec().getSubjectType()) {
+                        case POST -> "文章";
+                        case PROJECT -> "项目";
+                        case PRODUCT -> "产品";
+                        case TOPIC -> "话题";
+                        case LEAVE_MESSAGE -> "留言";
+                    };
+                    return IssueSubjectInfo.builder()
+                       .subjectDisplayName(issueSubject.getSpec().getDisplayName())
+                       .subjectType(issueSubjectTypeName);
+                }).flatMap(issueSubjectInfoBuilder -> {
+                    //添加已经通知的标识
+                    issueAnnotations.put(Constant.CLOSED_ISSUE_NOTIFIED_ANNO, "true");
+                    return client.update(issue).then(this.sendClosedIssueNotification(issue, issueWatchers, issueSubjectInfoBuilder.subjectDisplayName,
+                        issueSubjectInfoBuilder.subjectType, closedComment, closedOwner));
+                }).thenReturn(issue);
+        }
+        return client.update(issue);
+    }
+
+    /**
+     * 关闭issue的时候发送通知
+     * @param issue
+     * @param closedComment
+     * @param closedOwner
+     * @return
+     */
+    private Mono<Void> sendClosedIssueNotification(Issue issue, Set<String> participateUsers, String subjectDisplayName, String subjectType, String closedComment, String closedOwner) {
+        Boolean approved = issue.getSpec().getApproved();
+        String contentUrl;
+        if(approved){
+            contentUrl = externalLinkProcessor.processLink(issue.getStatus().getPermalink());
+        }else{
+            contentUrl = externalLinkProcessor.processLink("/console/issueSubject/issues?subjectName=" + issue.getSpec().getSubjectName() + "&approved=false");
+        }
+        return Flux.fromIterable(participateUsers).flatMap(participateUser -> {
+            var reasonSubject = Reason.Subject.builder()
+                .apiVersion(issue.getApiVersion())
+                .kind(issue.getKind())
+                .name(issue.getMetadata().getName())
+                .title(issue.getSpec().getTitle())
+                .url(contentUrl)
+                .build();
+            String owner = issue.getSpec().getOwner();
+            var emitReasonMono = notificationReasonEmitter.emit(Constant.MANAGER_CLOSED_ISSUE,
+                builder -> {
+                    var attributes = IssueClosedReasonData.builder()
+                        .issueTitle(issue.getSpec().getTitle())
+                        .issueClosedTime(issue.getSpec().getClosedAt().toString())
+                        .closedComment(closedComment)
+                        .issuePermalink(contentUrl)
+                        .issueOwner(issue.getSpec().getOwner())
+                        .closedOwner(closedOwner)
+                        .receiveOwner(participateUser)
+                        .subjectDisplayName(subjectDisplayName)
+                        .subjectType(subjectType)
+                        .build();
+                    builder.attributes(ReasonDataConverterUtils.toAttributeMap(attributes))
+                        .author(UserIdentity.of(owner))
+                        .subject(reasonSubject);
+                });
+            return subscribeClosedIssueReasonForSubject(issue).then(emitReasonMono);
+        }).then();
+
+    }
+
+    /**
+     * 关闭 issue 的时候为issue拥有者和issue关注者进行通知
+     * @param issue
+     */
+    public Mono<Void> subscribeClosedIssueReasonForSubject(Issue issue) {
+        // 当issue被关闭的时候，为 issue 拥有者和关注者进行通知
+        String issueOwner = issue.getSpec().getOwner();
+        Set<String> watchers = issue.getSpec().getWatchers();
+        // 为创建者订阅关闭 Issue 通知
+        subscribeClosedIssueNotify(UserIdentity.of(issueOwner));
+        watchers.forEach(participateUser -> subscribeClosedIssueNotify(UserIdentity.of(participateUser)));
+        return Mono.empty();
+    }
+
+    Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
+        var interestReason = new Subscription.InterestReason();
+        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
+        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
+        var subscriber = new Subscription.Subscriber();
+        subscriber.setName(identity.name());
+        return notificationCenter.subscribe(subscriber, interestReason).then();
+    }
+
+    @Builder
+    record IssueClosedReasonData(String issueTitle, String issueClosedTime, String closedComment, String issuePermalink, String issueOwner,String closedOwner,
+                                 String receiveOwner, String subjectDisplayName, String subjectType) {
+    }
+
+    @Builder
+    record IssueSubjectInfo(String subjectDisplayName, String subjectType){
     }
 
 }

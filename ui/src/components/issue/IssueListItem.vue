@@ -10,13 +10,15 @@ import {
   VAvatar,
   VStatusDot,
   IconExternalLinkLine,
-  VSpace,
+  VSpace, VModal, VButton,
+  VAlert
 } from "@halo-dev/components";
 import { computed, inject, type Ref, ref } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
 
 import type { Issue, ListedIssue } from "@/api/generated";
-import {issueApiClient} from "@/api";
+import { issueApiClient, consoleIssueApiClient} from "@/api";
+import {submitForm} from "@formkit/core";
 
 const queryClient = useQueryClient();
 
@@ -33,6 +35,11 @@ const props = withDefaults(
 const emit = defineEmits<{
   (event: "update", value: Issue): void;
 }>();
+
+const closedVisibleModal = ref(false);
+const closedComment = ref("")
+const closing= ref(false);
+const showTips = ref(true);
 const selectedIssueMessageNames = inject<Ref<string[]>>("selectedIssueMessageNames", ref([]));
 
 const handleDelete = async (issue: ListedIssue) => {
@@ -61,45 +68,75 @@ const issueStatus = computed(() => {
   return status?.state === "AWAIT" ? "待处理" : status?.state == "PROGRESS" ? "进行中" : "已关闭";
 });
 
-const handlerViewDetail= (issue: ListedIssue) =>{
+const handlerViewDetail= (listedIssue: ListedIssue) =>{
   
 }
 // 编辑issue留言
 const handlerEditIssueMessage = (issue: ListedIssue)=> {
   emit("update", issue.issue);
 }
-
-const handleCloseIssue = async (issue:Issue) => {
-  Dialog.warning({
-    title: `确定关闭Issue留言「${props.issue.issue.spec.title}」?`,
-    confirmType: "primary",
-    confirmText: "确定",
-    cancelText: "取消",
-    onConfirm: async () => {
-      try {
-        await issueApiClient.issue.patchIssue({
-          name: issue.metadata.name,
-          jsonPatchInner: [
-            {
-              op: "add",
-              path: "/status/state",
-              value: "CLOSED",
-            }
-          ],
-        });
-        Toast.success("关闭Issue成功");
-      } catch (error) {
-        console.error("Failed to end issue", error);
-      } finally {
-        await queryClient.invalidateQueries({ queryKey: ["issueMessages"] });
-      }
-    },
-  });
-};
-
+const onSubmitClose = async ()=>{
+  try {
+    await consoleIssueApiClient.issue.closedIssue({
+      closedComment: closedComment.value,
+      issue: props.issue.issue
+    })
+    Toast.success("关闭Issue成功");
+  } catch (error) {
+    console.error("Failed to end issue", error);
+  } finally {
+    await queryClient.invalidateQueries({ queryKey: ["issues"] });
+    closedComment.value = "";
+    showTips.value = true;
+    closedVisibleModal.value = false;
+  }
+}
 function handleRouteToUserDetail() {}
 </script>
 <template>
+  <VModal
+    title="关闭Issue"
+    :visible="closedVisibleModal"
+    :width="420"
+  >
+    <template #actions>
+      <slot name="append-actions" />
+    </template>
+    <div class="space-y-3">
+      <VAlert
+        type="info"
+        title="提示"
+        v-if="showTips"
+        :description="'确认关闭此Issue' + issue.issue.spec.title + '，关闭后可重新打开'"
+        @close="showTips = false"
+      />
+      <FormKit
+        id="issue-closed"
+        type="form"
+        name="issue-message"
+        :config="{ validationVisibility: 'submit' }"
+        @submit="onSubmitClose"
+      >
+        <FormKit
+          v-model.trim="closedComment"
+          type="text"
+          label="关闭原因"
+        />
+      </FormKit>
+    </div>
+    <template #footer>
+      <VSpace>
+        <VButton
+          :loading="closing"
+          type="secondary"
+          @click="submitForm('issue-closed')"
+        >
+          提交
+        </VButton>
+        <VButton @click="closedVisibleModal = false;showTips=true;"> 取消 </VButton>
+      </VSpace>
+    </template>
+  </VModal>
   <VEntity :is-selected="isSelected">
     <template #checkbox>
       <HasPermission :permissions="['plugin:issue:manage']">
@@ -181,7 +218,7 @@ function handleRouteToUserDetail() {}
       <VDropdownItem @click="handlerViewDetail(issue)"> 详情 </VDropdownItem>
       <VDropdownItem @click="handlerEditIssueMessage(issue)"> 编辑 </VDropdownItem>
       <HasPermission :permissions="['plugin:issues:manage']">
-        <VDropdownItem v-if="issue.issue.status?.state != 'CLOSED'" @click="handleCloseIssue(issue.issue)">
+        <VDropdownItem v-if="issue.issue.status?.state != 'CLOSED'" @click="closedVisibleModal = true;">
           关闭
         </VDropdownItem>
         <VDropdownDivider />

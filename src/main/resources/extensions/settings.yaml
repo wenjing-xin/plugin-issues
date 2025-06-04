@@ -19,4 +19,9 @@ spec:
           max: 20
           min: 4
           help: "最大二十条，最小4条"
+        - $formkit: text
+          name: defaultClosedComment
+          label: Issue关闭原因
+          value: Issue已解决
+          help: "默认关闭Issued原因"
 

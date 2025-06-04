@@ -1,26 +1,22 @@
 package com.webjing.issues.notify;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.webjing.issues.Constant;
 import com.webjing.issues.event.IssueCreatedEvent;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueSubject;
+import com.webjing.issues.util.ReasonDataConverterUtils;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.UtilityClass;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.notification.Reason;
 import run.halo.app.extension.ExtensionClient;
 import run.halo.app.infra.ExternalLinkProcessor;
-import run.halo.app.infra.utils.JsonUtils;
 import run.halo.app.notification.NotificationReasonEmitter;
 import run.halo.app.notification.UserIdentity;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static run.halo.app.extension.MetadataUtil.nullSafeAnnotations;
@@ -111,7 +107,7 @@ public class NewIssueNotificationReasonPublisher {
                         .subjectDisplayName(subjectDisplayName)
                         .subjectType(subjectType)
                         .build();
-                    builder.attributes(ReasonDataConverter.toAttributeMap(attributes))
+                    builder.attributes(ReasonDataConverterUtils.toAttributeMap(attributes))
                         .author(UserIdentity.of(owner))
                         .subject(reasonSubject);
                 }).block();
@@ -126,15 +122,5 @@ public class NewIssueNotificationReasonPublisher {
         }
 
     }
-
-    @UtilityClass
-    static class ReasonDataConverter {
-        public static <T> Map<String, Object> toAttributeMap(T data) {
-            Assert.notNull(data, "Reason attributes must not be null");
-            return JsonUtils.mapper().convertValue(data, new TypeReference<>() {
-            });
-        }
-    }
-
 
 }

@@ -5,6 +5,8 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 import com.webjing.issues.Constant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.Data;
@@ -66,7 +68,7 @@ public class Issue extends AbstractExtension {
         private String subjectName;
 
         @Schema(description = "关注者列表")
-        private Set<String> watchers;
+        private Set<String> watchers = new HashSet<>();
 
         @Schema(requiredMode = REQUIRED, defaultValue = "false", description = "是否置顶")
         private Boolean top;
@@ -74,14 +76,15 @@ public class Issue extends AbstractExtension {
 
     @Data
     public static class IssueStatus {
+
         private IssueState state =  IssueState.AWAIT;
-        private Integer replayCount; // 动态计算的回复数
-        private String closeReason; // CLOSED 状态的关闭原因
+
         private String permalink;
+
         private long observedVersion;
 
         @Schema(description = "状态变更历史（时间+操作人）")
-        private List<StateTransition> transitions;
+        private List<StateTransition> transitions = new ArrayList<>();
 
         @Schema(description = "优先级（P0-P3）", defaultValue = "P2")
         private String priority;

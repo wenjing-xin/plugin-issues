@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
 import { computed, nextTick, onMounted, ref, toRaw, watchEffect } from "vue";
-import type { Issue } from "@/api/generated";
+import type {Issue, IssueTemplate} from "@/api/generated";
 import cloneDeep from "lodash.clonedeep";
 import {
   consoleIssueApiClient,
@@ -59,7 +59,6 @@ const initIssue: Issue = {
     top: false
   },
   status: {
-    closeReason: "",
     observedVersion: 0,
     permalink: "",
     state: "AWAIT",
@@ -87,7 +86,7 @@ const handlerLabelOptions = () => {
       name: "",
     })
     .then((res) => {
-      labelOptions.value = res.data.map((itemLabel) => {
+      labelOptions.value = res.data.map((itemLabel:string) => {
         return {
           label: itemLabel,
           value: itemLabel,
@@ -157,7 +156,7 @@ const handleUpdate = async () => {
 //处理issue template的筛选过滤条件
 const handlerIssueTemplateOptions = () => {
   issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
-    data.items.forEach((it) => {
+    data.items.forEach((it:IssueTemplate) => {
       const itemOption = { label: it.spec?.name, value: it.metadata.name };
       issueTemplateFilterOptions.value.push(itemOption);
     });

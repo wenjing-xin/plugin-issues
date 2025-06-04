@@ -90,6 +90,110 @@ spec:
 apiVersion: notification.halo.run/v1alpha1
 kind: NotificationTemplate
 metadata:
+  name: template-manager-closed-issue
+spec:
+  reasonSelector:
+    reasonType: manager-closed-issue
+    language: default
+  template:
+    title: "[(${closedOwner})] 于 [(${issueClosedTime})] 时刻关闭了issue「[(${issueTitle})]」"
+    rawBody: |
+      [(${receiveOwner})] 你好：
+
+      你的的issue「[(${issueTitle})]」已经被[(${closedOwner})]关闭， 以下是Issue关闭的原因：
+
+      [(${closedComment})]
+    htmlBody: |
+      <div style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: #f5f7fa; line-height: 1.5;">
+        <!-- 外层容器 -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f5f7fa" style="max-width: 600px; margin: 0 auto;">
+          <tr>
+            <td align="center" style="padding: 40px 20px;">
+              <!-- 内容容器 -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.05); overflow: hidden;">
+                <!-- 头部 -->
+                <tr>
+                  <td bgcolor="#4f46e5" style="padding: 32px 30px; text-align: center;">
+                    <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 600;">
+                        <span th:text="'Issue 已关闭'"></span>
+                    </h1>
+                    <p style="color: rgba(255,255,255,0.85); margin: 12px 0 0; font-size: 16px;">
+                        <span th:text="'您好，' + ${receiveOwner} + '！'"></span>
+                        <span th:text="${subjectDisplayName} + ' 中的Issue已被关闭'"></span>
+                    </p>
+                  </td>
+                </tr>
+                <!-- 状态标识 -->
+                <tr>
+                  <td style="padding: 0 30px;">
+                    <div style="background-color: #f1f5f9; border-radius: 8px; padding: 16px; margin: -20px 0 20px; text-align: center; border: 1px solid #e2e8f0;">
+                      <div style="display: inline-flex; align-items: center; background-color: #dcfce7; color: #166534; padding: 6px 16px; border-radius: 50px; font-weight: 500;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span th:text="'状态：已关闭'"></span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <!-- 主要内容 -->
+                <tr>
+                  <td style="padding: 0 30px 30px;">
+                    <!-- Issue基本信息 -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 0; margin-bottom: 28px;">
+                      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                        <tr>
+                          <td colspan="2" style="padding: 20px; border-bottom: 1px solid #e2e8f0; background-color: #f8fafc;">
+                              <h2 style="margin: 0; font-size: 18px; color: #1e293b;" th:text="${issueTitle}"></h2>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 16px 20px; width: 35%; color: #64748b; font-weight: 500; border-bottom: 1px solid #f1f5f9;">依托主体</td>
+                          <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; color: #334155;" th:text="${subjectDisplayName} + ' (' + ${subjectType} + ')'"></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 16px 20px; color: #64748b; font-weight: 500; border-bottom: 1px solid #f1f5f9;">创建者</td>
+                          <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; color: #334155;" th:text="${issueOwner}"></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 16px 20px; color: #64748b; font-weight: 500; border-bottom: 1px solid #f1f5f9;">关闭者</td>
+                          <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; color: #334155;" th:text="${closedOwner}"></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 16px 20px; color: #64748b; font-weight: 500;">关闭时间</td>
+                          <td style="padding: 16px 20px; color: #334155;" th:text="${issueClosedTime}"></td>
+                        </tr>
+                      </table>
+                    </div>
+                    <!-- 关闭原因 -->
+                    <div style="margin-bottom: 28px;">
+                      <h3 style="margin: 0 0 12px; font-size: 16px; color: #1e293b; font-weight: 600;">关闭原因</h3>
+                      <div style="background-color: #f8fafc; border-radius: 8px; padding: 20px; border-left: 4px solid #4f46e5;">
+                        <div th:utext="${closedComment}" style="color: #475569; line-height: 1.6;"></div>
+                      </div>
+                    </div>
+                    <!-- 操作按钮 -->
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td align="center">
+                          <a th:href="${issuePermalink}" style="display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 500; font-size: 16px; transition: all 0.2s;">
+                              查看完整 Issue
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: NotificationTemplate
+metadata:
   name: template-someone-comment-issue
 spec:
   reasonSelector:

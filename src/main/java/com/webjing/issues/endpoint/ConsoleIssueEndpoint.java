@@ -9,6 +9,8 @@ import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueService;
 import com.webjing.issues.entity.ListedIssue;
+import com.webjing.issues.service.RoleService;
+import com.webjing.issues.service.SettingConfigGetter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,10 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
     private final String tag = groupVersion() + "/Issue";
 
     private final IssueService issueService;
+
+    private final RoleService roleService;
+
+    private final SettingConfigGetter settingConfigGetter;
 
     @Override
     public RouterFunction<ServerResponse> endpoint() {
@@ -97,6 +103,25 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(Issue.class))
             )
+            .PUT("issues/closed", this::closedIssue,
+                builder -> builder.operationId("ClosedIssue")
+                    .description("Closed the Issue")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("closedComment")
+                        .in(ParameterIn.QUERY)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .content(contentBuilder()
+                            .mediaType(MediaType.APPLICATION_JSON_VALUE)
+                            .schema(Builder.schemaBuilder()
+                                .implementation(Issue.class))
+                        ))
+                    .response(responseBuilder().implementation(Issue.class))
+                    )
             .build();
     }
 
@@ -132,6 +157,25 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
             .filter(labelName -> StringUtils.isBlank(name) || StringUtils.containsIgnoreCase(labelName, name))
             .collectList()
             .flatMap(result -> ServerResponse.ok().bodyValue(result));
+    }
+
+    private Mono<ServerResponse> closedIssue(ServerRequest request){
+        return Mono.justOrEmpty(request.queryParam("closedComment"))
+            .switchIfEmpty(Mono.defer(() ->
+                settingConfigGetter.getIssuesBasic()
+                    .map(issuesBasic -> issuesBasic.getDefaultClosedComment())
+                    .onErrorResume(e -> Mono.just("默认关闭原因"))
+            ))
+            .flatMap(closedComment ->
+                request.bodyToMono(Issue.class).flatMap(issue ->
+                        roleService.getCurrentUser()
+                            .flatMap(curUser ->
+                                issueService.closeIssue(issue, closedComment, curUser.getName())
+                            )
+                    ).flatMap(updatedIssue ->
+                        ServerResponse.ok().bodyValue(updatedIssue)
+                    )
+            );
     }
 
     @Override

@@ -133,6 +133,25 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementationArray(String.class)
                     ))
+            .PUT("issues/closed", this::closedMyIssue,
+                builder -> builder.operationId("closedMyIssue")
+                    .description("Closed the myself of owner")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("closedComment")
+                        .in(ParameterIn.QUERY)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .content(contentBuilder()
+                            .mediaType(MediaType.APPLICATION_JSON_VALUE)
+                            .schema(Builder.schemaBuilder()
+                                .implementation(Issue.class))
+                        ))
+                    .response(responseBuilder().implementation(Issue.class))
+            )
             .build();
     }
 
@@ -224,6 +243,23 @@ public class UcIssueEndpoint implements CustomEndpoint {
                 name))
             .collectList()
             .flatMap(result -> ServerResponse.ok().bodyValue(result));
+    }
+
+    private Mono<ServerResponse> closedMyIssue(ServerRequest request){
+        // 从查询参数获取 closedComment
+        String closedComment = request.queryParam("closedComment")
+            .orElseThrow(() -> new IllegalArgumentException("closedComment parameter is required"));
+        // 从请求体获取 Issue 对象
+        return request.bodyToMono(Issue.class)
+            .flatMap(issue -> roleService.getCurrentUser()
+                .map(curUser ->  {
+                    if(curUser.getName().equals(issue.getSpec().getOwner())){
+                        return issueService.closeIssue(issue, closedComment, curUser.getName());
+                    }else{
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can close it"));
+                    }
+                }))
+            .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
     }
 
     @Override

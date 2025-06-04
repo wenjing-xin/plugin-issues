@@ -28,8 +28,6 @@ public class IssueSubjectReconciler  implements Reconciler<Reconciler.Request> {
 
     private final ExtensionClient client;
 
-    private final ApplicationEventPublisher eventPublisher;
-
     private final NotificationSubscriptionHelper notificationSubscriptionHelper;
 
     @Override
@@ -53,8 +51,7 @@ public class IssueSubjectReconciler  implements Reconciler<Reconciler.Request> {
     @Override
     public Controller setupWith(ControllerBuilder builder) {
         IssueSubject issueSubject = new IssueSubject();
-        return builder
-            .extension(issueSubject)
+        return builder.extension(issueSubject)
             .workerCount(5)
             .build();
     }

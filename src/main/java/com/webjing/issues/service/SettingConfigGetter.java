@@ -9,9 +9,15 @@ public interface SettingConfigGetter {
 
     @Data
     class IssuesBasic {
+
         public static final String GROUP = "issuesBasic";
+
         private String title;
+
         private int pageSize;
+
+        private String defaultClosedComment;
+
     }
 
 }
