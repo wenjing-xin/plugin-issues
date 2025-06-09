@@ -4,12 +4,14 @@ import com.webjing.issues.entity.IssueSubjectStats;
 import com.webjing.issues.entity.Stats;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueSubject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.Assert;
 import run.halo.app.extension.MetadataOperator;
+import java.util.List;
 
 /**
  * issue依托主体数据传输对象
@@ -26,7 +28,10 @@ public class IssueSubjectVO {
 
     private IssueSubject.IssueSubjectSpec spec;
 
-    private ContributorVO contributorVo;
+    private ContributorVO createOwner;
+
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+    private List<ContributorVO> participateUsers;
 
     private IssueSubjectStats issueSubjectStats;
 

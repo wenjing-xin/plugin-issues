@@ -3,7 +3,6 @@ package com.webjing.issues.reconciler;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import run.halo.app.extension.ExtensionClient;
 import run.halo.app.extension.ExtensionUtil;

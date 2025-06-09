@@ -1,7 +1,138 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:plugin-moment:fragments/layout :: layoutHtml(content = ~{::content})}">
-<th:block th:fragment="content">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '依托主体', content = ~{::content}, version = ${pluginVersion} )}">
+<th:block th:fragment="content" th:with="subjectType = ${issueSubjectVO.spec.subjectType + ''}">
 
-    <h2 class="piw-w-full"> Issue Subject </h2>
+    <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectVO.spec.subjectType}, title = ${issueSubjectVO.spec.displayName},
+    name = ${issueSubjectVO.metadata.name}, totalIssue = ${issueSubjectVO.issueSubjectStats.awaitIssue + issueSubjectVO.issueSubjectStats.progressIssue},
+     activeTab = 'subject')}" />
+
+    <main class="piw-container piw-mx-auto piw-px-4 piw-py-6">
+        <!-- 选项卡内容 -->
+        <div class="piw-mb-10">
+            <!-- 依托主体内容 -->
+            <div id="content-subject" class="piw-block">
+                <!-- 项目标题 -->
+                <div class="piw-mb-6 piw-bg-white piw-rounded-lg piw-shadow-sm piw-p-6">
+                    <h1 class="piw-text-[clamp(1.5rem,3vw,2.5rem)] piw-font-bold piw-text-neutral-900">
+                        [[${issueSubjectVO.spec.displayName}]]
+                        <span class="piw-text-sm piw-font-normal piw-text-neutral-500 piw-ml-2">
+                            [[${issueSubjectVO.metadata.name}]]
+                        </span>
+                    </h1>
+                    <p class="piw-text-neutral-600 piw-mt-2 max-w-3xl">
+                        [[${issueSubjectVO.spec.description}]]
+                    </p>
+                    <div class="piw-flex piw-items-center piw-mt-4">
+                        <div class="piw-flex -piw-space-x-2">
+                            <img th:each="user : ${issueSubjectVO.participateUsers}"
+                                 th:src="${user.avatar}"
+                                 alt="[[${user.name}]]"
+                                 class="piw-w-8 piw-h-8 piw-rounded-full piw-border-2 piw-border-white piw-cursor-pointer"
+                                 title="[[${user.name}]]">
+                        </div>
+                        <div class="piw-ml-3 piw-text-sm piw-text-neutral-600">
+                            <span class="piw-font-medium">由 <a href="#" class="piw-text-primary">[[${issueSubjectVO.createOwner.displayName}]]</a> 创建</span>
+                            <span class="piw-text-neutral-400"> · </span>
+                            <span>上次更新于 2 天前</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="piw-grid piw-grid-cols-1 piw-sm:piw-grid-cols-2 piw-lg:piw-grid-cols-4 piw-gap-4 piw-mb-6">
+                    <div class="piw-bg-white piw-rounded-lg piw-shadow-sm piw-p-4 piw-card-hover">
+                        <div class="piw-flex piw-items-center">
+                            <div class="piw-w-10 piw-h-10 piw-rounded-full piw-bg-primary/10 piw-flex piw-items-center piw-justify-center">
+                                <i class="fa fa-file-text-o piw-text-primary"></i>
+                            </div>
+                            <div class="piw-ml-4">
+                                <h3 class="piw-text-neutral-500 piw-text-sm">总 Issue</h3>
+                                <p class="piw-text-2xl piw-font-bold">[[${issueSubjectVO.issueSubjectStats.totalIssue}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="piw-bg-white piw-rounded-lg piw-shadow-sm piw-p-4 piw-card-hover">
+                        <div class="piw-flex piw-items-center">
+                            <div class="piw-w-10 piw-h-10 piw-rounded-full piw-bg-success/10 piw-flex piw-items-center piw-justify-center">
+                                <i class="fa fa-check-circle-o piw-text-success"></i>
+                            </div>
+                            <div class="piw-ml-4">
+                                <h3 class="piw-text-neutral-500 piw-text-sm">已关闭</h3>
+                                <p class="piw-text-2xl piw-font-bold">[[${issueSubjectVO.issueSubjectStats.closedIssue}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="piw-bg-white piw-rounded-lg piw-shadow-sm piw-p-4 piw-card-hover">
+                        <div class="piw-flex piw-items-center">
+                            <div class="piw-w-10 piw-h-10 piw-rounded-full piw-bg-danger/10 piw-flex piw-items-center piw-justify-center">
+                                <i class="fa fa-exclamation-circle-o piw-text-danger"></i>
+                            </div>
+                            <div class="piw-ml-4">
+                                <h3 class="piw-text-neutral-500 piw-text-sm">进行中</h3>
+                                <p class="piw-text-2xl piw-font-bold">[[${issueSubjectVO.issueSubjectStats.progressIssue}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 依托主体详情 -->
+                <div class="piw-bg-white piw-rounded-lg piw-shadow-sm piw-p-6 piw-mb-6">
+                    <h2 class="piw-text-xl piw-font-bold piw-text-neutral-900 piw-mb-4">依托主体详情</h2>
+
+                    <div class="piw-grid piw-grid-cols-1 piw-md:piw-grid-cols-2 piw-gap-6">
+                        <div>
+                            <h3 class="piw-text-sm piw-font-medium piw-text-neutral-500 piw-mb-2">基本信息</h3>
+                            <div class="piw-space-y-4">
+                                <div>
+                                    <label class="piw-block piw-text-sm piw-text-neutral-500 piw-mb-1">显示名称</label>
+                                    <p class="piw-text-neutral-800">[[${issueSubjectVO.spec.displayName}]]</p>
+                                </div>
+                                <div>
+                                    <label class="piw-block piw-text-sm piw-text-neutral-500 piw-mb-1">类型</label>
+                                    <p class="piw-text-neutral-800" th:text="${issueSubjectVO.spec.subjectType}"></p>
+                                </div>
+                                <div>
+                                    <label class="piw-block piw-text-sm piw-text-neutral-500 piw-mb-1">创建者</label>
+                                    <div class="piw-flex piw-items-center">
+                                        <img th:src="${issueSubjectVO.createOwner.avatar}" th:alt="${issueSubjectVO.createOwner.name}" class="piw-w-6 piw-h-6 piw-rounded-full piw-mr-2">
+                                        <span>[[${issueSubjectVO.createOwner.name}]]</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="piw-block piw-text-sm piw-text-neutral-500 piw-mb-1">参与用户</label>
+                                    <div class="piw-flex piw-flex-wrap piw-gap-2">
+                                        <span th:each="user : ${issueSubjectVO.participateUsers}" class="piw-text-xs piw-bg-neutral-100 piw-text-neutral-700 piw-rounded-full piw-px-3 piw-py-1 piw-flex piw-items-center">
+                                            <img src="[[${user.avatar}]]" alt="[[${user.name}]]" class="piw-w-4 piw-h-4 piw-rounded-full piw-mr-1">
+                                            [[${user.name}]]
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="piw-text-sm piw-font-medium piw-text-neutral-500 piw-mb-2">内容信息</h3>
+                            <div class="piw-space-y-4">
+                                <div>
+                                    <label class="piw-block piw-text-sm piw-text-neutral-500 piw-mb-1">内容</label>
+                                    <div class="piw-bg-neutral-50 piw-p-4 piw-rounded-md piw-border piw-border-neutral-200 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]">
+                                        [[${issueSubjectVO.spec.content}]]
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="piw-block piw-text-sm piw-text-neutral-500 piw-mb-1">Issue 模板</label>
+                                    <div class="piw-flex piw-flex-wrap piw-gap-2">
+                                        <span th:each="template : ${issueSubjectVO.spec.issueTemplates}" class="piw-text-xs piw-bg-primary/10 piw-text-primary piw-rounded-md piw-px-3 piw-py-1">
+                                            [[${template}]]
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </th:block>
 </html>

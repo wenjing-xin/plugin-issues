@@ -44,7 +44,7 @@ public class NotificationSubscriptionHelper {
     public void subscribeClosedIssueReasonForSubject(Issue issue) {
         // 当issue被关闭的时候，为 issue 拥有者和关注者进行通知
         String issueOwner = issue.getSpec().getOwner();
-        Set<String> watchers = issue.getSpec().getWatchers();
+        Set<String> watchers = issue.getSpec().getAssignees();
         // 为创建者订阅关闭 Issue 通知
         subscribeClosedIssueNotify(UserIdentity.of(issueOwner));
         watchers.forEach(participateUser -> subscribeClosedIssueNotify(UserIdentity.of(participateUser)));

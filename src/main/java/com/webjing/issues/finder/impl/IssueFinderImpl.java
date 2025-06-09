@@ -141,8 +141,8 @@ public class IssueFinderImpl implements IssueFinder {
             .and(ExtensionUtil.defaultSort());
     }
 
-    private Mono<IssueVO> getIssueMessageVo(@Nonnull Issue issueMessage) {
-        IssueVO issueMessageVo = IssueVO.from(issueMessage);
+    private Mono<IssueVO> getIssueMessageVo(@Nonnull Issue issue) {
+        IssueVO issueMessageVo = IssueVO.from(issue);
         return Mono.just(issueMessageVo)
             .flatMap(imv -> fetchIssueStats(issueMessageVo)
                 .doOnNext(imv::setIssueStats)

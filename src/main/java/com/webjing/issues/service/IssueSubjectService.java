@@ -1,5 +1,6 @@
 package com.webjing.issues.service;
 
+import com.webjing.issues.entity.IssueSubjectStats;
 import com.webjing.issues.entity.ListedIssueSubject;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.query.IssueSubjectQuery;
@@ -16,5 +17,7 @@ public interface IssueSubjectService {
     Mono<IssueSubject> create(IssueSubject issueSubject);
 
     Mono<ListResult<ListedIssueSubject>> listIssueSubject(IssueSubjectQuery query);
+
+    Mono<IssueSubjectStats> fetchIssueSubjectStats(String issueSubjectName);
 
 }

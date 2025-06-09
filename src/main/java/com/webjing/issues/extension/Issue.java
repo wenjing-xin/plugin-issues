@@ -6,7 +6,6 @@ import com.webjing.issues.Constant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.Data;
@@ -46,7 +45,7 @@ public class Issue extends AbstractExtension {
         @Schema(requiredMode = REQUIRED)
         private IssueContent content;
 
-        private List<String> assignees; // 经办人列表
+        private Set<String> assignees; // 经办人列表
 
         private Set<String> labels; // 标签名称集合
 
@@ -66,9 +65,6 @@ public class Issue extends AbstractExtension {
 
         @Schema(description = "关联主体唯一标识", requiredMode = REQUIRED)
         private String subjectName;
-
-        @Schema(description = "关注者列表")
-        private Set<String> watchers = new HashSet<>();
 
         @Schema(requiredMode = REQUIRED, defaultValue = "false", description = "是否置顶")
         private Boolean top;

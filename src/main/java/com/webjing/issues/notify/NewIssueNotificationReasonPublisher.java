@@ -50,13 +50,8 @@ public class NewIssueNotificationReasonPublisher {
             client.fetch(IssueSubject.class, issue.getSpec().getSubjectName()).map(issueSubject -> {
                 List<String> participateUsers = issueSubject.getSpec().getParticipateUsers();
                 participateUsers.add(issueSubject.getSpec().getOwner());
-                String issueSubjectTypeName = switch (issueSubject.getSpec().getSubjectType()) {
-                    case POST -> "文章";
-                    case PROJECT -> "项目";
-                    case PRODUCT -> "产品";
-                    case TOPIC -> "话题";
-                    case LEAVE_MESSAGE -> "留言";
-                };
+                String issueSubjectTypeName = IssueSubject.parseSubjectType(issueSubject.getSpec()
+                    .getSubjectType());
                 participateUsers.forEach(
                     participateUser -> newIssueOnSubjectReasonPublisher.publishReasonBy(issue,
                         participateUser, issueSubject.getSpec().getDisplayName(), issueSubjectTypeName));

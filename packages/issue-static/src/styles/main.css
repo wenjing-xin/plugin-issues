@@ -67,3 +67,21 @@ ul {
   -webkit-animation: maskedAnimation 1s infinite linear;
 }
 
+.tab-transfer{
+    @apply piw-inline-block piw-inline-flex piw-items-center piw-py-1.5 piw-px-4 piw-gap-x-1.5
+}
+.tab-transfer-active {
+    @apply piw-border-b-2 piw-border-[#EE9279]
+}
+/*分页元素的一些样式*/
+.page-numbers {
+    @apply piw-block piw-size-7 piw-items-center piw-inline-flex piw-justify-center piw-items-center piw-rounded-md piw-shadow-md
+    piw-text-sm piw-text-neutral-500 dark:piw-text-neutral-300 piw-bg-white dark:piw-bg-neutral-800 piw-transition-colors piw-duration-300
+    hover:piw-text-neutral-300 hover:dark:piw-text-neutral-700;
+}
+
+/*issue留言板页面样式*/
+.issue-item {
+    @apply piw-bg-white dark:piw-bg-slate-800 piw-rounded-xl piw-border piw-border-gray-200 piw-p-5 hover:piw-border-blue-300
+    piw-transition-all piw-duration-200 hover:piw-shadow-md
+}

@@ -81,7 +81,7 @@ const handlerIssueSubjectType = (
     case "TOPIC":
       return { name: "话题", icon: IconParkOutlineTopicDiscussion };
     case "LEAVE_MESSAGE":
-      return { name: "留言", icon: EpMessage };
+        return { name: "留言", icon: EpMessage };
   }
 };
 const goIssuePage = (name:string) => {

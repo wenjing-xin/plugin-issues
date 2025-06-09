@@ -46,15 +46,9 @@ public class ClosedIssueNotificationReasonPublisher {
         var newIssueNotified = annotations.getOrDefault(Constant.CLOSED_ISSUE_NOTIFIED_ANNO,"false");
         if (Objects.equals(newIssueNotified,"false")) {
             client.fetch(IssueSubject.class, issue.getSpec().getSubjectName()).map(issueSubject -> {
-                Set<String> watchers = issue.getSpec().getWatchers();
+                Set<String> watchers = issue.getSpec().getAssignees();
                 watchers.add(issue.getSpec().getOwner());
-                String issueSubjectTypeName = switch (issueSubject.getSpec().getSubjectType()) {
-                    case POST -> "文章";
-                    case PROJECT -> "项目";
-                    case PRODUCT -> "产品";
-                    case TOPIC -> "话题";
-                    case LEAVE_MESSAGE -> "留言";
-                };
+                String issueSubjectTypeName = IssueSubject.parseSubjectType(issueSubject.getSpec().getSubjectType());
                 watchers.forEach(
                     participateUser -> closedIssueReasonPublisher.publishReasonBy(issue,
                         participateUser, issueSubject.getSpec().getDisplayName(), issueSubjectTypeName, event.getClosedComment(), event.getClosedOwner()));

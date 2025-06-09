@@ -65,7 +65,7 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
             .issueSubject(issueSubject);
         return Mono.just(issueSubjectBuilder)
             .map(ListedIssueSubject.ListedIssueSubjectBuilder::build)
-            .flatMap(li -> fetchIssueSubjectStats(issueSubject)
+            .flatMap(li -> fetchIssueSubjectStats(issueSubject.getMetadata().getName())
                 .doOnNext(li::setIssueSubjectStats)
                 .thenReturn(li))
             .flatMap(li -> setOwner(issueSubject.getSpec().getOwner(), li))
@@ -103,12 +103,12 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
 
     /**
      * issue主体数据统计
-     * @param issueSubject
+     * @param issueSubjectName
      * @return
      */
-    private Mono<IssueSubjectStats> fetchIssueSubjectStats(IssueSubject issueSubject) {
-        Assert.notNull(issueSubject, "The issueSubject must not be null.");
-        String issueSubjectName = issueSubject.getMetadata().getName();
+    @Override
+    public Mono<IssueSubjectStats> fetchIssueSubjectStats(String issueSubjectName) {
+        Assert.notNull(issueSubjectName, "The issueSubject must not be null.");
 
         return client.listAll(Issue.class, ListOptions.builder().fieldQuery(QueryFactory.equal("spec.subjectName", issueSubjectName))
                     .build(), Sort.by(Sort.Order.desc("metadata.creationTimestamp")))

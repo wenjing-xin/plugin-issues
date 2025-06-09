@@ -1,7 +1,7 @@
 apiVersion: plugin.halo.run/v1alpha1
 kind: Plugin
 metadata:
-  name: issues
+  name: PluginIssues
 spec:
   enabled: true
   requires: ">=2.20.0"

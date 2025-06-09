@@ -1,0 +1,71 @@
+<!-- 顶部导航 -->
+<header th:fragment="header(subjectType, title, name, totalIssue, activeTab)" class="piw-bg-slate-100 piw-border piw-border-slate-200">
+    <div class="piw-w-5/6 piw-mx-auto piw-px-3 piw-space-y-2">
+        <div class="piw-flex piw-items-center piw-justify-between piw-mt-3">
+            <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-sm">
+                <span class="piw-text-slate-600">
+                    <th:block th:switch="${subjectType + ''}">
+                        <th:block th:case="'POST'">文章</th:block>
+                        <th:block th:case="'PROJECT'">项目</th:block>
+                        <th:block th:case="'PRODUCT'">产品</th:block>
+                        <th:block th:case="'TOPIC'">话题</th:block>
+                        <th:block th:case="'LEAVE_MESSAGE'">留言</th:block>
+                    </th:block>
+                </span>
+                <span class="piw-text-slate-400">/</span>
+                <p class="piw-text-lg piw-text-slate-800 piw-font-bold" th:text="${title}"></p>
+            </div>
+            <div class="piw-flex piw-items-center">
+                <!-- 明暗切换  -->
+                <div>
+
+                </div>
+                <div class="piw-ml-4 piw-flex piw-items-center">
+                    <button class="piw-text-neutral-600 piw-mr-4 piw-hover:text-primary">
+                        <i class="fa fa-bell-o piw-text-lg"></i>
+                    </button>
+                    <div class="piw-relative">
+                        <button class="piw-flex piw-items-center piw-hover:text-primary">
+                            <img src="https://picsum.photos/id/237/32/32" alt="用户头像" class="piw-w-8 piw-h-8 piw-rounded-full piw-border piw-border-neutral-200">
+                            <i class="fa fa-caret-down piw-ml-1 piw-text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 选项卡导航 -->
+        <div class="piw-flex piw-overflow-x-auto piw-scrollbar-hide">
+            <a th:href="${'/subject/' + name}" class="tab-transfer piw-transition-all piw-duration-300"
+               th:classappend="${#strings.equals(activeTab, 'subject') ? 'tab-transfer-active' : ''}">
+                <th:block th:switch="${subjectType + ''}">
+                    <th:block th:case="'POST'">
+                        <span class="piw-icon-[material-symbols-light--post-add]"></span>
+                        <span class="text-base">文章</span>
+                    </th:block>
+                    <th:block th:case="'PROJECT'">
+                        <span class="piw-icon-[ix--project]"></span>
+                        <span class="text-base">项目</span>
+                    </th:block>
+                    <th:block th:case="'PRODUCT'">
+                        <span class="piw-icon-[carbon--product]"></span>
+                        <span class="text-base">产品</span>
+                    </th:block>
+                    <th:block th:case="'TOPIC'">
+                        <span class="piw-icon-[icon-park-outline--topic-discussion]"></span>
+                        <span class="text-base">话题</span></th:block>
+                    <th:block th:case="'LEAVE_MESSAGE'">
+                        <span class="piw-icon-[ep--message]"></span>
+                        <span class="text-base">留言</span>
+                    </th:block>
+                </th:block>
+            </a>
+            <a th:href="${'/subject/' + name + '/issues'}" class="tab-transfer piw-duration-300"
+               th:classappend="${#strings.equals(activeTab, 'issues') ? 'tab-transfer-active' : ''}">
+                <span class="piw-mr-2 piw-icon-[codicon--issues] piw-font-bold piw-text-xl"></span>
+                <span class="piw-text-neutral-800 -piw-ml-1.5">Issues</span>
+                <span class="piw-bg-neutral-200 piw-text-neutral-700 piw-text-xs piw-rounded-full piw-px-2 piw-py-0.5 piw-ml-1"
+                      th:text="${totalIssue}"></span>
+            </a>
+        </div>
+    </div>
+</header>

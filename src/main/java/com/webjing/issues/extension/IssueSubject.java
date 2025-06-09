@@ -96,4 +96,14 @@ public class IssueSubject extends AbstractExtension {
         LEAVE_MESSAGE
     }
 
+    public static String parseSubjectType(SubjectType type) {
+        return switch (type) {
+            case POST -> "文章";
+            case PROJECT -> "项目";
+            case PRODUCT -> "产品";
+            case TOPIC -> "话题";
+            case LEAVE_MESSAGE -> "留言";
+        };
+    }
+
 }

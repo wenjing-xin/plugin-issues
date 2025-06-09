@@ -170,17 +170,12 @@ public class IssueServiceImpl implements IssueService {
         var issueAnnotations = nullSafeAnnotations(issue);
         var newIssueNotified = issueAnnotations.getOrDefault(Constant.CLOSED_ISSUE_NOTIFIED_ANNO,"false");
         if (Objects.equals(newIssueNotified,"false")) {
-            Set<String> issueWatchers = issue.getSpec().getWatchers();
+            Set<String> issueWatchers = issue.getSpec().getAssignees();
             issueWatchers.add(issue.getSpec().getOwner());
             return client.fetch(IssueSubject.class, issue.getSpec().getSubjectName())
                 .map(issueSubject -> {
-                    String issueSubjectTypeName = switch (issueSubject.getSpec().getSubjectType()) {
-                        case POST -> "文章";
-                        case PROJECT -> "项目";
-                        case PRODUCT -> "产品";
-                        case TOPIC -> "话题";
-                        case LEAVE_MESSAGE -> "留言";
-                    };
+                    String issueSubjectTypeName = IssueSubject.parseSubjectType(issueSubject.getSpec()
+                        .getSubjectType());
                     return IssueSubjectInfo.builder()
                        .subjectDisplayName(issueSubject.getSpec().getDisplayName())
                        .subjectType(issueSubjectTypeName);
@@ -247,7 +242,7 @@ public class IssueServiceImpl implements IssueService {
     public Mono<Void> subscribeClosedIssueReasonForSubject(Issue issue) {
         // 当issue被关闭的时候，为 issue 拥有者和关注者进行通知
         String issueOwner = issue.getSpec().getOwner();
-        Set<String> watchers = issue.getSpec().getWatchers();
+        Set<String> watchers = issue.getSpec().getAssignees();
         // 为创建者订阅关闭 Issue 通知
         subscribeClosedIssueNotify(UserIdentity.of(issueOwner));
         watchers.forEach(participateUser -> subscribeClosedIssueNotify(UserIdentity.of(participateUser)));

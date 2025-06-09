@@ -1,7 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:plugin-moment:fragments/layout :: layoutHtml(content = ~{::content})}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = 'issue',
+content = ~{::content}, version = ${pluginVersion})}">
 <th:block th:fragment="content">
+    <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
+    totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
+    <main class="piw-container piw-mx-auto piw-px-4 piw-py-6">
+        <!-- 选项卡内容 -->
+        <div class="piw-mb-10">
 
-  <h2 class="piw-w-full"> Hello World </h2>
+        </div>
+    </main>
 </th:block>
 </html>

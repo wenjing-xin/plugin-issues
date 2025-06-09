@@ -1,19 +1,16 @@
 package com.webjing.issues.endpoint.uc;
 
-import com.webjing.issues.entity.ListedIssue;
 import com.webjing.issues.entity.ListedIssueComment;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.query.IssueCommentQuery;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueCommentService;
-import com.webjing.issues.service.IssueService;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.AuthorityUtils;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springdoc.core.fn.builders.schema.Builder;
 import org.springdoc.webflux.core.fn.SpringdocRouteBuilder;
 import org.springframework.http.HttpStatus;
