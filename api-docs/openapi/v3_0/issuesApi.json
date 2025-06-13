@@ -5,7 +5,7 @@
     "version" : "2.20.18"
   },
   "servers" : [ {
-    "url" : "http://localhost:38396",
+    "url" : "http://localhost:33327",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -2219,6 +2219,7 @@
             "format" : "date-time"
           },
           "assignees" : {
+            "uniqueItems" : true,
             "type" : "array",
             "items" : {
               "type" : "string"
@@ -2262,15 +2263,6 @@
             "type" : "boolean",
             "description" : "是否置顶",
             "default" : false
-          },
-          "watchers" : {
-            "uniqueItems" : true,
-            "type" : "array",
-            "description" : "关注者列表",
-            "items" : {
-              "type" : "string",
-              "description" : "关注者列表"
-            }
           }
         }
       },
@@ -2395,7 +2387,7 @@
         }
       },
       "IssueSubjectSpec" : {
-        "required" : [ "content", "owner", "subjectType" ],
+        "required" : [ "content", "displayName", "owner", "subjectType", "subjectVisible" ],
         "type" : "object",
         "properties" : {
           "content" : {
@@ -2430,10 +2422,20 @@
               "description" : "参与用户"
             }
           },
+          "subjectIcon" : {
+            "type" : "string",
+            "description" : "主体图标"
+          },
           "subjectType" : {
             "type" : "string",
             "description" : "依托对象类型",
             "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          },
+          "subjectVisible" : {
+            "type" : "string",
+            "description" : "主体可见性",
+            "default" : "PUBLIC",
+            "enum" : [ "PUBLIC", "PRIVATE" ]
           }
         },
         "description" : "依托对象详情"

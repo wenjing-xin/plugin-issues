@@ -40,7 +40,7 @@ export interface IssueSubjectSpec {
      * @type {string}
      * @memberof IssueSubjectSpec
      */
-    'displayName'?: string;
+    'displayName': string;
     /**
      * issue模版
      * @type {Array<string>}
@@ -60,11 +60,23 @@ export interface IssueSubjectSpec {
      */
     'participateUsers'?: Array<string>;
     /**
+     * 主体图标
+     * @type {string}
+     * @memberof IssueSubjectSpec
+     */
+    'subjectIcon'?: string;
+    /**
      * 依托对象类型
      * @type {string}
      * @memberof IssueSubjectSpec
      */
     'subjectType': IssueSubjectSpecSubjectTypeEnum;
+    /**
+     * 主体可见性
+     * @type {string}
+     * @memberof IssueSubjectSpec
+     */
+    'subjectVisible': IssueSubjectSpecSubjectVisibleEnum;
 }
 
 export const IssueSubjectSpecSubjectTypeEnum = {
@@ -76,5 +88,11 @@ export const IssueSubjectSpecSubjectTypeEnum = {
 } as const;
 
 export type IssueSubjectSpecSubjectTypeEnum = typeof IssueSubjectSpecSubjectTypeEnum[keyof typeof IssueSubjectSpecSubjectTypeEnum];
+export const IssueSubjectSpecSubjectVisibleEnum = {
+    Public: 'PUBLIC',
+    Private: 'PRIVATE'
+} as const;
+
+export type IssueSubjectSpecSubjectVisibleEnum = typeof IssueSubjectSpecSubjectVisibleEnum[keyof typeof IssueSubjectSpecSubjectVisibleEnum];
 
 

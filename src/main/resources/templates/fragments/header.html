@@ -1,6 +1,6 @@
 <!-- 顶部导航 -->
-<header th:fragment="header(subjectType, title, name, totalIssue, activeTab)" class="piw-bg-slate-100 piw-border piw-border-slate-200">
-    <div class="piw-w-5/6 piw-mx-auto piw-px-3 piw-space-y-2">
+<header th:fragment="header(subjectType, title, name, totalIssue, activeTab)" class="piw-w-full piw-bg-slate-100 piw-border piw-border-slate-200">
+    <div class="piw-container piw-mx-auto piw-space-y-2">
         <div class="piw-flex piw-items-center piw-justify-between piw-mt-3">
             <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-sm">
                 <span class="piw-text-slate-600">
@@ -12,8 +12,8 @@
                         <th:block th:case="'LEAVE_MESSAGE'">留言</th:block>
                     </th:block>
                 </span>
-                <span class="piw-text-slate-400">/</span>
-                <p class="piw-text-lg piw-text-slate-800 piw-font-bold" th:text="${title}"></p>
+                <span class="piw-text-slate-400 piw-text-base">/</span>
+                <p class="piw-text-slate-800 piw-font-bold" th:text="${title}"></p>
             </div>
             <div class="piw-flex piw-items-center">
                 <!-- 明暗切换  -->
@@ -34,7 +34,7 @@
             </div>
         </div>
         <!-- 选项卡导航 -->
-        <div class="piw-flex piw-overflow-x-auto piw-scrollbar-hide">
+        <div class="piw-flex piw-items-center piw-gap-x-2 piw-overflow-x-auto piw-scrollbar-hide">
             <a th:href="${'/subject/' + name}" class="tab-transfer piw-transition-all piw-duration-300"
                th:classappend="${#strings.equals(activeTab, 'subject') ? 'tab-transfer-active' : ''}">
                 <th:block th:switch="${subjectType + ''}">
@@ -63,7 +63,7 @@
                th:classappend="${#strings.equals(activeTab, 'issues') ? 'tab-transfer-active' : ''}">
                 <span class="piw-mr-2 piw-icon-[codicon--issues] piw-font-bold piw-text-xl"></span>
                 <span class="piw-text-neutral-800 -piw-ml-1.5">Issues</span>
-                <span class="piw-bg-neutral-200 piw-text-neutral-700 piw-text-xs piw-rounded-full piw-px-2 piw-py-0.5 piw-ml-1"
+                <span class="piw-bg-neutral-200 piw-text-neutral-700 piw-text-xs piw-rounded-lg piw-px-2 piw-py-0.5 piw-ml-1"
                       th:text="${totalIssue}"></span>
             </a>
         </div>

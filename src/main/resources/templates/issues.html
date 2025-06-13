@@ -4,10 +4,40 @@ content = ~{::content}, version = ${pluginVersion})}">
 <th:block th:fragment="content">
     <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
     totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
-    <main class="piw-container piw-mx-auto piw-px-4 piw-py-6">
+    <main class="piw-container piw-mx-auto piw-py-6 piw-space-y-4">
         <!-- 选项卡内容 -->
-        <div class="piw-mb-10">
-
+        <div class="piw-w-full piw-inline-flex piw-items-center piw-gap-x-3">
+            <div class="piw-w-full piw-relative piw-inline-flex piw-rounded-md piw-h-8 piw-px-3 piw-px-2 piw-border piw-border-neutral-200">
+                <div class="piw-text-sm piw-text-blue-500 piw-flex piw-items-center piw-absolute piw-left-2 piw-top-1">is:issue</div>
+                <input class="piw-w-full piw-h-full focus:piw-border-indigo-300 piw-transition-all piw-duration-300" />
+            </div>
+            <button class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8">New issue</button>
+        </div>
+        <div class="piw-rounded-md piw-bg-slate-100 piw-border piw-border-slate-200">
+            <div class="piw-w-full piw-px-3 piw-py-1.5 piw-inline-flex piw-justify-between piw-items-center piw-gap-x-3 piw-border-b piw-border-neutral-200">
+                <div class="piw-inline-flex piw-gap-x-3">
+                    <a class="issue-wrapper-stats" th:href="${'#'}">
+                        <span class="piw-text-sm piw-font-bold">处理中</span>
+                        <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.progressIssue}"></span>
+                    </a>
+                    <a class="issue-wrapper-stats" th:href="${'#'}">
+                        <span class="piw-text-sm piw-font-bold">等待中</span>
+                        <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.awaitIssue}"></span>
+                    </a>
+                    <a class="issue-wrapper-stats" th:href="${'#'}">
+                        <span class="piw-text-sm piw-font-bold">已关闭</span>
+                        <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.closedIssue}"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="piw-divide-y piw-divide-slate-200">
+                <th:block th:each="issueItem : ${issueItems.items}">
+                    <th:block th:replace="~{fragments/macro/issue-item::issueItem(issueVO=${issueItem})}" />
+                </th:block>
+            </div>
+        </div>
+        <div class="piw-w-full piw-flex piw-justify-center piw-items-center">
+            <th:block th:replace="~{fragments/pagination::pagination(context = '/subject/' + ${issueSubjectInfo.name} + '/issues/', prevUrl = ${issueItems.prevUrl}, nextUrl = ${issueItems.nextUrl}, totalPages = ${issueItems.totalPages}, page = ${issueItems.page}, hasPrevious = ${issueItems.hasPrevious()}, hasNext = ${issueItems.hasNext()})}" />
         </div>
     </main>
 </th:block>

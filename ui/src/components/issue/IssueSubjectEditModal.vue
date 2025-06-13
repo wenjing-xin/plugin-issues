@@ -57,7 +57,8 @@ const initIssueSubject: IssueSubject = {
     issueTemplates: [],
     owner: "",
     description: "",
-    participateUsers: []
+    participateUsers: [],
+    subjectVisible: "PUBLIC"
   },
 };
 
@@ -242,6 +243,14 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
               fieldSelectorKey: 'metadata.name'
             }"
             help="创建者和参与者将会在有新issue时收到通知"
+          />
+          <FormKit
+            type="select"
+            v-model="formState.spec.subjectVisible"
+            clearable
+            validation="required"
+            label="可见性"
+            :options="[{label: '公共', value: 'PUBLIC'},{label: '私有', value: 'PRIVATE'}]"
           />
         </FormKit>
         <div

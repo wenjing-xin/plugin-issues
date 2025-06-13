@@ -51,13 +51,13 @@ public class IssueFinderImpl implements IssueFinder {
         listOptions.setFieldSelector(
             FieldSelector.of(FIXED_QUERY));
         return client.listAll(Issue.class, listOptions, defaultSort())
-            .concatMap(this::getIssueMessageVo);
+            .concatMap(this::getIssueVo);
     }
 
     @Override
     public Mono<ListResult<IssueVO>> list(Integer page, Integer size) {
         var pageRequest = PageRequestImpl.of(pageNullSafe(page), sizeNullSafe(size), defaultSort());
-        return pageIssueMessage(null, pageRequest);
+        return pageIssues(null, pageRequest);
     }
 
     @Override
@@ -66,14 +66,14 @@ public class IssueFinderImpl implements IssueFinder {
         var query = and(FIXED_QUERY, equal("spec.labels", label));
         listOptions.setFieldSelector(FieldSelector.of(query));
         return client.listAll(Issue.class, listOptions, defaultSort())
-            .concatMap(this::getIssueMessageVo);
+            .concatMap(this::getIssueVo);
     }
 
     @Override
     public Mono<IssueVO> get(String issueName) {
         return client.get(Issue.class, issueName)
             .filter(FIXED_PREDICATE)
-            .flatMap(this::getIssueMessageVo);
+            .flatMap(this::getIssueVo);
     }
 
     @Override
@@ -112,12 +112,12 @@ public class IssueFinderImpl implements IssueFinder {
         }
         var pageRequest =
             PageRequestImpl.of(pageNullSafe(pageNum), sizeNullSafe(pageSize), defaultSort());
-        return pageIssueMessage(FieldSelector.of(query), pageRequest);
+        return pageIssues(FieldSelector.of(query), pageRequest);
     }
 
     record IssueMessageLabelPair(String labelName, String issueMessageName){}
 
-    private Mono<ListResult<IssueVO>> pageIssueMessage(FieldSelector fieldSelector, PageRequest page) {
+    private Mono<ListResult<IssueVO>> pageIssues(FieldSelector fieldSelector, PageRequest page) {
         var listOptions = new ListOptions();
         var query = FIXED_QUERY;
         if (fieldSelector != null) {
@@ -126,7 +126,7 @@ public class IssueFinderImpl implements IssueFinder {
         listOptions.setFieldSelector(FieldSelector.of(query));
         return client.listBy(Issue.class, listOptions, page)
             .flatMap(list -> Flux.fromStream(list.get())
-                .concatMap(this::getIssueMessageVo)
+                .concatMap(this::getIssueVo)
                 .collectList()
                 .map(momentVos -> new ListResult<>(list.getPage(), list.getSize(),
                     list.getTotal(), momentVos)
@@ -141,7 +141,7 @@ public class IssueFinderImpl implements IssueFinder {
             .and(ExtensionUtil.defaultSort());
     }
 
-    private Mono<IssueVO> getIssueMessageVo(@Nonnull Issue issue) {
+    private Mono<IssueVO> getIssueVo(@Nonnull Issue issue) {
         IssueVO issueMessageVo = IssueVO.from(issue);
         return Mono.just(issueMessageVo)
             .flatMap(imv -> fetchIssueStats(issueMessageVo)

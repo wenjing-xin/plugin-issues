@@ -1,1 +1,0 @@
-export const MOMENT_POSITION = 'momentPosition';

@@ -31,7 +31,10 @@ public class IssueSubject extends AbstractExtension {
     @Data
     public static class IssueSubjectSpec {
 
-        @Schema(description = "依托对象显示名称")
+        @Schema(description = "主体图标")
+        private String subjectIcon;
+
+        @Schema(description = "依托对象显示名称", requiredMode = REQUIRED)
         private String displayName;
 
         @Schema(description = "依托对象类型", requiredMode = REQUIRED)
@@ -51,6 +54,9 @@ public class IssueSubject extends AbstractExtension {
 
         @Schema(description = "参与用户")
         private List<String> participateUsers;
+
+        @Schema(description = "主体可见性", requiredMode = REQUIRED, defaultValue = "PUBLIC")
+        private SubjectVisible subjectVisible;
     }
 
     /**
@@ -68,6 +74,17 @@ public class IssueSubject extends AbstractExtension {
         @Schema(description = "依托的原内容", requiredMode = REQUIRED)
         private  String rawContent;
 
+    }
+
+    public enum SubjectVisible {
+        /**
+         * 公开
+         */
+        PUBLIC,
+        /**
+         * 私密
+         */
+        PRIVATE
     }
 
     /**

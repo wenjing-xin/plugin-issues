@@ -95,11 +95,5 @@ export interface IssueSpec {
      * @memberof IssueSpec
      */
     'top': boolean;
-    /**
-     * 关注者列表
-     * @type {Array<string>}
-     * @memberof IssueSpec
-     */
-    'watchers'?: Array<string>;
 }
 
