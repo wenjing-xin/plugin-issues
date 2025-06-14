@@ -84,10 +84,11 @@ export const ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiAxiosParamCr
          * @param {string} [keyword] IssueMessages filtered by keyword.
          * @param {string} [owner] IssueTemplate owner.
          * @param {ListIssueSubjectsSubjectTypeEnum} [subjectType] subject type.
+         * @param {ListIssueSubjectsSubjectVisibleEnum} [subjectVisible] subject visible.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listIssueSubjects: async (page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, subjectType?: ListIssueSubjectsSubjectTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listIssueSubjects: async (page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, subjectType?: ListIssueSubjectsSubjectTypeEnum, subjectVisible?: ListIssueSubjectsSubjectVisibleEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/apis/console.api.issueSubject.webjing.com/v1alpha1/issuesubjects`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -140,6 +141,10 @@ export const ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiAxiosParamCr
                 localVarQueryParameter['subjectType'] = subjectType;
             }
 
+            if (subjectVisible !== undefined) {
+                localVarQueryParameter['subjectVisible'] = subjectVisible;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -183,11 +188,12 @@ export const ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFp = functio
          * @param {string} [keyword] IssueMessages filtered by keyword.
          * @param {string} [owner] IssueTemplate owner.
          * @param {ListIssueSubjectsSubjectTypeEnum} [subjectType] subject type.
+         * @param {ListIssueSubjectsSubjectVisibleEnum} [subjectVisible] subject visible.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listIssueSubjects(page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, subjectType?: ListIssueSubjectsSubjectTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueSubjectList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueSubjects(page, size, labelSelector, fieldSelector, sort, keyword, owner, subjectType, options);
+        async listIssueSubjects(page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, subjectType?: ListIssueSubjectsSubjectTypeEnum, subjectVisible?: ListIssueSubjectsSubjectVisibleEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueSubjectList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueSubjects(page, size, labelSelector, fieldSelector, sort, keyword, owner, subjectType, subjectVisible, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi.listIssueSubjects']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -218,7 +224,7 @@ export const ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFactory = fu
          * @throws {RequiredError}
          */
         listIssueSubjects(requestParameters: ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssueSubjectsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<ListedIssueSubjectList> {
-            return localVarFp.listIssueSubjects(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.subjectType, options).then((request) => request(axios, basePath));
+            return localVarFp.listIssueSubjects(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.subjectType, requestParameters.subjectVisible, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -298,6 +304,13 @@ export interface ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssu
      * @memberof ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssueSubjects
      */
     readonly subjectType?: ListIssueSubjectsSubjectTypeEnum
+
+    /**
+     * subject visible.
+     * @type {'PUBLIC' | 'PRIVATE'}
+     * @memberof ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssueSubjects
+     */
+    readonly subjectVisible?: ListIssueSubjectsSubjectVisibleEnum
 }
 
 /**
@@ -326,7 +339,7 @@ export class ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi extends Bas
      * @memberof ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi
      */
     public listIssueSubjects(requestParameters: ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssueSubjectsRequest = {}, options?: RawAxiosRequestConfig) {
-        return ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFp(this.configuration).listIssueSubjects(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.subjectType, options).then((request) => request(this.axios, this.basePath));
+        return ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFp(this.configuration).listIssueSubjects(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.subjectType, requestParameters.subjectVisible, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -341,3 +354,11 @@ export const ListIssueSubjectsSubjectTypeEnum = {
     LeaveMessage: 'LEAVE_MESSAGE'
 } as const;
 export type ListIssueSubjectsSubjectTypeEnum = typeof ListIssueSubjectsSubjectTypeEnum[keyof typeof ListIssueSubjectsSubjectTypeEnum];
+/**
+ * @export
+ */
+export const ListIssueSubjectsSubjectVisibleEnum = {
+    Public: 'PUBLIC',
+    Private: 'PRIVATE'
+} as const;
+export type ListIssueSubjectsSubjectVisibleEnum = typeof ListIssueSubjectsSubjectVisibleEnum[keyof typeof ListIssueSubjectsSubjectVisibleEnum];

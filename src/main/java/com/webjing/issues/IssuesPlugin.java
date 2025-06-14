@@ -59,6 +59,12 @@ public class IssuesPlugin extends BasePlugin {
                 )
             );
             indexSpecs.add(new IndexSpec()
+                .setName("spec.subjectVisible")
+                .setIndexFunc(simpleAttribute(IssueSubject.class,
+                    issueSubject -> issueSubject.getSpec().getSubjectVisible().name())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
                 .setName("spec.owner")
                 .setIndexFunc(simpleAttribute(IssueSubject.class,
                     issueSubject -> issueSubject.getSpec().getOwner())

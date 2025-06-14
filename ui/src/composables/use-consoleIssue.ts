@@ -2,9 +2,9 @@ import { ref, type Ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { consoleIssueApiClient, consoleIssueSubjectApiClient } from "@/api";
 import type {
-  IssueSubjectSpecSubjectTypeEnum,
+  IssueSubjectSpecSubjectTypeEnum, IssueSubjectSpecSubjectVisibleEnum,
   ListedIssue,
-  ListedIssueSubject,
+  ListedIssueSubject
 } from "@/api/generated";
 export function useIssueListFetch(
   page: Ref<number>,
@@ -81,6 +81,7 @@ export function useIssueSubjectListFetch(
   selectedSort?: Ref<string | undefined>,
   ownerName?: Ref<string | undefined>,
   selectedSubjectType?: Ref<IssueSubjectSpecSubjectTypeEnum | undefined>,
+  selectedSubjectVisible?: Ref<IssueSubjectSpecSubjectVisibleEnum | undefined>
 ) {
   const total = ref(0);
   const {
@@ -97,6 +98,7 @@ export function useIssueSubjectListFetch(
       selectedSort,
       ownerName,
       selectedSubjectType,
+      selectedSubjectVisible
     ],
     queryFn: async () => {
       const { data } =
@@ -107,6 +109,7 @@ export function useIssueSubjectListFetch(
           keyword: keyword?.value,
           owner: ownerName?.value,
           subjectType: selectedSubjectType?.value,
+          subjectVisible: selectedSubjectVisible?.value
         });
       total.value = data.total;
       return data.items;

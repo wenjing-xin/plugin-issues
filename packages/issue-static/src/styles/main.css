@@ -95,3 +95,7 @@ ul {
     @apply piw-block piw-size-7 piw-inline-flex piw-items-center piw-rounded-md piw-transition-bg piw-duration-300 piw-border piw-border-neutral-200
     piw-bg-white dark:piw-bg-neutral-800 hover:piw-bg-slate-300/70 hover:piw-text-neutral-700
 }
+
+.issue-detail-state{
+    @apply piw-px-3 piw-py-1 piw-rounded-3xl piw-text-sm
+}

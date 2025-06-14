@@ -2,7 +2,9 @@
     <div class="piw-w-full piw-bg-white piw-px-4 piw-py-3 piw-flex piw-justify-between piw-items-center last:piw-rounded-b-md">
         <div class="piw-space-y-2">
             <div class="piw-flex piw-items-center piw-gap-x-3">
-                <p class="piw-text-base piw-font-medium piw-text-neutral-800" th:text="${issueVO.spec.title}"></p>
+                <a class="piw-text-base piw-font-medium piw-text-neutral-800"
+                   th:href="${'/subject/' + issueVO.spec.subjectName + '/issues/' + issueVO.metadata.name}"
+                   th:text="${issueVO.spec.title}"></a>
                 <th:block th:each="label:${issueVO.spec.labels}">
                     <span class="piw-px-2 piw-py-0.5 piw-rounded-xl piw-text-xs piw-font-medium piw-border piw-border-green-100"
                             th:text="${label}"></span>

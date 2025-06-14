@@ -58,6 +58,12 @@ public class IssueSubjectQuery extends SortableRequest {
         return StringUtils.isBlank(subjectType) ? null : subjectType;
     }
 
+    @Schema(description = "subject visible.")
+    public String getSubjectVisible() {
+        String subjectVisible = queryParams.getFirst("subjectVisible");
+        return StringUtils.isBlank(subjectVisible) ? null : subjectVisible;
+    }
+
     /**
      * Build {@link ListOptions} from query params.
      *
@@ -79,6 +85,9 @@ public class IssueSubjectQuery extends SortableRequest {
         }
         if (StringUtils.isNotBlank(getSubjectType())) {
             query = and(query, equal("spec.subjectType", getSubjectType()));
+        }
+        if (StringUtils.isNotBlank(getSubjectVisible())) {
+            query = and(query, equal("spec.subjectVisible", getSubjectVisible()));
         }
         listOptions.setFieldSelector(FieldSelector.of(query));
         return listOptions;
@@ -112,6 +121,12 @@ public class IssueSubjectQuery extends SortableRequest {
                 .name("subjectType")
                 .description("subject type.")
                 .implementation(IssueSubject.SubjectType.class)
+                .required(false))
+            .parameter(parameterBuilder()
+                .in(ParameterIn.QUERY)
+                .name("subjectVisible")
+                .description("subject visible.")
+                .implementation(IssueSubject.SubjectVisible.class)
                 .required(false))
         ;
     }

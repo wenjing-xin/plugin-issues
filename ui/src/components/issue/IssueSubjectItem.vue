@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import MaterialSymbolsTagRounded from '~icons/material-symbols/tag-rounded';
-import MdiProgressClock from '~icons/mdi/progress-clock';
-import TdesignCollection from '~icons/tdesign/collection';
-import IxProject from '~icons/ix/project';
-import CarbonProduct from '~icons/carbon/product';
-import IconParkOutlineTopicDiscussion from '~icons/icon-park-outline/topic-discussion';
-import EpMessage from '~icons/ep/message';
+import MaterialSymbolsTagRounded from "~icons/material-symbols/tag-rounded";
+import MdiProgressClock from "~icons/mdi/progress-clock";
+import TdesignCollection from "~icons/tdesign/collection";
+import IxProject from "~icons/ix/project";
+import CarbonProduct from "~icons/carbon/product";
+import IconParkOutlineTopicDiscussion from "~icons/icon-park-outline/topic-discussion";
+import EpMessage from "~icons/ep/message";
+import SolarLockOutline from "~icons/solar/lock-outline";
+import MaterialSymbolsLightPublic from "~icons/material-symbols-light/public";
+
 import {
   type FunctionalComponent,
   inject,
@@ -19,15 +22,24 @@ import type {
   IssueSubjectSpecSubjectTypeEnum,
   ListedIssueSubject,
 } from "@/api/generated";
-import { Dialog, Toast, VAvatarGroup, VAvatar, VStatusDot } from "@halo-dev/components";
+import {
+  Dialog,
+  Toast,
+  VAvatarGroup,
+  VAvatar,
+  VStatusDot,
+  VSpace,
+  VDropdown,
+  VDropdownItem,
+  VTag,
+  IconExternalLinkLine,
+  VDropdownDivider,
+} from "@halo-dev/components";
 import { issueSubjectApiClient } from "@/api";
 import { useQueryClient } from "@tanstack/vue-query";
-import { useRouter } from "vue-router";
 const queryClient = useQueryClient();
-import { VDropdown, VDropdownItem, VTag } from "@halo-dev/components";
 import BiThreeDots from "~icons/bi/three-dots";
 
-const router = useRouter();
 const props = defineProps<{
   listedIssueSubject: ListedIssueSubject;
   isSelected: boolean;
@@ -67,7 +79,14 @@ const handleDelete = (issueSubject: ListedIssueSubject) => {
     },
   });
 };
-
+const copySubjectLink = (subjectName:string) => {
+  navigator.clipboard.writeText('/subject/' + subjectName).then(() => {
+    Toast.success("复制成功");
+  }).catch(error=> {
+    Toast.error("复制失败：" + error);
+  })
+  
+};
 const handlerIssueSubjectType = (
   subjectType: IssueSubjectSpecSubjectTypeEnum,
 ): { name: string; icon: FunctionalComponent<SVGAttributes> } => {
@@ -81,14 +100,8 @@ const handlerIssueSubjectType = (
     case "TOPIC":
       return { name: "话题", icon: IconParkOutlineTopicDiscussion };
     case "LEAVE_MESSAGE":
-        return { name: "留言", icon: EpMessage };
+      return { name: "留言", icon: EpMessage };
   }
-};
-const goIssuePage = (name:string) => {
-  router.push({
-    name: 'Issue',
-    query: { subjectName: name },
-  });
 };
 </script>
 <template>
@@ -97,28 +110,71 @@ const goIssuePage = (name:string) => {
     :class="{ 'border border-neutral-300': isSelected }"
   >
     <div class="flex justify-between items-center">
-      <div class="w-full flex items-center gap-x-2">
-        <p
-          class="text-sm font-bold text-neutral-700 hover:cursor-pointer hover:text-neutral-500 transition-all duration-300"
-          @click="goIssuePage(listedIssueSubject.issueSubject.metadata.name)"
-        >
-          {{ listedIssueSubject.issueSubject.spec.displayName }}
-        </p>
-        <VTag theme="default" class="cursor-auto">
-          {{
-            handlerIssueSubjectType(
-              listedIssueSubject.issueSubject.spec.subjectType,
-            ).name
-          }}
-          <template #leftIcon
-            ><component
-              :is="
-                handlerIssueSubjectType(
-                  listedIssueSubject.issueSubject.spec.subjectType,
-                ).icon
-              "
-          /></template>
-        </VTag>
+      <div class="w-full flex items-center">
+        <VSpace>
+          <RouterLink
+            :to="{
+              name: 'Issue',
+              query: {
+                subjectName: listedIssueSubject.issueSubject.metadata.name,
+              },
+            }"
+            class="flex items-center"
+          >
+            <p
+              class="text-sm font-bold text-neutral-700 hover:cursor-pointer hover:text-neutral-500 transition-all duration-300"
+            >
+              {{ listedIssueSubject.issueSubject.spec.displayName }}
+            </p>
+          </RouterLink>
+          <a
+            v-tooltip="'点击前往主题端访问'"
+            target="_blank"
+            :href="'/subject/' + listedIssueSubject.issueSubject.metadata.name"
+            class="text-gray-600 transition-all hover:text-gray-900 group-hover:inline-block"
+          >
+            <IconExternalLinkLine class="h-3.5 w-3.5" />
+          </a>
+          <VTag theme="default" class="cursor-auto">
+            {{
+              handlerIssueSubjectType(
+                listedIssueSubject.issueSubject.spec.subjectType,
+              ).name
+            }}
+            <template #leftIcon
+              ><component
+                :is="
+                  handlerIssueSubjectType(
+                    listedIssueSubject.issueSubject.spec.subjectType,
+                  ).icon
+                "
+            /></template>
+          </VTag>
+          <VTag
+            v-if="
+              listedIssueSubject.issueSubject.spec.subjectVisible == 'PRIVATE'
+            "
+            theme="default"
+            class="cursor-auto"
+          >
+            <template #leftIcon>
+              <SolarLockOutline />
+            </template>
+            私密
+          </VTag>
+          <VTag
+            v-if="
+              listedIssueSubject.issueSubject.spec.subjectVisible == 'PUBLIC'
+            "
+            theme="default"
+            class="cursor-auto"
+          >
+            <template #leftIcon>
+              <MaterialSymbolsLightPublic />
+            </template>
+            公开
+          </VTag>
+        </VSpace>
       </div>
       <HasPermission :permissions="['plugin:issueSubject:manage']">
         <input
@@ -140,39 +196,63 @@ const goIssuePage = (name:string) => {
     </div>
     <!--  统计  -->
     <div class="flex flex-wrap gap-2 py-1">
-      <div class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+      <div
+        class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+      >
         <TdesignCollection class="mr-1.5" />
         <span class="mr-1 text-sm">Total</span>
-        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.totalIssue}}</span>
+        <span class="text-sm">{{
+          listedIssueSubject.issueSubjectStats.totalIssue
+        }}</span>
       </div>
-      <div class="bg-blue-100 text-blue-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+      <div
+        class="bg-blue-100 text-blue-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+      >
         <MdiProgressClock class="mr-1.5" />
         <span class="mr-1 text-sm">进行中</span>
-        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.progressIssue}}</span>
+        <span class="text-sm">{{
+          listedIssueSubject.issueSubjectStats.progressIssue
+        }}</span>
       </div>
-      <div class="bg-yellow-100 text-yellow-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+      <div
+        class="bg-yellow-100 text-yellow-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+      >
         <VStatusDot state="warning" animate>
           <template #text>
             <span class="mr-1 text-sm">待处理</span>
-            <span class="text-sm">{{listedIssueSubject.issueSubjectStats.awaitIssue}}</span>
+            <span class="text-sm">{{
+              listedIssueSubject.issueSubjectStats.awaitIssue
+            }}</span>
           </template>
         </VStatusDot>
       </div>
-      <div class="bg-green-100 text-green-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+      <div
+        class="bg-green-100 text-green-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+      >
         <VStatusDot state="success">
           <template #text>
             <span class="mr-1 text-sm">已关闭</span>
-            <span class="text-sm">{{listedIssueSubject.issueSubjectStats.closedIssue}}</span>
+            <span class="text-sm">{{
+              listedIssueSubject.issueSubjectStats.closedIssue
+            }}</span>
           </template>
         </VStatusDot>
       </div>
-      <div class="bg-purple-100 text-purple-800 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+      <div
+        class="bg-purple-100 text-purple-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+      >
         <span class="mr-1 text-sm">待审核</span>
-        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.awaitApproved}}</span>
+        <span class="text-sm">{{
+          listedIssueSubject.issueSubjectStats.awaitApproved
+        }}</span>
       </div>
-      <div class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center">
+      <div
+        class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+      >
         <MaterialSymbolsTagRounded class="mr-1.5" />
-        <span class="text-sm">{{listedIssueSubject.issueSubjectStats.labels}}</span>
+        <span class="text-sm">{{
+          listedIssueSubject.issueSubjectStats.labels
+        }}</span>
         <span class="ml-1 text-sm">个标签</span>
       </div>
     </div>
@@ -212,6 +292,11 @@ const goIssuePage = (name:string) => {
             >
             <VDropdownItem @click="handleDelete(listedIssueSubject)"
               >删除</VDropdownItem
+            >
+            <VDropdownDivider />
+            <VDropdownItem
+              @click="copySubjectLink(listedIssueSubject.issueSubject.metadata.name)"
+              >复制链接</VDropdownItem
             >
           </template>
         </VDropdown>

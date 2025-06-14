@@ -142,9 +142,9 @@ public class IssueFinderImpl implements IssueFinder {
     }
 
     private Mono<IssueVO> getIssueVo(@Nonnull Issue issue) {
-        IssueVO issueMessageVo = IssueVO.from(issue);
-        return Mono.just(issueMessageVo)
-            .flatMap(imv -> fetchIssueStats(issueMessageVo)
+        IssueVO issueVo = IssueVO.from(issue);
+        return Mono.just(issueVo)
+            .flatMap(imv -> fetchIssueStats(issueVo)
                 .doOnNext(imv::setIssueStats)
                 .thenReturn(imv)
             )
@@ -155,7 +155,7 @@ public class IssueFinderImpl implements IssueFinder {
                     .doOnNext(imv::setContributorVo)
                     .thenReturn(imv);
             })
-            .defaultIfEmpty(issueMessageVo);
+            .defaultIfEmpty(issueVo);
     }
 
     private Mono<IssueStats> fetchIssueStats(IssueVO issueMessageVo) {

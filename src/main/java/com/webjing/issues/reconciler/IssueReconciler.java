@@ -75,7 +75,7 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
             }
             if(issue.getSpec().getApproved() && issue.getSpec().getReleaseTime() != null){
                 //设置发布的issue链接
-                issue.getStatus().setPermalink("/issues/" + issue.getMetadata().getName());
+                issue.getStatus().setPermalink("/subject/" + issue.getSpec().getSubjectName() + "/issues/" + issue.getMetadata().getName());
             }
             client.update(issue);
         });

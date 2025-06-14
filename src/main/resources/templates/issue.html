@@ -1,6 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:plugin-moment:fragments/layout :: layoutHtml(title = 'issue详情',content = ~{::content})}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = ${issueVO.spec.title},
+content = ~{::content}, version = ${pluginVersion})}">
 <th:block th:fragment="content">
-    <h2> issue detail </h2>
+    <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
+    totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
+    <main class="piw-container piw-mx-auto piw-py-6 piw-space-y-4">
+        <div class="piw-w-full piw-flex piw-items-center piw-flex-wrap piw-justify-between piw-gap-x-3 piw-pb-3 piw-border-b piw-border-slate-300">
+            <div class="piw-inline-flex piw-items-center piw-flex-wrap piw-gap-x-1.5">
+                <p class="piw-text-xl piw-tracking-wider piw-text-sm piw-font-bold piw-text-neutral-700" th:text="${issueVO.spec.title}"></p>
+                <th:block th:switch="${issueVO.status.state + ''}">
+                    <th:block th:case="'AWAIT'">
+                        <p class="issue-detail-state piw-bg-indigo-600 piw-text-white">等待中</p>
+                    </th:block>
+                    <th:block th:case="'PROGRESS'">
+                        <p class="issue-detail-state piw-accent-green-700 piw-text-white">处理中</p>
+                    </th:block>
+                    <th:block th:case="'CLOSED'">
+                        <p class="issue-detail-state piw-accent-slate-400 piw-text-white">已关闭</p>
+                    </th:block>
+                </th:block>
+            </div>
+            <button class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8">New issue</button>
+        </div>
+
+    </main>
 </th:block>
 </html>

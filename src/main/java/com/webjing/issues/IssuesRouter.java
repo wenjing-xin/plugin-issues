@@ -47,30 +47,24 @@ public class IssuesRouter {
 
     @Bean
     RouterFunction<ServerResponse> issueRouterFunction() {
-        return route(GET("/issues/{name}"), this::issueDetailRouter)
-            .andRoute(GET("/subject/{subjectName}"), this::handlerIssueSubjectFunction)
-            .andRoute(GET("/subject/{subjectName}/issues").or(GET("/subject/{subjectName}/issues/page/{page:\\d+}")),
-                this::handlerIssuePageFunction);
+        return route(GET("/subject/{subjectName}"), this::handlerIssueSubjectFunction)
+            .andRoute(GET("/subject/{subjectName}/issues").or(GET("/subject/{subjectName}/issues/page/{page:\\d+}")), this::handlerIssuePageFunction)
+            .andRoute(GET("/subject/{subjectName}/issues/{issueName}"), this::issueDetailRouter);
     }
 
     private Mono<ServerResponse> issueDetailRouter(ServerRequest request) {
-        final var name = request.pathVariable("name");
-        return null;
-        // return getPasteContentVo(name)
-        //     .doOnNext(pasteShareContent -> {
-        //         if(!pasteShareContent.getSpec().getPublish()){
-        //             throw new NotFoundException("PasteShareContent not publish.");
-        //         }
-        //     })
-        //     .switchIfEmpty(
-        //         Mono.error(() -> new NotFoundException("PasteShareContent not found.")))
-        //     .flatMap(pasteShareContent -> {
-        //         Map<String, Object> model = new HashMap<>(7);
-        //         return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),
-        //                 "pasteShare")
-        //             .flatMap(templateName -> ServerResponse.ok()
-        //                 .render(templateName, setTemplateDatas(model, pasteShareContent)));
-        //     });
+        final var issueName = request.pathVariable("issueName");
+        final var subjectName = request.pathVariable("subjectName");
+        return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"issue")
+            .flatMap(templateName -> {
+                Map<String, Object> model = new HashMap<>(4);
+                model.put("title",  getIssuesTitle());
+                model.put("issueVO", issueFinder.get(issueName));
+                model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
+                model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
+                buildCommonVariables(model);
+                return ServerResponse.ok().render(templateName, model);
+            });
     }
 
     private Mono<ServerResponse> handlerIssueSubjectFunction(ServerRequest request) {
