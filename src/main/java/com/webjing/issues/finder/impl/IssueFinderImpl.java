@@ -1,10 +1,13 @@
 package com.webjing.issues.finder.impl;
 
 import com.webjing.issues.entity.IssueStats;
+import com.webjing.issues.entity.ListedIssue;
+import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.finder.IssueFinder;
 import com.webjing.issues.vo.ContributorVO;
+import com.webjing.issues.vo.IssueCommentVO;
 import com.webjing.issues.vo.IssueLabelVO;
 import com.webjing.issues.vo.IssueVO;
 import com.webjing.issues.entity.Stats;
@@ -13,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.Assert;
 import org.springframework.web.util.UriUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static run.halo.app.extension.index.query.QueryFactory.*;
 
 /**
@@ -115,6 +118,17 @@ public class IssueFinderImpl implements IssueFinder {
         return pageIssues(FieldSelector.of(query), pageRequest);
     }
 
+    @Override
+    public Flux<IssueCommentVO> listAllIssueComments(String issueName) {
+        ListOptions listOptions = ListOptions.builder().fieldQuery(and(
+                equal("spec.approved", "true"),
+                equal("spec.issueName", issueName)
+            ))
+            .build();
+        return client.listAll(IssueComment.class, listOptions, Sort.by("metadata.creationTimestamp").ascending())
+            .flatMap(this::getIssueCommentVo);
+    }
+
     record IssueMessageLabelPair(String labelName, String issueMessageName){}
 
     private Mono<ListResult<IssueVO>> pageIssues(FieldSelector fieldSelector, PageRequest page) {
@@ -156,6 +170,34 @@ public class IssueFinderImpl implements IssueFinder {
                     .thenReturn(imv);
             })
             .defaultIfEmpty(issueVo);
+    }
+
+    private Mono<IssueCommentVO> getIssueCommentVo(@Nonnull IssueComment issueComment) {
+        IssueCommentVO issueCommentVo = IssueCommentVO.from(issueComment);
+        return Mono.just(issueCommentVo)
+            .flatMap(imv -> fetchIssueCommentStats(issueComment)
+                .doOnNext(imv::setStats)
+                .thenReturn(imv)
+            )
+            .flatMap(imv -> setOwner(issueComment.getSpec().getOwner(), imv));
+    }
+
+    private Mono<Stats> fetchIssueCommentStats(IssueComment issueComment) {
+        Assert.notNull(issueComment, "The issue must not be null.");
+        String name = issueComment.getMetadata().getName();
+        return client.fetch(Counter.class, MeterUtils.nameOf(IssueComment.class, name))
+            .map(counter -> Stats.builder()
+                .upvote(counter.getUpvote())
+                .downvote(counter.getDownvote())
+                .build())
+            .defaultIfEmpty(Stats.empty());
+    }
+
+    private Mono<IssueCommentVO> setOwner(String owner, IssueCommentVO issueCommentVO) {
+        return client.fetch(User.class, owner)
+            .map(user -> ContributorVO.from(user))
+            .doOnNext(issueCommentVO::setContributorVo)
+            .thenReturn(issueCommentVO);
     }
 
     private Mono<IssueStats> fetchIssueStats(IssueVO issueMessageVo) {

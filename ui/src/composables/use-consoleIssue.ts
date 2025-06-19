@@ -1,10 +1,16 @@
-import { ref, type Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
-import { consoleIssueApiClient, consoleIssueSubjectApiClient } from "@/api";
+import {
+  consoleIssueApiClient,
+  consoleIssueSubjectApiClient,
+  consoleIssueCommentApiClient,
+} from "@/api";
 import type {
-  IssueSubjectSpecSubjectTypeEnum, IssueSubjectSpecSubjectVisibleEnum,
+  IssueSubjectSpecSubjectTypeEnum,
+  IssueSubjectSpecSubjectVisibleEnum,
   ListedIssue,
-  ListedIssueSubject
+  ListedIssueSubject,
+  ListedIssueComment,
 } from "@/api/generated";
 export function useIssueListFetch(
   page: Ref<number>,
@@ -81,7 +87,7 @@ export function useIssueSubjectListFetch(
   selectedSort?: Ref<string | undefined>,
   ownerName?: Ref<string | undefined>,
   selectedSubjectType?: Ref<IssueSubjectSpecSubjectTypeEnum | undefined>,
-  selectedSubjectVisible?: Ref<IssueSubjectSpecSubjectVisibleEnum | undefined>
+  selectedSubjectVisible?: Ref<IssueSubjectSpecSubjectVisibleEnum | undefined>,
 ) {
   const total = ref(0);
   const {
@@ -98,7 +104,7 @@ export function useIssueSubjectListFetch(
       selectedSort,
       ownerName,
       selectedSubjectType,
-      selectedSubjectVisible
+      selectedSubjectVisible,
     ],
     queryFn: async () => {
       const { data } =
@@ -109,7 +115,7 @@ export function useIssueSubjectListFetch(
           keyword: keyword?.value,
           owner: ownerName?.value,
           subjectType: selectedSubjectType?.value,
-          subjectVisible: selectedSubjectVisible?.value
+          subjectVisible: selectedSubjectVisible?.value,
         });
       total.value = data.total;
       return data.items;
@@ -129,5 +135,40 @@ export function useIssueSubjectListFetch(
     isFetching,
     refetch,
     total,
+  };
+}
+
+export function useIssueCommentListFetch(
+  issueName: string,
+  showComments: Ref<boolean>
+) {
+  const {
+    data: issueComments,
+    isLoading,
+    refetch,
+  } = useQuery<ListedIssueComment[]>({
+    queryKey: ["issueComments", issueName, showComments],
+    queryFn: async () => {
+      const { data } =
+        await consoleIssueCommentApiClient.issueComment.listIssuesComment({
+          page: 0,
+          size: 0,
+          issueName: issueName,
+        });
+      return data.items;
+    },
+    refetchInterval(data) {
+      const hasDeletingComments = data?.some(
+        (issueComment) =>
+          !!issueComment.issueComment.metadata.deletionTimestamp,
+      );
+      return hasDeletingComments ? 1000 : false;
+    },
+    enabled: computed(() => showComments.value),
+  });
+  return {
+    issueComments,
+    isLoading,
+    refetch,
   };
 }

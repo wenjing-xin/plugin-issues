@@ -1,7 +1,10 @@
 package com.webjing.issues.endpoint;
 
+import com.webjing.issues.entity.ListedIssueComment;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueComment;
+import com.webjing.issues.query.IssueCommentQuery;
+import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueCommentService;
 import com.webjing.issues.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.endpoint.CustomEndpoint;
 import run.halo.app.extension.GroupVersion;
+import run.halo.app.extension.ListResult;
 import java.time.Instant;
 
 import static org.springdoc.core.fn.builders.apiresponse.Builder.responseBuilder;
@@ -42,6 +46,15 @@ public class ConsoleIssueCommentEndpoint implements CustomEndpoint {
     @Override
     public RouterFunction<ServerResponse> endpoint() {
         return SpringdocRouteBuilder.route()
+            .GET("issuecomments", this::listIssueComment, builder -> {
+                builder.operationId("ListIssuesComment")
+                    .description("List current issues comment.")
+                    .tag(tag)
+                    .response(responseBuilder()
+                        .implementation(ListResult.generateGenericClass(ListedIssueComment.class))
+                    );
+                IssueCommentQuery.buildParameters(builder);
+            })
             .POST("issuecomments", this::createIssueComment,
                 builder -> builder.operationId("CreateIssueComment")
                     .description("Create a IssueComment.")
@@ -51,12 +64,17 @@ public class ConsoleIssueCommentEndpoint implements CustomEndpoint {
                         .content(contentBuilder()
                             .mediaType(MediaType.APPLICATION_JSON_VALUE)
                             .schema(Builder.schemaBuilder()
-                                .implementation(Issue.class))
+                                .implementation(IssueComment.class))
                         ))
                     .response(responseBuilder()
-                        .implementation(Issue.class))
+                        .implementation(IssueComment.class))
             )
             .build();
+    }
+
+    private Mono<ServerResponse> listIssueComment(ServerRequest request) {
+        return issueCommentService.listIssueComment(new IssueCommentQuery(request.exchange()))
+            .flatMap(listedIssueComments -> ServerResponse.ok().bodyValue(listedIssueComments));
     }
 
     private Mono<ServerResponse> createIssueComment(ServerRequest serverRequest) {
@@ -70,6 +88,8 @@ public class ConsoleIssueCommentEndpoint implements CustomEndpoint {
             .flatMap(issueCommentService::create)
             .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
+
+
 
     @Override
     public GroupVersion groupVersion() {

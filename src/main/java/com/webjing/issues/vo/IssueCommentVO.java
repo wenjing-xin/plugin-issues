@@ -29,11 +29,11 @@ public class IssueCommentVO {
 
     private Stats stats;
 
-    public static IssueCommentVO from(IssueComment issueDetail) {
-        Assert.notNull(issueDetail, "The issue detail must not be null.");
+    public static IssueCommentVO from(IssueComment issueComment) {
+        Assert.notNull(issueComment, "The issue comment must not be null.");
         return IssueCommentVO.builder()
-            .metadata(issueDetail.getMetadata())
-            .spec(issueDetail.getSpec())
+            .metadata(issueComment.getMetadata())
+            .spec(issueComment.getSpec())
             .build();
     }
 

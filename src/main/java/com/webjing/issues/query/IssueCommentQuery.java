@@ -47,12 +47,6 @@ public class IssueCommentQuery extends SortableRequest {
         this.queryParams = exchange.getRequest().getQueryParams();
     }
 
-    @Nullable
-    @Schema(description = "IssueSubject filtered by keyword.")
-    public String getKeyword() {
-        return StringUtils.defaultIfBlank(queryParams.getFirst("keyword"), null);
-    }
-
     @Schema(description = "Owner name.")
     public String getOwnerName() {
         if (StringUtils.isNotBlank(username)) {
@@ -62,10 +56,19 @@ public class IssueCommentQuery extends SortableRequest {
         return StringUtils.isBlank(ownerName) ? null : ownerName;
     }
 
-    @Schema(description = "subject type.")
-    public String getSubjectType() {
-        String subjectType = queryParams.getFirst("subjectType");
-        return StringUtils.isBlank(subjectType) ? null : subjectType;
+    @Schema(description = "issueMessage approved.")
+    public Boolean getApproved() {
+        return convertBooleanOrNull(queryParams.getFirst("approved"));
+    }
+    private Boolean convertBooleanOrNull(String value) {
+        return StringUtils.isBlank(value) ? null : Boolean.parseBoolean(value);
+    }
+
+
+    @Schema(description = "issueName name.")
+    public String getIssueName() {
+        String issueName = queryParams.getFirst("issueName");
+        return StringUtils.isBlank(issueName) ? null : issueName;
     }
 
     /**
@@ -83,12 +86,11 @@ public class IssueCommentQuery extends SortableRequest {
         if (listOptions.getFieldSelector() != null) {
             query = and(query, listOptions.getFieldSelector().query());
         }
-        if (StringUtils.isNotBlank(getKeyword())) {
-            query = and(query, contains("spec.displayName", getKeyword()));
-            query = and(query, contains("spec.description", getKeyword()));
+        if (StringUtils.isNotBlank(getIssueName())) {
+            query = and(query, equal("spec.issueName", getIssueName()));
         }
-        if (StringUtils.isNotBlank(getSubjectType())) {
-            query = and(query, equal("spec.subjectType", getSubjectType()));
+        if (getApproved() != null) {
+            query = and(query, equal("spec.approved", Boolean.toString(getApproved())));
         }
         listOptions.setFieldSelector(FieldSelector.of(query));
         return listOptions;
@@ -105,12 +107,6 @@ public class IssueCommentQuery extends SortableRequest {
     public static void buildParameters(Builder builder) {
         IListRequest.buildParameters(builder);
         builder.parameter(sortParameter())
-            .parameter(parameterBuilder()
-                .in(ParameterIn.QUERY)
-                .name("keyword")
-                .description("IssueComments filtered by keyword.")
-                .implementation(String.class)
-                .required(false))
             .parameter(parameterBuilder()
                 .in(ParameterIn.QUERY)
                 .name("owner")

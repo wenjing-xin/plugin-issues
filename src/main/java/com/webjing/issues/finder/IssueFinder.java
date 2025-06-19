@@ -1,5 +1,6 @@
 package com.webjing.issues.finder;
 
+import com.webjing.issues.vo.IssueCommentVO;
 import com.webjing.issues.vo.IssueLabelVO;
 import com.webjing.issues.vo.IssueVO;
 import reactor.core.publisher.Flux;
@@ -42,4 +43,14 @@ public interface IssueFinder {
     Flux<IssueLabelVO> listAlllabels();
 
     Mono<ListResult<IssueVO>> listByLabel(int pageNum, Integer pageSize, String labelName);
+
+    /**
+    * @Author webjing
+    * @Description 列出所有的issue评论
+    * @Date 15:10 2025/6/14
+    * @Param [issueName]
+    * @return reactor.core.publisher.Flux<com.webjing.issues.vo.IssueCommentVO>
+    **/
+    Flux<IssueCommentVO> listAllIssueComments(String issueName);
+
 }

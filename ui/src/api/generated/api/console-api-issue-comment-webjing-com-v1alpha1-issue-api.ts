@@ -22,7 +22,9 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
-import type { Issue } from '../models';
+import type { IssueComment } from '../models';
+// @ts-ignore
+import type { ListedIssueCommentList } from '../models';
 /**
  * ConsoleApiIssueCommentWebjingComV1alpha1IssueApi - axios parameter creator
  * @export
@@ -31,13 +33,13 @@ export const ConsoleApiIssueCommentWebjingComV1alpha1IssueApiAxiosParamCreator =
     return {
         /**
          * Create a IssueComment.
-         * @param {Issue} issue 
+         * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createIssueComment: async (issue: Issue, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'issue' is not null or undefined
-            assertParamExists('createIssueComment', 'issue', issue)
+        createIssueComment: async (issueComment: IssueComment, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueComment' is not null or undefined
+            assertParamExists('createIssueComment', 'issueComment', issueComment)
             const localVarPath = `/apis/console.api.issueComment.webjing.com/v1alpha1/issuecomments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -65,7 +67,86 @@ export const ConsoleApiIssueCommentWebjingComV1alpha1IssueApiAxiosParamCreator =
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(issue, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(issueComment, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List current issues comment.
+         * @param {string} issueName issue name.
+         * @param {number} [page] Page number. Default is 0.
+         * @param {number} [size] Size number. Default is 0.
+         * @param {Array<string>} [labelSelector] Label selector. e.g.: hidden!&#x3D;true
+         * @param {Array<string>} [fieldSelector] Field selector. e.g.: metadata.name&#x3D;&#x3D;halo
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {string} [owner] IssueComment owner.
+         * @param {boolean} [approved] IssueComment approved.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listIssuesComment: async (issueName: string, page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, owner?: string, approved?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueName' is not null or undefined
+            assertParamExists('listIssuesComment', 'issueName', issueName)
+            const localVarPath = `/apis/console.api.issueComment.webjing.com/v1alpha1/issuecomments`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+            if (labelSelector) {
+                localVarQueryParameter['labelSelector'] = labelSelector;
+            }
+
+            if (fieldSelector) {
+                localVarQueryParameter['fieldSelector'] = fieldSelector;
+            }
+
+            if (sort) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+            if (owner !== undefined) {
+                localVarQueryParameter['owner'] = owner;
+            }
+
+            if (approved !== undefined) {
+                localVarQueryParameter['approved'] = approved;
+            }
+
+            if (issueName !== undefined) {
+                localVarQueryParameter['issueName'] = issueName;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -84,14 +165,33 @@ export const ConsoleApiIssueCommentWebjingComV1alpha1IssueApiFp = function(confi
     return {
         /**
          * Create a IssueComment.
-         * @param {Issue} issue 
+         * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createIssueComment(issue: Issue, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createIssueComment(issue, options);
+        async createIssueComment(issueComment: IssueComment, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueComment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createIssueComment(issueComment, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueCommentWebjingComV1alpha1IssueApi.createIssueComment']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * List current issues comment.
+         * @param {string} issueName issue name.
+         * @param {number} [page] Page number. Default is 0.
+         * @param {number} [size] Size number. Default is 0.
+         * @param {Array<string>} [labelSelector] Label selector. e.g.: hidden!&#x3D;true
+         * @param {Array<string>} [fieldSelector] Field selector. e.g.: metadata.name&#x3D;&#x3D;halo
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {string} [owner] IssueComment owner.
+         * @param {boolean} [approved] IssueComment approved.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listIssuesComment(issueName: string, page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, owner?: string, approved?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueCommentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssuesComment(issueName, page, size, labelSelector, fieldSelector, sort, owner, approved, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueCommentWebjingComV1alpha1IssueApi.listIssuesComment']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -110,8 +210,17 @@ export const ConsoleApiIssueCommentWebjingComV1alpha1IssueApiFactory = function 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createIssueComment(requestParameters: ConsoleApiIssueCommentWebjingComV1alpha1IssueApiCreateIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
-            return localVarFp.createIssueComment(requestParameters.issue, options).then((request) => request(axios, basePath));
+        createIssueComment(requestParameters: ConsoleApiIssueCommentWebjingComV1alpha1IssueApiCreateIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueComment> {
+            return localVarFp.createIssueComment(requestParameters.issueComment, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * List current issues comment.
+         * @param {ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesCommentRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listIssuesComment(requestParameters: ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<ListedIssueCommentList> {
+            return localVarFp.listIssuesComment(requestParameters.issueName, requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.owner, requestParameters.approved, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -124,10 +233,73 @@ export const ConsoleApiIssueCommentWebjingComV1alpha1IssueApiFactory = function 
 export interface ConsoleApiIssueCommentWebjingComV1alpha1IssueApiCreateIssueCommentRequest {
     /**
      * 
-     * @type {Issue}
+     * @type {IssueComment}
      * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiCreateIssueComment
      */
-    readonly issue: Issue
+    readonly issueComment: IssueComment
+}
+
+/**
+ * Request parameters for listIssuesComment operation in ConsoleApiIssueCommentWebjingComV1alpha1IssueApi.
+ * @export
+ * @interface ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesCommentRequest
+ */
+export interface ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesCommentRequest {
+    /**
+     * issue name.
+     * @type {string}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly issueName: string
+
+    /**
+     * Page number. Default is 0.
+     * @type {number}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly page?: number
+
+    /**
+     * Size number. Default is 0.
+     * @type {number}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly size?: number
+
+    /**
+     * Label selector. e.g.: hidden!&#x3D;true
+     * @type {Array<string>}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly labelSelector?: Array<string>
+
+    /**
+     * Field selector. e.g.: metadata.name&#x3D;&#x3D;halo
+     * @type {Array<string>}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly fieldSelector?: Array<string>
+
+    /**
+     * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+     * @type {Array<string>}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly sort?: Array<string>
+
+    /**
+     * IssueComment owner.
+     * @type {string}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly owner?: string
+
+    /**
+     * IssueComment approved.
+     * @type {boolean}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesComment
+     */
+    readonly approved?: boolean
 }
 
 /**
@@ -145,7 +317,18 @@ export class ConsoleApiIssueCommentWebjingComV1alpha1IssueApi extends BaseAPI {
      * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApi
      */
     public createIssueComment(requestParameters: ConsoleApiIssueCommentWebjingComV1alpha1IssueApiCreateIssueCommentRequest, options?: RawAxiosRequestConfig) {
-        return ConsoleApiIssueCommentWebjingComV1alpha1IssueApiFp(this.configuration).createIssueComment(requestParameters.issue, options).then((request) => request(this.axios, this.basePath));
+        return ConsoleApiIssueCommentWebjingComV1alpha1IssueApiFp(this.configuration).createIssueComment(requestParameters.issueComment, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List current issues comment.
+     * @param {ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesCommentRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsoleApiIssueCommentWebjingComV1alpha1IssueApi
+     */
+    public listIssuesComment(requestParameters: ConsoleApiIssueCommentWebjingComV1alpha1IssueApiListIssuesCommentRequest, options?: RawAxiosRequestConfig) {
+        return ConsoleApiIssueCommentWebjingComV1alpha1IssueApiFp(this.configuration).listIssuesComment(requestParameters.issueName, requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.owner, requestParameters.approved, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -1,0 +1,60 @@
+<div class="piw-w-full piw-rounded-md piw-border">
+    <div class="piw-w-full piw-flex piw-items-center piw-gap-x-0 piw-bg-slate-100 piw-h-9 piw-rounded-t-md">
+        <button :class="{ 'tab-button-active piw-border-r piw-border-slate-200 piw-rounded-tr-md': activeTab === 'editor'}"
+                @click="switchTab('editor')" class="tab-button piw-rounded-tl-md">
+            <span class="piw-icon-[lucide--edit]"></span>
+            <span class="piw-text-sm piw-whitespace-nowrap">编辑</span>
+        </button>
+        <button :class="{ 'tab-button-active piw-border-x piw-border-x piw-border-slate-200 piw-rounded-t-md': activeTab === 'preview'}"
+                @click="switchTab('preview')" class="tab-button">
+            <span class="piw-icon-[icon-park-outline--preview-open] piw-text-lg"></span>
+            <span class="piw-text-sm piw-whitespace-nowrap">预览</span>
+        </button>
+        <div x-show="activeTab === 'editor'" class="piw-w-full piw-h-full piw-border-b piw-flex piw-items-center piw-justify-end
+                piw-rounded-tr-md piw-gap-x-2 piw-px-3">
+            <div class="issue-editor-toolbar piw-relative">
+                <span class="piw-icon-[ci--heading] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[tabler--bold] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[mingcute--italic-fill]"></span>
+            </div>
+
+            <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
+
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[material-symbols--code-rounded] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[ci--link] piw-text-xl"></span>
+            </div>
+
+            <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
+
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[ci--list-unordered] piw-text-xl"></span>
+            </div>
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[lucide--list-ordered] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar">
+                <span class="piw-icon-[octicon--tasklist-24] piw-text-lg"></span>
+            </div>
+
+            <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
+        </div>
+    </div>
+    <div class="piw-bg-white">
+        <div class="issue-editor" x-show="activeTab === 'editor'">
+            <textarea id="editor"></textarea>
+        </div>
+        <div class="issue-editor-preview" x-show="activeTab === 'preview'">
+            <div class="markdown-body !piw-text-sm" x-html="preview"></div>
+        </div>
+    </div>
+</div>

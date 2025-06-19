@@ -62,21 +62,8 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(ListResult.generateGenericClass(ListedIssueComment.class))
                     );
-                IssueQuery.buildParameters(builder);
+                IssueCommentQuery.buildParameters(builder);
             })
-            .GET("issuecomments/{name}", this::getMyIssue,
-                builder -> builder.operationId("GetMyIssueComment")
-                    .description("Get a My Issue Comment.")
-                    .tag(tag)
-                    .parameter(parameterBuilder()
-                        .name("name")
-                        .in(ParameterIn.PATH)
-                        .required(true)
-                        .implementation(String.class)
-                    )
-                    .response(responseBuilder()
-                        .implementation(Issue.class))
-            )
             .POST("issuecomments", this::createMyIssueComment,
                 builder -> builder.operationId("CreateMyIssueComment")
                     .description("Create a My IssueComment.")
@@ -86,7 +73,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                         .content(contentBuilder()
                             .mediaType(MediaType.APPLICATION_JSON_VALUE)
                             .schema(Builder.schemaBuilder()
-                                .implementation(Issue.class))
+                                .implementation(IssueComment.class))
                         ))
                     .response(responseBuilder()
                         .implementation(Issue.class))
@@ -106,10 +93,10 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                         .content(contentBuilder()
                             .mediaType(MediaType.APPLICATION_JSON_VALUE)
                             .schema(Builder.schemaBuilder()
-                                .implementation(Issue.class))
+                                .implementation(IssueComment.class))
                         ))
                     .response(responseBuilder()
-                        .implementation(Issue.class))
+                        .implementation(IssueComment.class))
             )
             .DELETE("issuecomments/{name}", this::deleteMyIssueComment,
                 builder -> builder.operationId("DeleteMyIssueComment")
@@ -121,7 +108,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                         .required(true)
                         .implementation(String.class)
                     )
-                    .response(responseBuilder().implementation(Issue.class))
+                    .response(responseBuilder().implementation(IssueComment.class))
             )
             .build();
     }
@@ -130,7 +117,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
         var name = request.pathVariable("name");
         return getMyIssueCommentDetail(name)
             .flatMap(issueCommentService::deleteBy)
-            .flatMap(moment -> ServerResponse.ok().bodyValue(moment));
+            .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
 
     private Mono<ServerResponse> updateMyIssueComment(ServerRequest request) {
@@ -148,14 +135,9 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                     })
                     .flatMap(issueCommentService::updateBy);
             })
-            .flatMap(moment -> ServerResponse.ok().bodyValue(moment));
+            .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
 
-    private Mono<ServerResponse> getMyIssue(ServerRequest request) {
-        var name = request.pathVariable("name");
-        return getMyIssueCommentDetail(name)
-            .flatMap(issueMessage -> ServerResponse.ok().bodyValue(issueMessage));
-    }
 
     private Mono<IssueComment> getMyIssueCommentDetail(String issueCommentName) {
         return getCurrentUser()
@@ -188,7 +170,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                 })
             )
             .flatMap(issueCommentService::create)
-            .flatMap(moment -> ServerResponse.ok().bodyValue(moment));
+            .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
 
     private Mono<ServerResponse> listMyIssueComment(ServerRequest request) {

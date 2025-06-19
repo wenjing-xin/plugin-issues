@@ -57,11 +57,12 @@ public class IssuesRouter {
         final var subjectName = request.pathVariable("subjectName");
         return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"issue")
             .flatMap(templateName -> {
-                Map<String, Object> model = new HashMap<>(4);
+                Map<String, Object> model = new HashMap<>(7);
                 model.put("title",  getIssuesTitle());
                 model.put("issueVO", issueFinder.get(issueName));
                 model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                 model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
+                model.put("issueComments", issueFinder.listAllIssueComments(issueName));
                 buildCommonVariables(model);
                 return ServerResponse.ok().render(templateName, model);
             });

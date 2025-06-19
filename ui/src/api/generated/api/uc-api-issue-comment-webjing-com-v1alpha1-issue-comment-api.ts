@@ -24,6 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { Issue } from '../models';
 // @ts-ignore
+import type { IssueComment } from '../models';
+// @ts-ignore
 import type { ListedIssueCommentList } from '../models';
 /**
  * UcApiIssueCommentWebjingComV1alpha1IssueCommentApi - axios parameter creator
@@ -33,13 +35,13 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
     return {
         /**
          * Create a My IssueComment.
-         * @param {Issue} issue 
+         * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createMyIssueComment: async (issue: Issue, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'issue' is not null or undefined
-            assertParamExists('createMyIssueComment', 'issue', issue)
+        createMyIssueComment: async (issueComment: IssueComment, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueComment' is not null or undefined
+            assertParamExists('createMyIssueComment', 'issueComment', issueComment)
             const localVarPath = `/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -67,7 +69,7 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(issue, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(issueComment, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -116,67 +118,21 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
             };
         },
         /**
-         * Get a My Issue Comment.
-         * @param {string} name 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getMyIssueComment: async (name: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'name' is not null or undefined
-            assertParamExists('getMyIssueComment', 'name', name)
-            const localVarPath = `/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments/{name}`
-                .replace(`{${"name"}}`, encodeURIComponent(String(name)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication basicAuth required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * List My issues comment.
-         * @param {string} subjectName the subject of issue
+         * @param {string} issueName issue name.
          * @param {number} [page] Page number. Default is 0.
          * @param {number} [size] Size number. Default is 0.
          * @param {Array<string>} [labelSelector] Label selector. e.g.: hidden!&#x3D;true
          * @param {Array<string>} [fieldSelector] Field selector. e.g.: metadata.name&#x3D;&#x3D;halo
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
-         * @param {string} [keyword] IssueMessages filtered by keyword.
-         * @param {string} [ownerName] Owner name.
-         * @param {string} [label] IssueMessages label.
-         * @param {string} [startDate] IssueMessages start date.
-         * @param {string} [endDate] IssueMessages end date.
-         * @param {boolean} [approved] IssueMessages approved.
-         * @param {string} [issueTemplate] IssueMessages’s issueTemplate.
+         * @param {string} [owner] IssueComment owner.
+         * @param {boolean} [approved] IssueComment approved.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listMyIssuesComment: async (subjectName: string, page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, ownerName?: string, label?: string, startDate?: string, endDate?: string, approved?: boolean, issueTemplate?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'subjectName' is not null or undefined
-            assertParamExists('listMyIssuesComment', 'subjectName', subjectName)
+        listMyIssuesComment: async (issueName: string, page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, owner?: string, approved?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueName' is not null or undefined
+            assertParamExists('listMyIssuesComment', 'issueName', issueName)
             const localVarPath = `/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -217,40 +173,16 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
                 localVarQueryParameter['sort'] = sort;
             }
 
-            if (keyword !== undefined) {
-                localVarQueryParameter['keyword'] = keyword;
-            }
-
-            if (subjectName !== undefined) {
-                localVarQueryParameter['subjectName'] = subjectName;
-            }
-
-            if (ownerName !== undefined) {
-                localVarQueryParameter['ownerName'] = ownerName;
-            }
-
-            if (label !== undefined) {
-                localVarQueryParameter['label'] = label;
-            }
-
-            if (startDate !== undefined) {
-                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString() :
-                    startDate;
-            }
-
-            if (endDate !== undefined) {
-                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString() :
-                    endDate;
+            if (owner !== undefined) {
+                localVarQueryParameter['owner'] = owner;
             }
 
             if (approved !== undefined) {
                 localVarQueryParameter['approved'] = approved;
             }
 
-            if (issueTemplate !== undefined) {
-                localVarQueryParameter['issueTemplate'] = issueTemplate;
+            if (issueName !== undefined) {
+                localVarQueryParameter['issueName'] = issueName;
             }
 
 
@@ -267,15 +199,15 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
         /**
          * Update a My IssueComment.
          * @param {string} name 
-         * @param {Issue} issue 
+         * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateMyIssueComment: async (name: string, issue: Issue, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateMyIssueComment: async (name: string, issueComment: IssueComment, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'name' is not null or undefined
             assertParamExists('updateMyIssueComment', 'name', name)
-            // verify required parameter 'issue' is not null or undefined
-            assertParamExists('updateMyIssueComment', 'issue', issue)
+            // verify required parameter 'issueComment' is not null or undefined
+            assertParamExists('updateMyIssueComment', 'issueComment', issueComment)
             const localVarPath = `/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments/{name}`
                 .replace(`{${"name"}}`, encodeURIComponent(String(name)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -304,7 +236,7 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(issue, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(issueComment, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -323,12 +255,12 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp = function(con
     return {
         /**
          * Create a My IssueComment.
-         * @param {Issue} issue 
+         * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createMyIssueComment(issue: Issue, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createMyIssueComment(issue, options);
+        async createMyIssueComment(issueComment: IssueComment, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createMyIssueComment(issueComment, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.createMyIssueComment']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -339,44 +271,27 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp = function(con
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteMyIssueComment(name: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
+        async deleteMyIssueComment(name: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueComment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteMyIssueComment(name, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.deleteMyIssueComment']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Get a My Issue Comment.
-         * @param {string} name 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getMyIssueComment(name: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMyIssueComment(name, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.getMyIssueComment']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
          * List My issues comment.
-         * @param {string} subjectName the subject of issue
+         * @param {string} issueName issue name.
          * @param {number} [page] Page number. Default is 0.
          * @param {number} [size] Size number. Default is 0.
          * @param {Array<string>} [labelSelector] Label selector. e.g.: hidden!&#x3D;true
          * @param {Array<string>} [fieldSelector] Field selector. e.g.: metadata.name&#x3D;&#x3D;halo
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
-         * @param {string} [keyword] IssueMessages filtered by keyword.
-         * @param {string} [ownerName] Owner name.
-         * @param {string} [label] IssueMessages label.
-         * @param {string} [startDate] IssueMessages start date.
-         * @param {string} [endDate] IssueMessages end date.
-         * @param {boolean} [approved] IssueMessages approved.
-         * @param {string} [issueTemplate] IssueMessages’s issueTemplate.
+         * @param {string} [owner] IssueComment owner.
+         * @param {boolean} [approved] IssueComment approved.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listMyIssuesComment(subjectName: string, page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, ownerName?: string, label?: string, startDate?: string, endDate?: string, approved?: boolean, issueTemplate?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueCommentList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listMyIssuesComment(subjectName, page, size, labelSelector, fieldSelector, sort, keyword, ownerName, label, startDate, endDate, approved, issueTemplate, options);
+        async listMyIssuesComment(issueName: string, page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, owner?: string, approved?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueCommentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listMyIssuesComment(issueName, page, size, labelSelector, fieldSelector, sort, owner, approved, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.listMyIssuesComment']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -384,12 +299,12 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp = function(con
         /**
          * Update a My IssueComment.
          * @param {string} name 
-         * @param {Issue} issue 
+         * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateMyIssueComment(name: string, issue: Issue, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateMyIssueComment(name, issue, options);
+        async updateMyIssueComment(name: string, issueComment: IssueComment, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueComment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateMyIssueComment(name, issueComment, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.updateMyIssueComment']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -411,7 +326,7 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFactory = functio
          * @throws {RequiredError}
          */
         createMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiCreateMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
-            return localVarFp.createMyIssueComment(requestParameters.issue, options).then((request) => request(axios, basePath));
+            return localVarFp.createMyIssueComment(requestParameters.issueComment, options).then((request) => request(axios, basePath));
         },
         /**
          * Delete a My Issue Comment.
@@ -419,17 +334,8 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFactory = functio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiDeleteMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
+        deleteMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiDeleteMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueComment> {
             return localVarFp.deleteMyIssueComment(requestParameters.name, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Get a My Issue Comment.
-         * @param {UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
-            return localVarFp.getMyIssueComment(requestParameters.name, options).then((request) => request(axios, basePath));
         },
         /**
          * List My issues comment.
@@ -438,7 +344,7 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFactory = functio
          * @throws {RequiredError}
          */
         listMyIssuesComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<ListedIssueCommentList> {
-            return localVarFp.listMyIssuesComment(requestParameters.subjectName, requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.ownerName, requestParameters.label, requestParameters.startDate, requestParameters.endDate, requestParameters.approved, requestParameters.issueTemplate, options).then((request) => request(axios, basePath));
+            return localVarFp.listMyIssuesComment(requestParameters.issueName, requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.owner, requestParameters.approved, options).then((request) => request(axios, basePath));
         },
         /**
          * Update a My IssueComment.
@@ -446,8 +352,8 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFactory = functio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
-            return localVarFp.updateMyIssueComment(requestParameters.name, requestParameters.issue, options).then((request) => request(axios, basePath));
+        updateMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueComment> {
+            return localVarFp.updateMyIssueComment(requestParameters.name, requestParameters.issueComment, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -460,10 +366,10 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFactory = functio
 export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiCreateMyIssueCommentRequest {
     /**
      * 
-     * @type {Issue}
+     * @type {IssueComment}
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiCreateMyIssueComment
      */
-    readonly issue: Issue
+    readonly issueComment: IssueComment
 }
 
 /**
@@ -481,31 +387,17 @@ export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiDeleteMyIssue
 }
 
 /**
- * Request parameters for getMyIssueComment operation in UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.
- * @export
- * @interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest
- */
-export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueComment
-     */
-    readonly name: string
-}
-
-/**
  * Request parameters for listMyIssuesComment operation in UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.
  * @export
  * @interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesCommentRequest
  */
 export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesCommentRequest {
     /**
-     * the subject of issue
+     * issue name.
      * @type {string}
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
      */
-    readonly subjectName: string
+    readonly issueName: string
 
     /**
      * Page number. Default is 0.
@@ -543,53 +435,18 @@ export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesC
     readonly sort?: Array<string>
 
     /**
-     * IssueMessages filtered by keyword.
+     * IssueComment owner.
      * @type {string}
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
      */
-    readonly keyword?: string
+    readonly owner?: string
 
     /**
-     * Owner name.
-     * @type {string}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
-     */
-    readonly ownerName?: string
-
-    /**
-     * IssueMessages label.
-     * @type {string}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
-     */
-    readonly label?: string
-
-    /**
-     * IssueMessages start date.
-     * @type {string}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
-     */
-    readonly startDate?: string
-
-    /**
-     * IssueMessages end date.
-     * @type {string}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
-     */
-    readonly endDate?: string
-
-    /**
-     * IssueMessages approved.
+     * IssueComment approved.
      * @type {boolean}
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
      */
     readonly approved?: boolean
-
-    /**
-     * IssueMessages’s issueTemplate.
-     * @type {string}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesComment
-     */
-    readonly issueTemplate?: string
 }
 
 /**
@@ -607,10 +464,10 @@ export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssue
 
     /**
      * 
-     * @type {Issue}
+     * @type {IssueComment}
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueComment
      */
-    readonly issue: Issue
+    readonly issueComment: IssueComment
 }
 
 /**
@@ -628,7 +485,7 @@ export class UcApiIssueCommentWebjingComV1alpha1IssueCommentApi extends BaseAPI 
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApi
      */
     public createMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiCreateMyIssueCommentRequest, options?: RawAxiosRequestConfig) {
-        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).createMyIssueComment(requestParameters.issue, options).then((request) => request(this.axios, this.basePath));
+        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).createMyIssueComment(requestParameters.issueComment, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -643,17 +500,6 @@ export class UcApiIssueCommentWebjingComV1alpha1IssueCommentApi extends BaseAPI 
     }
 
     /**
-     * Get a My Issue Comment.
-     * @param {UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApi
-     */
-    public getMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest, options?: RawAxiosRequestConfig) {
-        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).getMyIssueComment(requestParameters.name, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * List My issues comment.
      * @param {UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesCommentRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -661,7 +507,7 @@ export class UcApiIssueCommentWebjingComV1alpha1IssueCommentApi extends BaseAPI 
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApi
      */
     public listMyIssuesComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesCommentRequest, options?: RawAxiosRequestConfig) {
-        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).listMyIssuesComment(requestParameters.subjectName, requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.ownerName, requestParameters.label, requestParameters.startDate, requestParameters.endDate, requestParameters.approved, requestParameters.issueTemplate, options).then((request) => request(this.axios, this.basePath));
+        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).listMyIssuesComment(requestParameters.issueName, requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.owner, requestParameters.approved, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -672,7 +518,7 @@ export class UcApiIssueCommentWebjingComV1alpha1IssueCommentApi extends BaseAPI 
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApi
      */
     public updateMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueCommentRequest, options?: RawAxiosRequestConfig) {
-        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).updateMyIssueComment(requestParameters.name, requestParameters.issue, options).then((request) => request(this.axios, this.basePath));
+        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).updateMyIssueComment(requestParameters.name, requestParameters.issueComment, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

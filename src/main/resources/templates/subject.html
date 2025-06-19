@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '依托主体', content = ~{::content}, version = ${pluginVersion} )}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '依托主体', content = ~{::content}, version = ${pluginVersion}, head = null )}">
 <th:block th:fragment="content" th:with="subjectType = ${issueSubjectVO.spec.subjectType + ''}">
     <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectVO.spec.subjectType}, title = ${issueSubjectVO.spec.displayName},
     name = ${issueSubjectVO.metadata.name}, totalIssue = ${issueSubjectVO.issueSubjectStats.awaitIssue + issueSubjectVO.issueSubjectStats.progressIssue},

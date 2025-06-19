@@ -155,6 +155,12 @@ public class IssuesPlugin extends BasePlugin {
                     issueComment.getSpec().getIssueName())
                 )
             );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.quoteCommentUid")
+                .setIndexFunc(simpleAttribute(IssueComment.class, issueComment ->
+                    issueComment.getSpec().getQuoteCommentUid())
+                )
+            );
         });
 
         schemeManager.register(IssueTemplate.class, indexSpecs -> {

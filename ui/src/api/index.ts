@@ -6,6 +6,8 @@ import {
   ConsoleApiIssueWebjingComV1alpha1IssueApi,
   UcApiIssueWebjingComV1alpha1IssueApi,
   IssueCommentV1alpha1Api,
+  ConsoleApiIssueCommentWebjingComV1alpha1IssueApi,
+  UcApiIssueCommentWebjingComV1alpha1IssueCommentApi,
   IssueTemplateV1alpha1Api,
   ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi
 } from "./generated";
@@ -25,6 +27,14 @@ const issueApiClient = {
 
 const issueCommentApiClient = {
   issueComment: new IssueCommentV1alpha1Api(undefined, "", axiosInstance),
+};
+
+const consoleIssueCommentApiClient = {
+  issueComment: new ConsoleApiIssueCommentWebjingComV1alpha1IssueApi(undefined, "", axiosInstance),
+};
+
+const ucIssueCommentApiClient = {
+  issueComment: new UcApiIssueCommentWebjingComV1alpha1IssueCommentApi(undefined, "", axiosInstance),
 };
 
 const issueTemplateApiClient = {
@@ -50,6 +60,8 @@ export {
   consoleIssueApiClient,
   ucIssueApiClient,
   issueCommentApiClient,
+  consoleIssueCommentApiClient,
+  ucIssueCommentApiClient,
   issueTemplateApiClient,
   consoleIssueTemplateApiClient
 };

@@ -99,3 +99,61 @@ ul {
 .issue-detail-state{
     @apply piw-px-3 piw-py-1 piw-rounded-3xl piw-text-sm
 }
+
+.tab-button{
+    @apply piw-h-full piw-py-2 piw-px-4 piw-text-sm piw-text-slate-600 piw-cursor-pointer piw-transition-all piw-ease-in piw-duration-200
+    piw-inline-flex piw-items-center piw-gap-x-1.5
+}
+.tab-button-active{
+    @apply piw-bg-white piw-border-slate-300
+}
+
+.issue-editor-preview{
+    @apply piw-p-3 piw-leading-7 piw-text-neutral-700 piw-min-h-40
+}
+.issue-editor{
+    @apply piw-box-border piw-p-0
+}
+.issue-editor textarea, .CodeMirror {
+    @apply piw-w-full !piw-h-40 !piw-overflow-y-auto piw-border-none piw-text-sm piw-leading-6 piw-p-3 piw-box-border
+}
+
+
+.issue-editor-toolbar{
+    @apply piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-p-1
+    hover:piw-cursor-pointer
+}
+
+.issue-item-operation {
+   @apply piw-w-full piw-inline-flex piw-items-center piw-rounded-md piw-gap-x-2 piw-p-1 hover:piw-cursor-pointer hover:piw-bg-slate-100
+}
+
+/* 懒加载动画 */
+@keyframes radialReveal {
+    0% {
+        opacity: 0;
+        transform: translate(-20px, 15px) scale(0.98);
+        filter: blur(2px);
+    }
+    60% {
+        transform: translate(5px, -3px) scale(1.02);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* 初始状态 */
+.t-lazy-item {
+    opacity: 0;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    animation-fill-mode: both;
+    transition:
+            opacity 0.5s ease-out,
+            transform 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}

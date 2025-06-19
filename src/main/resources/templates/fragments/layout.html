@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" th:fragment="layoutHtml(title, content, version)">
+<html lang="en" th:fragment="layoutHtml(title, content, version, head)">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -8,6 +8,9 @@
     <title th:text="${title}">Issues</title>
     <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/dist/style.css?v={version}(version=${version})}" />
     <script th:src="@{/plugins/PluginIssues/assets/static/dist/main.iife.js?v={version}(version=${version})}" type="text/javascript"></script>
+    <th:block th:if="${head != null}">
+        <th:block th:replace="${head}" />
+    </th:block>
 </head>
 <body class="relative w-full">
 
