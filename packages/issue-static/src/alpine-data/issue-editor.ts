@@ -33,7 +33,7 @@ export default () => ({
         this.editor = editor;
 
         // 设置初始内容
-        editor.setValue(`请输入...`);
+        editor.setValue(``);
 
         // 监听内容变化
         editor.on('change', () => {

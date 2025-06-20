@@ -12,6 +12,7 @@ import issueEditor from "./alpine-data/issue-editor";
 import { IssueComment } from "./types";
 import { createIssueComment } from "./api";
 
+
 window.Alpine = Alpine;
 Alpine.data("dropdown", dropdown);
 Alpine.data("colorSchemeSwitcher", colorSchemeSwitcher);
@@ -22,6 +23,7 @@ Alpine.data("messageBox", message);
 Alpine.data("dateUtils", dateUtils);
 Alpine.data("issueEditor", issueEditor)
 Alpine.start();
+
 
 type ColorSchemeType = "system" | "dark" | "light";
 export let currentColorScheme: ColorSchemeType = "system";
@@ -97,10 +99,10 @@ export function publishIssueComment(issueId: string, rawContent: string, htmlCon
             userAgent: navigator.userAgent
         },
     }
-    console.log(issueId, rawContent, htmlContent, quoteCommentId)
     createIssueComment(initComment).then(res=> {
         if(res.status == 200){
-            alert("发布成功")
+            const messageUtils = message();
+            messageUtils.showMessage("success", '操作成功', 3000)
             window.location.reload();
         }
     })
@@ -114,7 +116,6 @@ export function triggerLazyAnimation(targetSelector: string) {
     const COL_DELAY = 0.07; // 列间延迟增量
     const STAGGER_OFFSET = 12; // 列错位幅度 10-30px
     const elements = document.querySelectorAll<HTMLElement>(targetSelector + '.t-lazy-item');
-    console.log(elements,8989, targetSelector)
     // 布局分析数据结构
     interface LayoutInfo {
         rows: HTMLElement[][];

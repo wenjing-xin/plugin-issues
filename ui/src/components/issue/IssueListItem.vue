@@ -2,6 +2,7 @@
 import { formatDatetime } from "@/utils/date";
 import {
   Dialog,
+  VEntityContainer,
   VDropdownItem,
   VEntity,
   VEntityField,
@@ -18,10 +19,17 @@ import {
   VLoading,
   VEmpty,
 } from "@halo-dev/components";
+import BiThreeDots from "~icons/bi/three-dots";
 import { computed, inject, type Ref, ref } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
+import IssueCommentItem from "@/components/issue/IssueCommentItem.vue";
 
-import type { Issue, ListedIssue } from "@/api/generated";
+import type {
+  Issue,
+  ListedIssue,
+  ListedIssueComment,
+  IssueComment,
+} from "@/api/generated";
 import { issueApiClient, consoleIssueApiClient } from "@/api";
 import { submitForm } from "@formkit/core";
 import { useIssueCommentListFetch } from "@/composables/use-consoleIssue";
@@ -109,6 +117,13 @@ const onSubmitClose = async () => {
   }
 };
 function handleRouteToUserDetail() {}
+
+function getStatusDotState(status: string) {
+  if (status === "PENDING") return "warning";
+  if (status === "APPROVED") return "success";
+  if (status === "REJECTED") return "danger";
+  return "default";
+}
 </script>
 <template>
   <VModal title="关闭Issue" :visible="closedVisibleModal" :width="420">
@@ -197,10 +212,12 @@ function handleRouteToUserDetail() {}
                   v-bind="{ state: 'success', text: '关闭详情', animate: true }"
                 />
               </span>
-              <span v-if="!showComments" class="hover:cursor-pointer" @click="showComments = !showComments">
-                <VStatusDot
-                  v-bind="{ state: 'default', text: '查看详情', animate: true }"
-                />
+              <span
+                v-if="!showComments"
+                class="hover:cursor-pointer text-xs text-gray-500"
+                @click="showComments = !showComments"
+              >
+                查看详情
               </span>
             </VSpace>
           </div>
@@ -299,7 +316,16 @@ function handleRouteToUserDetail() {}
             </template>
           </VEmpty>
         </Transition>
-        <Transition v-else appear name="fade"> pingliunadfadsfa </Transition>
+        <Transition v-else appear name="fade">
+          <VEntityContainer>
+            <IssueCommentItem
+              v-for="comment in issueComments"
+              :key="comment.issueComment.metadata.name"
+              :comment="comment"
+              :comments="issueComments"
+            ></IssueCommentItem>
+          </VEntityContainer>
+        </Transition>
       </div>
     </template>
   </VEntity>

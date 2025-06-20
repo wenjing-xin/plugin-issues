@@ -3,6 +3,7 @@ import SystemUiconsMessage from "~icons/system-uicons/message";
 import IssueTemplateListItem from "../components/issue/IssueTemplateListItem.vue";
 import {
   IconAddCircle,
+  VEntityContainer,
   VButton,
   VCard,
   VEmpty,
@@ -17,8 +18,8 @@ import {
 import { useRouter } from "vue-router";
 import UserFilterDropdown from "@/components/common/UserFilterDropdown.vue";
 import { useRouteQuery } from "@vueuse/router";
-import {computed, provide, type Ref, ref, watch} from "vue";
-import type {ListedIssueSubject, ListedIssueTemplate} from "@/api/generated";
+import { computed, provide, type Ref, ref, watch } from "vue";
+import type { ListedIssueSubject, ListedIssueTemplate } from "@/api/generated";
 import { issueTemplateApiClient } from "@/api";
 import { useIssueTemplateListFetch } from "@/composables/use-consoleIssueTemplate";
 
@@ -37,7 +38,10 @@ function handleClearFilters() {
 
 const checkedAll = ref(false);
 const selectedIssueTemplateNames = ref<string[]>([]);
-provide<Ref<string[]>>("selectedIssueTemplateNames", selectedIssueTemplateNames);
+provide<Ref<string[]>>(
+  "selectedIssueTemplateNames",
+  selectedIssueTemplateNames,
+);
 
 const editingModal = ref(false);
 const selectedIssueTemplate = ref<ListedIssueTemplate>();
@@ -45,17 +49,12 @@ const selectedIssueTemplate = ref<ListedIssueTemplate>();
 const page = ref(1);
 const size = ref(20);
 const keyword = ref("");
-const { issueTemplates, isLoading, isFetching, refetch, total } = useIssueTemplateListFetch(
-  page,
-  size,
-  keyword,
-  selectedSort,
-  ownerName
-);
+const { issueTemplates, isLoading, isFetching, refetch, total } =
+  useIssueTemplateListFetch(page, size, keyword, selectedSort, ownerName);
 
 const handlerNewIssueTemplate = () => {
   //新建issue模版
-  router.push({ name: "IssueTemplateEditor"});
+  router.push({ name: "IssueTemplateEditor" });
 };
 const handleCheckAllChange = (e: Event) => {
   const { checked } = e.target as HTMLInputElement;
@@ -72,7 +71,7 @@ watch(
   () => selectedIssueTemplateNames.value,
   (newValue) => {
     checkedAll.value = newValue.length === issueTemplates.value?.length;
-  }
+  },
 );
 const onEditingModalClose = async () => {
   selectedIssueTemplate.value = undefined;
@@ -81,8 +80,11 @@ const onEditingModalClose = async () => {
 };
 const checkSelection = (listedIssueTemplate: ListedIssueTemplate) => {
   return (
-    listedIssueTemplate.issueTemplate.metadata.name === selectedIssueTemplate.value?.issueTemplate.metadata.name ||
-    selectedIssueTemplateNames.value.includes(listedIssueTemplate.issueTemplate.metadata.name)
+    listedIssueTemplate.issueTemplate.metadata.name ===
+      selectedIssueTemplate.value?.issueTemplate.metadata.name ||
+    selectedIssueTemplateNames.value.includes(
+      listedIssueTemplate.issueTemplate.metadata.name,
+    )
   );
 };
 
@@ -95,11 +97,13 @@ const handleDeleteInBatch = async () => {
     cancelText: "取消",
     onConfirm: async () => {
       try {
-        const promises = selectedIssueTemplateNames.value.map((name: string) => {
-          return issueTemplateApiClient.issueTemplate.deleteIssueTemplate({
-            name: name,
-          });
-        });
+        const promises = selectedIssueTemplateNames.value.map(
+          (name: string) => {
+            return issueTemplateApiClient.issueTemplate.deleteIssueTemplate({
+              name: name,
+            });
+          },
+        );
         await Promise.all(promises);
         selectedIssueTemplateNames.value = [];
         Toast.success("删除成功");
@@ -139,7 +143,11 @@ const handleDeleteInBatch = async () => {
                 class="relative flex flex-col flex-wrap items-start gap-4 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center"
               >
                 <div class="mr-1 hidden items-center sm:flex">
-                  <input v-model="checkedAll" type="checkbox" @change="handleCheckAllChange" />
+                  <input
+                    v-model="checkedAll"
+                    type="checkbox"
+                    @change="handleCheckAllChange"
+                  />
                 </div>
                 <div class="w-full flex flex-1 sm:w-auto">
                   <VButton
@@ -154,9 +162,15 @@ const handleDeleteInBatch = async () => {
                 </div>
                 <div class="w-auto sm:w-auto">
                   <VSpace spacing="sm" class="flex flex-wrap">
-                    <FilterCleanButton v-if="hasFilters" @click="handleClearFilters" />
+                    <FilterCleanButton
+                      v-if="hasFilters"
+                      @click="handleClearFilters"
+                    />
                     <HasPermission :permissions="['system:users:view']">
-                      <UserFilterDropdown v-model="ownerName" :label="'创建者'" />
+                      <UserFilterDropdown
+                        v-model="ownerName"
+                        :label="'创建者'"
+                      />
                     </HasPermission>
                     <FilterDropdown
                       v-model="selectedSort"
@@ -176,7 +190,10 @@ const handleDeleteInBatch = async () => {
                       ]"
                     />
                     <div class="flex flex-row gap-2">
-                      <div class="group cursor-pointer rounded p-1 hover:bg-gray-200" @click="refetch()">
+                      <div
+                        class="group cursor-pointer rounded p-1 hover:bg-gray-200"
+                        @click="refetch()"
+                      >
                         <IconRefreshLine
                           v-tooltip="'刷新'"
                           :class="{ 'animate-spin text-gray-900': isFetching }"
@@ -191,7 +208,10 @@ const handleDeleteInBatch = async () => {
           </template>
           <VLoading v-if="isLoading" />
           <Transition v-else-if="!issueTemplates?.length" appear name="fade">
-            <VEmpty message="你可以尝试刷新或者新建issue留言模版" title="当前没有任何Issue留言模版">
+            <VEmpty
+              message="你可以尝试刷新或者新建issue留言模版"
+              title="当前没有任何Issue留言模版"
+            >
               <template #actions>
                 <VSpace>
                   <VButton @click="refetch"> 刷新</VButton>
@@ -210,14 +230,22 @@ const handleDeleteInBatch = async () => {
             </VEmpty>
           </Transition>
           <Transition v-else appear name="fade">
-            <ul class="box-border h-auto w-full divide-y divide-gray-100" role="list">
-              <li v-for="listedIssueTemplate in issueTemplates" :key="listedIssueTemplate.issueTemplate.metadata.name">
-                <IssueTemplateListItem :issue-template="listedIssueTemplate" :is-selected="checkSelection(listedIssueTemplate)" />
-              </li>
-            </ul>
+            <VEntityContainer>
+              <IssueTemplateListItem
+                v-for="listedIssueTemplate in issueTemplates"
+                :key="listedIssueTemplate.issueTemplate.metadata.name"
+                :issue-template="listedIssueTemplate"
+                :is-selected="checkSelection(listedIssueTemplate)"
+              />
+            </VEntityContainer>
           </Transition>
           <template #footer>
-            <VPagination v-model:page="page" v-model:size="size" :total="total" :size-options="[20, 30, 50, 100]" />
+            <VPagination
+              v-model:page="page"
+              v-model:size="size"
+              :total="total"
+              :size-options="[20, 30, 50, 100]"
+            />
           </template>
         </VCard>
       </div>

@@ -13,6 +13,7 @@ import {
   IconRefreshLine,
   Dialog,
   Toast,
+  VEntityContainer
 } from "@halo-dev/components";
 import UserFilterDropdown from "@/components/common/UserFilterDropdown.vue";
 import { toISODayEndOfTime } from "@/utils/date";
@@ -337,15 +338,15 @@ onMounted(() => {
             </VEmpty>
           </Transition>
           <Transition v-else appear name="fade">
-            <ul class="box-border h-auto w-full divide-y divide-gray-100" role="list">
-              <li v-for="listedIssue in issues" :key="listedIssue.issue.metadata.name">
-                <IssueListItem
-                  :issue="listedIssue"
-                  :is-selected="checkSelection(listedIssue)"
-                  @update="handlerUpdateIssue"
-                />
-              </li>
-            </ul>
+            <VEntityContainer>
+              <IssueListItem
+                v-for="listedIssue in issues"
+                :key="listedIssue.issue.metadata.name"
+                :issue="listedIssue"
+                :is-selected="checkSelection(listedIssue)"
+                @update="handlerUpdateIssue"
+              />
+            </VEntityContainer>
           </Transition>
           <template #footer>
             <VPagination v-model:page="page" v-model:size="size" :total="total" :size-options="[20, 30, 50, 100]" />

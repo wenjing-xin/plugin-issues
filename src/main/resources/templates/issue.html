@@ -36,7 +36,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                             <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueVO.contributorVo.avatar}, name=${issueVO.contributorVo.name})}" />
                         </div>
                         <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200">
-                            <div class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100">
+                            <div class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
                                 <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2">
                                     <div class="lg:piw-hidden">
                                         <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueVO.contributorVo.avatar}, name=${issueVO.contributorVo.name})}" />
@@ -81,7 +81,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                             <div class="piw-w-full">
                                 <div class="piw-h-4 piw-w-0.5 piw-bg-slate-300/80 piw-ml-6"></div>
                                 <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200">
-                                    <div class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100">
+                                    <div class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
                                         <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2">
                                             <div class="lg:piw-hidden">
                                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
@@ -128,10 +128,11 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     </div>
                 </div>
                 <!-- 提交按钮 -->
-                <div class="piw-w-full piw-my-3 lg:piw-pl-10 piw-flex piw-items-center piw-gap-x-3">
+                <div class="piw-w-full piw-my-3 lg:piw-pl-10 piw-flex piw-items-center piw-gap-x-3" x-data="messageBox">
                     <button class="piw-w-24 piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-h-8 piw-text-sm piw-tracking-wider"
                     @click="main.publishIssueComment(issueId, rawContent, preview, quoteCommentId)">评论</button>
-                    <div class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center">关闭issue</div>
+                    <div class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
+                    @click="showMessage('success', '操作成功', 3000)">关闭issue</div>
                 </div>
             </div>
             <!--  右侧信息栏 -->
@@ -168,7 +169,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                         <p class="piw-text-xs piw-tracking-wider piw-font-bold">通知</p>
                         <p class="piw-text-xs piw-tracking-wider piw-font-bold">自定义</p>
                     </div>
-                    <div class="piw-flex piw-py-2 piw-items-center piw-gap-x-2 piw-justify-center piw-w-full piw-rounded-md piw-bg-slate-100 piw-border piw-border-slate-200
+                    <div class="piw-flex piw-py-2 piw-items-center piw-gap-x-2 piw-justify-center piw-w-full piw-rounded-md piw-bg-slate-100/80 piw-border piw-border-slate-200
                                 hover:piw-cursor-pointer hover:piw-bg-slate-200/80">
                         <span class="piw-icon-[iconamoon--notification] piw-text-base"></span>
                         <span class="piw-text-sm piw-text-neutral-600">订阅</span>
