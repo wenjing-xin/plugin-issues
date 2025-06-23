@@ -2,7 +2,9 @@ import CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/lib/codemirror.css';
 import { marked } from 'marked';
-
+marked.setOptions({
+    breaks: true
+});
 export default () => ({
     activeTab: 'editor',
     editor: null,
@@ -350,6 +352,16 @@ export default () => ({
                     );
                 }
             }
+        });
+    },
+    insertQuote(content: string) {
+        // @ts-ignore
+        this.insertMarkdown((cm, selection) => {
+            const doc = cm.getDoc();
+            const cursor = doc.getCursor();
+            doc.replaceRange('> ' + content, cursor);
+            doc.setCursor(cursor.line, cursor.ch + 2);
+
         });
     },
 });

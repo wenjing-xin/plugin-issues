@@ -445,12 +445,36 @@
   margin-top: 0;
   margin-bottom: 10px;
 }
+[data-color-scheme="dark"] .markdown-body pre {
+    background: #23272e;
+    box-shadow: 0 2px 8px rgba(30,34,40,0.12);
+}
 
+
+[data-color-scheme="dark"] .markdown-body blockquote {
+    background: #23272e;
+    border-left-color: #444c56;
+    color: #b3bac5;
+    box-shadow: 0 1px 4px rgba(44,50,60,0.10);
+}
 .markdown-body blockquote {
-  margin: 0;
-  padding: 0 1em;
-  color: var(--color-fg-muted);
-  border-left: 0.25em solid var(--color-border-default);
+    background: #f9fafb;
+    border-left: 4px solid #b3bac5;
+    margin: 1.2em 0;
+    padding: 0.8em 1.2em;
+    color: #555;
+    border-radius: 6px;
+    font-size: 1em;
+    font-style: italic;
+    box-shadow: 0 1px 4px rgba(180,186,197,0.06);
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.markdown-body blockquote > :first-child {
+    margin-top: 0;
+}
+.markdown-body blockquote > :last-child {
+    margin-bottom: 0;
 }
 
 .markdown-body ul,
@@ -484,11 +508,35 @@
 }
 
 .markdown-body pre {
-  margin-top: 0;
-  margin-bottom: 0;
-  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-  font-size: 12px;
-  word-wrap: normal;
+    background: #282c34;
+    color: #f8f8f2;
+    border-radius: 8px;
+    padding: 1em 1.2em;
+    margin: 1.2em 0;
+    overflow-x: auto;
+    font-size: 15px;
+    line-height: 1.7;
+    box-shadow: 0 2px 8px rgba(40,44,52,0.08);
+    border: none;
+    transition: background 0.3s;
+}
+
+.markdown-body code {
+    background: #f6f8fa;
+    /*color: #c7254e;*/
+    border-radius: 4px;
+    padding: 0.2em 0.4em;
+    font-size: 95%;
+    font-family: 'JetBrains Mono', 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    transition: background 0.3s;
+}
+
+.markdown-body pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+    border-radius: 0;
 }
 
 .markdown-body .octicon {
@@ -582,14 +630,6 @@
 .markdown-body details {
   margin-top: 0;
   margin-bottom: 16px;
-}
-
-.markdown-body blockquote > :first-child {
-  margin-top: 0;
-}
-
-.markdown-body blockquote > :last-child {
-  margin-bottom: 0;
 }
 
 .markdown-body h1 .octicon-link,
@@ -853,7 +893,6 @@
   text-align: right;
 }
 
-.markdown-body code,
 .markdown-body tt {
   padding: 0.2em 0.4em;
   margin: 0;

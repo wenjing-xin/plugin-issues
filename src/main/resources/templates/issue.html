@@ -77,7 +77,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     </div>
                     <!-- issue 评论数据  -->
                     <th:block th:if="${ not #lists.isEmpty(issueComments)}" th:each="issueComment : ${issueComments}">
-                        <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}'}|" :id="commentId">
+                        <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}', issueCommentContent: '${issueComment.spec.content.raw}'}|" :id="commentId">
                             <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block lg:piw-pt-4">
                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
                             </div>
@@ -108,7 +108,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                                     <span class="piw-text-sm">复制链接</span>
                                                 </div>
                                                 <hr class="piw-w-full piw-bg-slate-200" />
-                                                <div class="issue-item-operation t-lazy-item" @click="insertQuote('2323');close();">
+                                                <div class="issue-item-operation t-lazy-item" @click="insertQuote(issueCommentContent);close();">
                                                     <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
                                                     <span class="piw-text-sm">引用回复</span>
                                                 </div>

@@ -56,8 +56,8 @@
         <div class="issue-editor" :class="{'piw-hidden': activeTab !== 'editor'}">
             <textarea id="editor" x-ref="editor" placeholder="请输入..."></textarea>
         </div>
-        <div class="issue-editor-preview" :class="{'piw-hidden': activeTab !== 'preview'}">
-            <div class="markdown-body !piw-text-sm" x-html="preview"></div>
+        <div class="issue-editor-preview markdown-body" :class="{'piw-hidden': activeTab !== 'preview'}">
+            <div class="!piw-text-sm" x-html="preview"></div>
         </div>
     </div>
 </div>
