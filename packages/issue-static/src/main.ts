@@ -298,3 +298,17 @@ export function generateColors (labelsStr: string, maxColors?: number): {label:s
 
     return colors;
 }
+
+// 复制链接
+export function copyLink(link: string) {
+    const messageUtils = message();
+    let finalCopyLink = link;
+    if(!link.includes('https://') || !link.includes('http://')){
+        finalCopyLink = window.location.origin + link
+    }
+    navigator.clipboard.writeText(finalCopyLink).then(() => {
+        messageUtils.showMessage("success", '链接复制成功', 3000)
+    }).catch(error=> {
+        messageUtils.showMessage("error", '链接复制失败：' + error.message, 3000)
+    })
+}

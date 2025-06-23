@@ -8,9 +8,11 @@ content = ~{::content}, version = ${pluginVersion}, head = null)}">
     <main class="piw-container piw-mx-auto piw-py-6 piw-space-y-4">
         <!-- 选项卡内容 -->
         <div class="piw-w-full piw-inline-flex piw-items-center piw-gap-x-3">
-            <div class="piw-w-full piw-relative piw-inline-flex piw-rounded-md piw-h-8 piw-px-2 piw-border piw-border-neutral-200">
-                <div class="piw-text-sm piw-text-blue-500 piw-flex piw-items-center piw-absolute piw-left-2 piw-top-1">is:issue</div>
-                <input class="piw-w-full piw-h-full focus:piw-border-indigo-300 piw-transition-all piw-duration-300" />
+            <div class="piw-relative piw-w-full">
+                <input type="search"
+                       placeholder="搜索Issue..."
+                       class="piw-w-full piw-pl-10 piw-pr-4 piw-py-1.5 piw-border piw-border-gray-300 piw-rounded-lg piw-text-sm focus:piw-outline-none focus:piw-ring-2 focus:piw-ring-primary focus:piw-border-transparent piw-transition-all piw-duration-300">
+                <span class="piw-size-4 piw-text-gray-400 piw-absolute piw-left-3 piw-top-2 piw-icon-[mingcute--list-search-line]"></span>
             </div>
             <button class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8">New issue</button>
         </div>

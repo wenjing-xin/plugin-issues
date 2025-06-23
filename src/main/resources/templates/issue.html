@@ -2,6 +2,9 @@
 <html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = ${issueVO.spec.title},
 content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
 <th:block th:fragment="head">
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
     <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
 </th:block>
 <th:block th:fragment="content" th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}">
@@ -29,7 +32,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
              th:attr="x-data=|{issueId:'${issueVO.metadata.name}', quoteCommentId: ''}|">
             <div class="lg:piw-w-[68%] piw-w-full" x-data="issueEditor">
                 <!--  初始化issue编辑器  -->
-                <div class="piw-w-full">
+                <div class="piw-w-full" th:attr="x-data=|{issueLink: '${issueVO.status.permalink}', issueContent: '${issueVO.spec.content.raw}'}|">
                     <!--  原有的issue信息  -->
                     <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full">
                         <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block">
@@ -53,12 +56,12 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                     <div x-show="show" @click.outside="close();"
                                          class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md
                                          piw-flex piw-flex-col piw-items-center piw-space-y-1 piw-p-2">
-                                        <div class="issue-item-operation t-lazy-item">
+                                        <div class="issue-item-operation t-lazy-item" @click="main.copyLink(issueLink);close();">
                                             <span class="piw-icon-[ci--link] piw-text-xl"></span>
                                             <span class="piw-text-sm">复制链接</span>
                                         </div>
                                         <hr class="piw-w-full piw-bg-slate-200" />
-                                        <div class="issue-item-operation t-lazy-item">
+                                        <div class="issue-item-operation t-lazy-item" @click="insertQuote(issueContent);close();">
                                             <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
                                             <span class="piw-text-sm">引用回复</span>
                                         </div>
@@ -80,7 +83,9 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                             </div>
                             <div class="piw-w-full">
                                 <div class="piw-h-4 piw-w-0.5 piw-bg-slate-300/80 piw-ml-6"></div>
-                                <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200">
+                                <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200"
+                                     x-data="{curCommentPos: window.location.href.replace(window.location.origin+window.location.pathname, '').replace('#', '')}"
+                                     :class="{'!piw-border-indigo-600 piw-border-2': curCommentPos != '' && curCommentPos === commentId}">
                                     <div class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
                                         <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2">
                                             <div class="lg:piw-hidden">
@@ -98,12 +103,12 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                             <div x-show="show" @click.outside="close();"
                                                  class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md
                                              piw-flex piw-flex-col piw-items-center piw-space-y-1 piw-p-2">
-                                                <div class="issue-item-operation t-lazy-item">
+                                                <div class="issue-item-operation t-lazy-item" @click="main.copyLink(issueLink + '#' + commentId);close();close();">
                                                     <span class="piw-icon-[ci--link] piw-text-xl"></span>
                                                     <span class="piw-text-sm">复制链接</span>
                                                 </div>
                                                 <hr class="piw-w-full piw-bg-slate-200" />
-                                                <div class="issue-item-operation t-lazy-item">
+                                                <div class="issue-item-operation t-lazy-item" @click="insertQuote('2323');close();">
                                                     <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
                                                     <span class="piw-text-sm">引用回复</span>
                                                 </div>
@@ -128,11 +133,11 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     </div>
                 </div>
                 <!-- 提交按钮 -->
-                <div class="piw-w-full piw-my-3 lg:piw-pl-10 piw-flex piw-items-center piw-gap-x-3" x-data="messageBox">
+                <div class="piw-w-full piw-my-3 lg:piw-pl-10 piw-flex piw-items-center piw-gap-x-3" sec:authorize="isAuthenticated()" x-data="messageBox">
                     <button class="piw-w-24 piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-h-8 piw-text-sm piw-tracking-wider"
-                    @click="main.publishIssueComment(issueId, rawContent, preview, quoteCommentId)">评论</button>
+                    @click="main.publishIssueComment(issueId, rawContent, preview, quoteCommentId)" >评论</button>
                     <div class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
-                    @click="showMessage('success', '操作成功', 3000)">关闭issue</div>
+                    @click="showMessage('success', '操作成功', 3000)">关闭 Issue</div>
                 </div>
             </div>
             <!--  右侧信息栏 -->
