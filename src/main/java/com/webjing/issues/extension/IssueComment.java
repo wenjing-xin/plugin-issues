@@ -49,7 +49,7 @@ public class IssueComment extends AbstractExtension {
         private String owner;
 
         @Schema(requiredMode = REQUIRED)
-        private IssueDetailContent content;
+        private IssueCommentContent content;
 
         @Schema(defaultValue = "false")
         private Boolean approved;
@@ -69,7 +69,7 @@ public class IssueComment extends AbstractExtension {
     }
 
     @Data
-    public static class IssueDetailContent {
+    public static class IssueCommentContent {
 
         @Schema(description = "Raw of content")
         private String raw;
@@ -81,11 +81,11 @@ public class IssueComment extends AbstractExtension {
             uniqueItems = true,
             arraySchema = @Schema(description = "Medium of issueDetail"),
             schema = @Schema(description = "Media item of issueDetail"))
-        private List<IssueDetailMedia> medium;
+        private List<IssueCommentMedia> medium;
     }
 
     @Data
-    public static class IssueDetailMedia {
+    public static class IssueCommentMedia {
 
         @Schema(description = "Type of media")
         private IssueDetailMediaType type;

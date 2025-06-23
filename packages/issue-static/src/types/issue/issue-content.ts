@@ -13,33 +13,24 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { IssueDetailMedia } from './issue-detail-media';
 
 /**
  * 
  * @export
- * @interface IssueDetailContent
+ * @interface IssueContent
  */
-export interface IssueDetailContent {
+export interface IssueContent {
     /**
      * Rendered result with HTML format
      * @type {string}
-     * @memberof IssueDetailContent
+     * @memberof IssueContent
      */
-    'html'?: string;
-    /**
-     * Medium of issueDetail
-     * @type {Array<IssueDetailMedia>}
-     * @memberof IssueDetailContent
-     */
-    'medium'?: Array<IssueDetailMedia>;
+    'html': string;
     /**
      * Raw of content
      * @type {string}
-     * @memberof IssueDetailContent
+     * @memberof IssueContent
      */
-    'raw'?: string;
+    'raw': string;
 }
 

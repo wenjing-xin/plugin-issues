@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:63863",
+    "url" : "http://localhost:32476",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -2089,6 +2089,27 @@
           }
         }
       },
+      "IssueCommentContent" : {
+        "type" : "object",
+        "properties" : {
+          "html" : {
+            "type" : "string",
+            "description" : "Rendered result with HTML format"
+          },
+          "medium" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "description" : "Medium of issueDetail",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueCommentMedia"
+            }
+          },
+          "raw" : {
+            "type" : "string",
+            "description" : "Raw of content"
+          }
+        }
+      },
       "IssueCommentList" : {
         "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
         "type" : "object",
@@ -2138,6 +2159,25 @@
           }
         }
       },
+      "IssueCommentMedia" : {
+        "type" : "object",
+        "properties" : {
+          "originType" : {
+            "type" : "string",
+            "description" : "Origin type of media."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of media",
+            "enum" : [ "PHOTO", "POST" ]
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "External URL of media"
+          }
+        },
+        "description" : "Media item of issueDetail"
+      },
       "IssueCommentSpec" : {
         "required" : [ "content", "hidden", "issueName", "owner", "top" ],
         "type" : "object",
@@ -2157,7 +2197,7 @@
             "format" : "date-time"
           },
           "content" : {
-            "$ref" : "#/components/schemas/IssueDetailContent"
+            "$ref" : "#/components/schemas/IssueCommentContent"
           },
           "hidden" : {
             "type" : "boolean",
@@ -2189,20 +2229,7 @@
         }
       },
       "IssueContent" : {
-        "required" : [ "html", "raw" ],
-        "type" : "object",
-        "properties" : {
-          "html" : {
-            "type" : "string",
-            "description" : "Rendered result with HTML format"
-          },
-          "raw" : {
-            "type" : "string",
-            "description" : "Raw of content"
-          }
-        }
-      },
-      "IssueDetailContent" : {
+        "required" : [ "html", "medium", "raw" ],
         "type" : "object",
         "properties" : {
           "html" : {
@@ -2210,11 +2237,10 @@
             "description" : "Rendered result with HTML format"
           },
           "medium" : {
-            "uniqueItems" : true,
             "type" : "array",
-            "description" : "Medium of issueDetail",
+            "description" : "rendered medium",
             "items" : {
-              "$ref" : "#/components/schemas/IssueDetailMedia"
+              "$ref" : "#/components/schemas/IssueMedia"
             }
           },
           "raw" : {
@@ -2222,25 +2248,6 @@
             "description" : "Raw of content"
           }
         }
-      },
-      "IssueDetailMedia" : {
-        "type" : "object",
-        "properties" : {
-          "originType" : {
-            "type" : "string",
-            "description" : "Origin type of media."
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "Type of media",
-            "enum" : [ "PHOTO", "POST" ]
-          },
-          "url" : {
-            "type" : "string",
-            "description" : "External URL of media"
-          }
-        },
-        "description" : "Media item of issueDetail"
       },
       "IssueList" : {
         "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
@@ -2290,6 +2297,25 @@
             "format" : "int64"
           }
         }
+      },
+      "IssueMedia" : {
+        "type" : "object",
+        "properties" : {
+          "originType" : {
+            "type" : "string",
+            "description" : "Origin type of media."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of media",
+            "enum" : [ "PHOTO", "POST" ]
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "External URL of media"
+          }
+        },
+        "description" : "rendered medium"
       },
       "IssueSpec" : {
         "required" : [ "content", "owner", "subjectName", "title", "top" ],

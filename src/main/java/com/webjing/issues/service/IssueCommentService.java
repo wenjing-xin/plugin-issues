@@ -26,5 +26,5 @@ public interface IssueCommentService {
 
     Mono<IssueComment> getByUsername(String issueCommentName, String name);
 
-    Mono<IssueComment.IssueDetailContent> getIssueCommentContent(String issueCommentName);
+    Mono<IssueComment.IssueCommentContent> getIssueCommentContent(String issueCommentName);
 }

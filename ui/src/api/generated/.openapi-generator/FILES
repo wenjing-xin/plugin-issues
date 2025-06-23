@@ -21,13 +21,14 @@ models/add-operation.ts
 models/contributor-vo.ts
 models/copy-operation.ts
 models/index.ts
+models/issue-comment-content.ts
 models/issue-comment-list.ts
+models/issue-comment-media.ts
 models/issue-comment-spec.ts
 models/issue-comment.ts
 models/issue-content.ts
-models/issue-detail-content.ts
-models/issue-detail-media.ts
 models/issue-list.ts
+models/issue-media.ts
 models/issue-spec.ts
 models/issue-stats.ts
 models/issue-status.ts

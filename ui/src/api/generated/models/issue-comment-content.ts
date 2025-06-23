@@ -15,31 +15,31 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { IssueMedia } from './issue-media';
+import type { IssueCommentMedia } from './issue-comment-media';
 
 /**
  * 
  * @export
- * @interface IssueContent
+ * @interface IssueCommentContent
  */
-export interface IssueContent {
+export interface IssueCommentContent {
     /**
      * Rendered result with HTML format
      * @type {string}
-     * @memberof IssueContent
+     * @memberof IssueCommentContent
      */
-    'html': string;
+    'html'?: string;
     /**
-     * rendered medium
-     * @type {Array<IssueMedia>}
-     * @memberof IssueContent
+     * Medium of issueDetail
+     * @type {Array<IssueCommentMedia>}
+     * @memberof IssueCommentContent
      */
-    'medium': Array<IssueMedia>;
+    'medium'?: Array<IssueCommentMedia>;
     /**
      * Raw of content
      * @type {string}
-     * @memberof IssueContent
+     * @memberof IssueCommentContent
      */
-    'raw': string;
+    'raw'?: string;
 }
 

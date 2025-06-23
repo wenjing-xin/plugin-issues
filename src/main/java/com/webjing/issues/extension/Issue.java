@@ -103,6 +103,9 @@ public class Issue extends AbstractExtension {
 
         @Schema(description = "Rendered result with HTML format", requiredMode = REQUIRED)
         private String html;
+
+        @Schema(description = "rendered medium", requiredMode = REQUIRED)
+        private List<IssueMedia> medium;
     }
 
     @Data

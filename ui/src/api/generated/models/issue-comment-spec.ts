@@ -15,7 +15,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { IssueDetailContent } from './issue-detail-content';
+import type { IssueCommentContent } from './issue-comment-content';
 
 /**
  * 
@@ -43,10 +43,10 @@ export interface IssueCommentSpec {
     'approvedTime'?: string;
     /**
      * 
-     * @type {IssueDetailContent}
+     * @type {IssueCommentContent}
      * @memberof IssueCommentSpec
      */
-    'content': IssueDetailContent;
+    'content': IssueCommentContent;
     /**
      * 是否隐藏
      * @type {boolean}

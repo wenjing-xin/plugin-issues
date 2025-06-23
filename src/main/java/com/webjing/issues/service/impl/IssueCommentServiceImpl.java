@@ -75,7 +75,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
     }
 
     @Override
-    public Mono<IssueComment.IssueDetailContent> getIssueCommentContent(String issueCommentName) {
+    public Mono<IssueComment.IssueCommentContent> getIssueCommentContent(String issueCommentName) {
         return client.fetch(IssueComment.class, issueCommentName).map(issueComment -> issueComment.getSpec().getContent());
     }
 
