@@ -189,6 +189,11 @@ public class IssueServiceImpl implements IssueService {
         return client.update(issue);
     }
 
+    @Override
+    public Mono<Issue.IssueContent> getIssueContent(String issueName) {
+        return client.fetch(Issue.class, issueName).map(issue -> issue.getSpec().getContent());
+    }
+
     /**
      * 关闭issue的时候发送通知
      * @param issue

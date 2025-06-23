@@ -62,6 +62,20 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     );
                 IssueQuery.buildParameters(builder);
             })
+            .GET("issues/content", this::fetchIssueContent, builder -> {
+                builder.operationId("FetchIssueContent")
+                    .description("fetch issue content.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("issueName")
+                        .in(ParameterIn.QUERY)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementation(Issue.IssueContent.class)
+                    );
+            })
             .GET("issues/{name}", this::getMyIssue,
                 builder -> builder.operationId("GetMyIssue")
                     .description("Get a My Issue.")
@@ -155,11 +169,24 @@ public class UcIssueEndpoint implements CustomEndpoint {
             .build();
     }
 
+    private Mono<ServerResponse> listMyIssue(ServerRequest request) {
+        return getCurrentUser()
+            .map(user -> new IssueQuery(request.exchange(), user.getName()))
+            .flatMap(issueService::listIssue)
+            .flatMap(listedMoments -> ServerResponse.ok().bodyValue(listedMoments));
+    }
+
+    private Mono<ServerResponse> fetchIssueContent(ServerRequest request) {
+        String issueName = request.queryParam("issueName").get();
+        return issueService.getIssueContent(issueName)
+            .flatMap(issueContent -> ServerResponse.ok().bodyValue(issueContent));
+    }
+
     private Mono<ServerResponse> deleteMyIssue(ServerRequest request) {
         var name = request.pathVariable("name");
         return getMyIssueDetail(name)
             .flatMap(issueService::deleteBy)
-            .flatMap(moment -> ServerResponse.ok().bodyValue(moment));
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
 
     private Mono<ServerResponse> updateMyIssue(ServerRequest request) {
@@ -177,7 +204,7 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     })
                     .flatMap(issueService::updateBy);
             })
-            .flatMap(moment -> ServerResponse.ok().bodyValue(moment));
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
 
     private Mono<ServerResponse> getMyIssue(ServerRequest request) {
@@ -219,14 +246,7 @@ public class UcIssueEndpoint implements CustomEndpoint {
                 })
             )
             .flatMap(issueService::create)
-            .flatMap(moment -> ServerResponse.ok().bodyValue(moment));
-    }
-
-    private Mono<ServerResponse> listMyIssue(ServerRequest request) {
-        return getCurrentUser()
-            .map(user -> new IssueQuery(request.exchange(), user.getName()))
-            .flatMap(issueService::listIssue)
-            .flatMap(listedMoments -> ServerResponse.ok().bodyValue(listedMoments));
+            .flatMap(createdIssue -> ServerResponse.ok().bodyValue(createdIssue));
     }
 
     private Mono<Authentication> getCurrentUser() {

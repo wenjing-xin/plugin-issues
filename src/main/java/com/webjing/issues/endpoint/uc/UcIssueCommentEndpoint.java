@@ -64,6 +64,20 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                     );
                 IssueCommentQuery.buildParameters(builder);
             })
+            .GET("issuecomments/content", this::fetchIssueCommentContent, builder -> {
+                builder.operationId("FetchIssueCommentContent")
+                    .description("fetch issue comment content.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("issueCommentName")
+                        .in(ParameterIn.QUERY)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementation(Issue.IssueContent.class)
+                    );
+            })
             .POST("issuecomments", this::createMyIssueComment,
                 builder -> builder.operationId("CreateMyIssueComment")
                     .description("Create a My IssueComment.")
@@ -111,6 +125,12 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                     .response(responseBuilder().implementation(IssueComment.class))
             )
             .build();
+    }
+
+    private Mono<ServerResponse> fetchIssueCommentContent(ServerRequest request) {
+        String issueCommentName = request.queryParam("issueCommentName").get();
+        return issueCommentService.getIssueCommentContent(issueCommentName)
+            .flatMap(issueCommentContent -> ServerResponse.ok().bodyValue(issueCommentContent));
     }
 
     private Mono<ServerResponse> deleteMyIssueComment(ServerRequest request) {

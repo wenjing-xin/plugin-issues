@@ -3,6 +3,7 @@ package com.webjing.issues.service;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.entity.ListedIssue;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import run.halo.app.extension.ListResult;
@@ -30,4 +31,5 @@ public interface IssueService {
 
     Mono<Issue> closeIssue(Issue issue,  String closedComment, String closedOwner);
 
+    Mono<Issue.IssueContent> getIssueContent(String issueName);
 }

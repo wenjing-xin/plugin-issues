@@ -25,4 +25,6 @@ public interface IssueCommentService {
     Mono<IssueComment> deleteBy(IssueComment issueComment);
 
     Mono<IssueComment> getByUsername(String issueCommentName, String name);
+
+    Mono<IssueComment.IssueDetailContent> getIssueCommentContent(String issueCommentName);
 }

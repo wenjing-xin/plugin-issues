@@ -53,7 +53,7 @@ export function setColorScheme(colorScheme: ColorSchemeType, store: boolean) {
         }
         //移除文章顶部cover的颜色
         coverBottomRounded?.classList.forEach(className => {
-            if(className.startsWith(prefix) && className !== "bg-neutral-50"){
+            if (className.startsWith(prefix) && className !== "bg-neutral-50") {
                 coverBottomRounded.classList.remove(className);
                 coverBottomRounded.classList.add('bg-neutral-50');
             }
@@ -75,8 +75,8 @@ export function setColorScheme(colorScheme: ColorSchemeType, store: boolean) {
     }
 }
 
-export function publishIssueComment(issueId: string, rawContent: string, htmlContent: string, quoteCommentId:string) {
-    let initComment:IssueComment = {
+export function publishIssueComment(issueId: string, rawContent: string, htmlContent: string, quoteCommentId: string) {
+    let initComment: IssueComment = {
         kind: "IssueComment",
         apiVersion: "issue.webjing.com/v1alpha1",
         metadata: {
@@ -99,8 +99,8 @@ export function publishIssueComment(issueId: string, rawContent: string, htmlCon
             userAgent: navigator.userAgent
         },
     }
-    createIssueComment(initComment).then(res=> {
-        if(res.status == 200){
+    createIssueComment(initComment).then(res => {
+        if (res.status == 200) {
             const messageUtils = message();
             messageUtils.showMessage("success", '操作成功', 3000)
             window.location.reload();
@@ -119,7 +119,7 @@ export function triggerLazyAnimation(targetSelector: string) {
     // 布局分析数据结构
     interface LayoutInfo {
         rows: HTMLElement[][];
-        positions: WeakMap<HTMLElement, {row: number; col: number}>;
+        positions: WeakMap<HTMLElement, { row: number; col: number }>;
     }
 
     // 分析元素行列布局
@@ -143,14 +143,14 @@ export function triggerLazyAnimation(targetSelector: string) {
 
         // 排序行和列
         layout.rows = Array.from(rowMap.values())
-                .sort((a, b) =>
-                        a[0].getBoundingClientRect().top - b[0].getBoundingClientRect().top
+            .sort((a, b) =>
+                a[0].getBoundingClientRect().top - b[0].getBoundingClientRect().top
+            )
+            .map(row =>
+                row.sort((a, b) =>
+                    a.getBoundingClientRect().left - b.getBoundingClientRect().left
                 )
-                .map(row =>
-                        row.sort((a, b) =>
-                                a.getBoundingClientRect().left - b.getBoundingClientRect().left
-                        )
-                );
+            );
 
         // 记录行列位置
         layout.rows.forEach((row, rowIndex) => {
@@ -181,8 +181,8 @@ export function triggerLazyAnimation(targetSelector: string) {
         if (!pos) return BASE_DELAY;
 
         return BASE_DELAY +
-                pos.row * ROW_DELAY +
-                pos.col * COL_DELAY;
+            pos.row * ROW_DELAY +
+            pos.col * COL_DELAY;
     };
 
     // 核心加载方法
@@ -228,9 +228,9 @@ export function triggerLazyAnimation(targetSelector: string) {
 }
 
 // 生成随机颜色
-export function generateColors (labelsStr: string, maxColors?: number): {label:string, bgColor:string}[] {
+export function generateColors(labelsStr: string, maxColors?: number): { label: string, bgColor: string }[] {
     // 处理标签列表
-    let labels:string[] =  labelsStr.replace("[", "").replace("]", "").split(",")
+    let labels: string[] = labelsStr.replace("[", "").replace("]", "").split(",")
 
     // HSL 颜色生成策略 (更易控制美观度)
     const generateHSL = (hue: number): string => {
@@ -253,20 +253,20 @@ export function generateColors (labelsStr: string, maxColors?: number): {label:s
             const hue2rgb = (p, q, t) => {
                 if (t < 0) t += 1;
                 if (t > 1) t -= 1;
-                if (t < 1/6) return p + (q - p) * 6 * t;
-                if (t < 1/2) return q;
-                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                if (t < 1 / 6) return p + (q - p) * 6 * t;
+                if (t < 1 / 2) return q;
+                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
                 return p;
             };
 
             const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
             const p = 2 * l - q;
-            r = hue2rgb(p, q, h + 1/3);
+            r = hue2rgb(p, q, h + 1 / 3);
             g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1/3);
+            b = hue2rgb(p, q, h - 1 / 3);
         }
 
-        const toHex = (x:number) => {
+        const toHex = (x: number) => {
             const hex = Math.round(x * 255).toString(16);
             return hex.length === 1 ? '0' + hex : hex;
         };
@@ -287,11 +287,11 @@ export function generateColors (labelsStr: string, maxColors?: number): {label:s
         const hsl = generateHSL(currentHue);
         const matches = hsl.match(/(\d+(\.\d+)?)/g);
         const rgb = hslToRgb(
-                parseFloat(matches![0]),
-                parseFloat(matches![1]),
-                parseFloat(matches![2])
+            parseFloat(matches![0]),
+            parseFloat(matches![1]),
+            parseFloat(matches![2])
         );
-        let randomColorLabel = {label:labels[i], bgColor: rgb}
+        let randomColorLabel = { label: labels[i], bgColor: rgb }
         colors.push(randomColorLabel);
         currentHue = (currentHue + hueStep) % 360;
     }
@@ -303,12 +303,181 @@ export function generateColors (labelsStr: string, maxColors?: number): {label:s
 export function copyLink(link: string) {
     const messageUtils = message();
     let finalCopyLink = link;
-    if(!link.includes('https://') || !link.includes('http://')){
+    if (!link.includes('https://') || !link.includes('http://')) {
         finalCopyLink = window.location.origin + link
     }
     navigator.clipboard.writeText(finalCopyLink).then(() => {
         messageUtils.showMessage("success", '链接复制成功', 3000)
-    }).catch(error=> {
+    }).catch(error => {
         messageUtils.showMessage("error", '链接复制失败：' + error.message, 3000)
     })
+}
+
+
+
+let globalTooltipDiv: HTMLDivElement | null = null;
+
+type TooltipDirection = 'top' | 'bottom' | 'left' | 'right';
+
+export function showTooltip(
+        content: string,
+        event: MouseEvent,
+        direction: TooltipDirection = 'top'
+) {
+    // 立即移除上一个
+    if (globalTooltipDiv) {
+        // 立即移除，不等动画
+        globalTooltipDiv.remove();
+        globalTooltipDiv = null;
+    }
+
+    // 创建 tooltip 容器
+    const tooltipDiv = document.createElement('div');
+    tooltipDiv.className = 'custom-tooltip';
+    tooltipDiv.textContent = content;
+    tooltipDiv.style.position = 'fixed';
+    tooltipDiv.style.background = 'rgba(40,40,40,0.97)';
+    tooltipDiv.style.color = '#fff';
+    tooltipDiv.style.padding = '7px 16px';
+    tooltipDiv.style.borderRadius = '8px';
+    tooltipDiv.style.fontSize = '14px';
+    tooltipDiv.style.boxShadow = '0 4px 16px rgba(0,0,0,0.13)';
+    tooltipDiv.style.zIndex = '9999';
+    tooltipDiv.style.pointerEvents = 'none';
+    tooltipDiv.style.transition = 'opacity 0.18s cubic-bezier(.4,0,.2,1)';
+    tooltipDiv.style.opacity = '0';
+    tooltipDiv.style.whiteSpace = 'nowrap';
+
+    // 箭头
+    const arrow = document.createElement('div');
+    arrow.className = 'custom-tooltip-arrow';
+    arrow.style.position = 'absolute';
+    arrow.style.width = '0';
+    arrow.style.height = '0';
+
+    // 先插入到 body
+    document.body.appendChild(tooltipDiv);
+    tooltipDiv.appendChild(arrow);
+    globalTooltipDiv = tooltipDiv;
+
+    // 计算位置
+    const padding = 8; // tooltip 与目标的间距
+    const rect = (event.target as HTMLElement).getBoundingClientRect();
+    let left = 0, top = 0;
+
+    // 先让 tooltip 可见以便获取宽高
+    tooltipDiv.style.opacity = '0';
+    tooltipDiv.style.display = 'block';
+
+    // 箭头样式和定位
+    function setArrow(dir: TooltipDirection) {
+        arrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
+        switch (dir) {
+            case 'top':
+                arrow.style.borderLeft = '7px solid transparent';
+                arrow.style.borderRight = '7px solid transparent';
+                arrow.style.borderTop = '7px solid rgba(40,40,40,0.97)';
+                arrow.style.borderBottom = 'none';
+                arrow.style.left = (tooltipDiv.offsetWidth / 2 - 7) + 'px';
+                arrow.style.top = (tooltipDiv.offsetHeight - 1) + 'px';
+                break;
+            case 'bottom':
+                arrow.style.borderLeft = '7px solid transparent';
+                arrow.style.borderRight = '7px solid transparent';
+                arrow.style.borderBottom = '7px solid rgba(40,40,40,0.97)';
+                arrow.style.borderTop = 'none';
+                arrow.style.left = (tooltipDiv.offsetWidth / 2 - 7) + 'px';
+                arrow.style.top = '-7px';
+                break;
+            case 'left':
+                arrow.style.borderTop = '7px solid transparent';
+                arrow.style.borderBottom = '7px solid transparent';
+                arrow.style.borderLeft = '7px solid rgba(40,40,40,0.97)';
+                arrow.style.borderRight = 'none';
+                arrow.style.left = (tooltipDiv.offsetWidth - 1) + 'px';
+                arrow.style.top = (tooltipDiv.offsetHeight / 2 - 7) + 'px';
+                break;
+            case 'right':
+                arrow.style.borderTop = '7px solid transparent';
+                arrow.style.borderBottom = '7px solid transparent';
+                arrow.style.borderRight = '7px solid rgba(40,40,40,0.97)';
+                arrow.style.borderLeft = 'none';
+                arrow.style.left = '-7px';
+                arrow.style.top = (tooltipDiv.offsetHeight / 2 - 7) + 'px';
+                break;
+        }
+    }
+
+    // 方向定位
+    switch (direction) {
+        case 'top':
+            left = rect.left + rect.width / 2 - tooltipDiv.offsetWidth / 2;
+            top = rect.top - tooltipDiv.offsetHeight - padding;
+            setArrow('top');
+            break;
+        case 'bottom':
+            left = rect.left + rect.width / 2 - tooltipDiv.offsetWidth / 2;
+            top = rect.bottom + padding;
+            setArrow('bottom');
+            break;
+        case 'left':
+            left = rect.left - tooltipDiv.offsetWidth - padding;
+            top = rect.top + rect.height / 2 - tooltipDiv.offsetHeight / 2;
+            setArrow('left');
+            break;
+        case 'right':
+            left = rect.right + padding;
+            top = rect.top + rect.height / 2 - tooltipDiv.offsetHeight / 2;
+            setArrow('right');
+            break;
+    }
+
+    // 防止超出屏幕
+    left = Math.max(8, Math.min(left, window.innerWidth - tooltipDiv.offsetWidth - 8));
+    top = Math.max(8, Math.min(top, window.innerHeight - tooltipDiv.offsetHeight - 8));
+
+    tooltipDiv.style.left = `${left}px`;
+    tooltipDiv.style.top = `${top}px`;
+
+    // 渐显
+    setTimeout(() => {
+        tooltipDiv.style.opacity = '1';
+    }, 10);
+
+    // 跟随鼠标移动（仅左右方向时）
+    function moveHandler(e: MouseEvent) {
+        if (!globalTooltipDiv) return;
+        if (direction === 'top' || direction === 'bottom') return;
+        const rect = (event.target as HTMLElement).getBoundingClientRect();
+        let left = 0, top = 0;
+        if (direction === 'left') {
+            left = rect.left - tooltipDiv.offsetWidth - padding;
+            top = e.clientY - tooltipDiv.offsetHeight / 2;
+        } else if (direction === 'right') {
+            left = rect.right + padding;
+            top = e.clientY - tooltipDiv.offsetHeight / 2;
+        }
+        left = Math.max(8, Math.min(left, window.innerWidth - tooltipDiv.offsetWidth - 8));
+        top = Math.max(8, Math.min(top, window.innerHeight - tooltipDiv.offsetHeight - 8));
+        tooltipDiv.style.left = `${left}px`;
+        tooltipDiv.style.top = `${top}px`;
+    }
+    document.addEventListener('mousemove', moveHandler);
+
+    // 保存 handler 以便移除
+    (tooltipDiv as any)._moveHandler = moveHandler;
+}
+
+export function hideTooltip() {
+    if (globalTooltipDiv) {
+        globalTooltipDiv.style.opacity = '0';
+        // 移除 mousemove 事件
+        const moveHandler = (globalTooltipDiv as any)._moveHandler;
+        if (moveHandler) {
+            document.removeEventListener('mousemove', moveHandler);
+        }
+        // 立即移除
+        globalTooltipDiv.remove();
+        globalTooltipDiv = null;
+    }
 }

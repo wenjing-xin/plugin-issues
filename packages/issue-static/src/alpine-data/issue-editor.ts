@@ -176,7 +176,7 @@ export default () => ({
     },
 
     // 标题
-    heading() {
+    heading(level: number) {
         // @ts-ignore
         this.insertMarkdown((cm, selection: string) => {
             const doc = cm.getDoc();
@@ -184,19 +184,21 @@ export default () => ({
             const line = doc.getLine(cursor.line);
 
             // 检测当前标题级别
-            const headingMatch = line.match(/^(#+)\s/);
+            const headingMatch = line.match(/^(#{1,6})\s/);
             const currentLevel = headingMatch ? headingMatch[1].length : 0;
 
-            if (currentLevel > 0) {
-                // 已有标题：增加或减少级别
-                const newLevel = currentLevel === 6 ? 0 : currentLevel + 1;
-                const newPrefix = newLevel > 0 ? '#'.repeat(newLevel) + ' ' : '';
-                doc.replaceRange(newPrefix, { line: cursor.line, ch: 0 }, { line: cursor.line, ch: currentLevel + 1 });
+            if (currentLevel === level) {
+                // 如果当前级别和传入级别一致，去掉标题
+                doc.replaceRange('', { line: cursor.line, ch: 0 }, { line: cursor.line, ch: currentLevel + 1 });
             } else {
-                // 无标题：添加一级标题
-                doc.replaceRange('# ', { line: cursor.line, ch: 0 });
+                // 替换为指定级别标题
+                const newPrefix = '#'.repeat(level) + ' ';
+                if (currentLevel > 0) {
+                    doc.replaceRange(newPrefix, { line: cursor.line, ch: 0 }, { line: cursor.line, ch: currentLevel + 1 });
+                } else {
+                    doc.replaceRange(newPrefix, { line: cursor.line, ch: 0 });
+                }
             }
-
             // 将光标移至行尾
             doc.setCursor(cursor.line, doc.getLine(cursor.line).length);
         });

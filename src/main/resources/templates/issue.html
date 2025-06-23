@@ -51,7 +51,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                         <span class="piw-text-sm" x-text="relativeTimeTo(publishTime)"></span>
                                     </p>
                                 </div>
-                                <div class="piw-relative issue-item-tools" x-data="dropdown" @click="open();main.triggerLazyAnimation('.issue-item-tools ')">
+                                <div class="piw-relative issue-item-tools" x-data="dropdown" @click="open();main.triggerLazyAnimation('.issue-item-tools ')"
+                                     @mouseenter="main.showTooltip('操作', $event)" @mouseleave="main.hideTooltip()">
                                     <span class="piw-icon-[pepicons-pencil--dots-x] piw-text-2xl hover:piw-cursor-pointer"></span>
                                     <div x-show="show" @click.outside="close();"
                                          class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md
@@ -98,7 +99,9 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                                 <span class="piw-text-sm" x-text="relativeTimeTo(createTime)"></span>
                                             </p>
                                         </div>
-                                        <div class="piw-relative" :class="commentId" x-data="dropdown" @click="open();main.triggerLazyAnimation('.' + commentId + ' ')">
+                                        <div class="piw-relative" :class="commentId" x-data="dropdown" @click="open();main.triggerLazyAnimation('.' + commentId + ' ')"
+                                             @mouseenter="main.showTooltip('操作', $event)"
+                                             @mouseleave="main.hideTooltip()">
                                             <span class="piw-icon-[pepicons-pencil--dots-x] piw-text-2xl hover:piw-cursor-pointer"></span>
                                             <div x-show="show" @click.outside="close();"
                                                  class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md

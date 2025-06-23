@@ -74,6 +74,11 @@ public class IssueCommentServiceImpl implements IssueCommentService {
             .filter(post -> Objects.equals(name, post.getSpec().getOwner()));
     }
 
+    @Override
+    public Mono<IssueComment.IssueDetailContent> getIssueCommentContent(String issueCommentName) {
+        return client.fetch(IssueComment.class, issueCommentName).map(issueComment -> issueComment.getSpec().getContent());
+    }
+
     private Mono<ListedIssueComment> toListedIssueComment(IssueComment issueComment) {
         ListedIssueComment.ListedIssueCommentBuilder issueBuilder = ListedIssueComment.builder()
             .issueComment(issueComment);
