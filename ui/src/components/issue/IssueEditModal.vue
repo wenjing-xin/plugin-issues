@@ -47,6 +47,7 @@ const initIssue: Issue = {
     content: {
       raw: "",
       html: "",
+      medium: []
     },
     releaseTime: new Date().toISOString(),
     owner: "",

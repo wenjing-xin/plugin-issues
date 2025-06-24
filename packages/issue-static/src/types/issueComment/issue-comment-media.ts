@@ -17,34 +17,34 @@
 /**
  * Media item of issueDetail
  * @export
- * @interface IssueDetailMedia
+ * @interface IssueCommentMedia
  */
-export interface IssueDetailMedia {
+export interface IssueCommentMedia {
     /**
      * Origin type of media.
      * @type {string}
-     * @memberof IssueDetailMedia
+     * @memberof IssueCommentMedia
      */
     'originType'?: string;
     /**
      * Type of media
      * @type {string}
-     * @memberof IssueDetailMedia
+     * @memberof IssueCommentMedia
      */
-    'type'?: IssueDetailMediaTypeEnum;
+    'type'?: IssueCommentMediaTypeEnum;
     /**
      * External URL of media
      * @type {string}
-     * @memberof IssueDetailMedia
+     * @memberof IssueCommentMedia
      */
     'url'?: string;
 }
 
-export const IssueDetailMediaTypeEnum = {
+export const IssueCommentMediaTypeEnum = {
     Photo: 'PHOTO',
     Post: 'POST'
 } as const;
 
-export type IssueDetailMediaTypeEnum = typeof IssueDetailMediaTypeEnum[keyof typeof IssueDetailMediaTypeEnum];
+export type IssueCommentMediaTypeEnum = typeof IssueCommentMediaTypeEnum[keyof typeof IssueCommentMediaTypeEnum];
 
 

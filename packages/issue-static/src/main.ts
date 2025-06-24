@@ -9,8 +9,8 @@ import upvote from "./alpine-data/upvote";
 import message from "./alpine-data/message";
 import dateUtils from "./alpine-data/date";
 import issueEditor from "./alpine-data/issue-editor";
-import { IssueComment } from "./types";
-import { createIssueComment } from "./api";
+import {IssueComment, IssueCommentContent, IssueContent} from "./types";
+import { createIssueComment, fetchIssueContent, fetchIssueCommentContent } from "./api";
 
 
 window.Alpine = Alpine;
@@ -24,7 +24,7 @@ Alpine.data("dateUtils", dateUtils);
 Alpine.data("issueEditor", issueEditor)
 Alpine.start();
 
-
+const messageUtils = message();
 type ColorSchemeType = "system" | "dark" | "light";
 export let currentColorScheme: ColorSchemeType = "system";
 
@@ -101,7 +101,6 @@ export function publishIssueComment(issueId: string, rawContent: string, htmlCon
     }
     createIssueComment(initComment).then(res => {
         if (res.status == 200) {
-            const messageUtils = message();
             messageUtils.showMessage("success", '操作成功', 3000)
             window.location.reload();
         }
@@ -479,5 +478,23 @@ export function hideTooltip() {
         // 立即移除
         globalTooltipDiv.remove();
         globalTooltipDiv = null;
+    }
+}
+
+export async function getIssueContent(issueName:string):Promise<IssueContent>{
+    const result = await fetchIssueContent(issueName);
+    if(result.status == 200){
+       return result.data as IssueContent;
+    }else{
+        return {raw: "", html: "", medium: []};
+    }
+}
+
+export async function getIssueCommentContent(issueCommentName:string):Promise<IssueCommentContent>{
+    const result = await fetchIssueCommentContent(issueCommentName);
+    if(result.status == 200){
+        return result.data as IssueCommentContent;
+    }else{
+        return {raw: "", html: "", medium: []};
     }
 }

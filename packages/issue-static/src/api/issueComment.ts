@@ -14,6 +14,6 @@ export function updateMyIssueComment(issueComment:IssueComment) {
 }
 
 export function fetchIssueCommentContent(issueCommentName: string){
-    const urlPath = `${apiVersion}/issuecomments/content`;
-    return axiosInstance.put(urlPath, issueCommentName)
+    const urlPath = `${apiVersion}/issuecomments/content?issueCommentName=${issueCommentName}`;
+    return axiosInstance.get(urlPath)
 }

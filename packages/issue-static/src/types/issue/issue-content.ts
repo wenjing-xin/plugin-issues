@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { IssueMedia } from './issue-media';
 
 /**
  * 
@@ -26,6 +29,12 @@ export interface IssueContent {
      * @memberof IssueContent
      */
     'html': string;
+    /**
+     * rendered medium
+     * @type {Array<IssueMedia>}
+     * @memberof IssueContent
+     */
+    'medium': Array<IssueMedia>;
     /**
      * Raw of content
      * @type {string}
