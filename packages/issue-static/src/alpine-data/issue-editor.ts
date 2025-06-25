@@ -25,6 +25,7 @@ export default () => ({
             indentUnit: 2,
             tabSize: 2,
             lineWrapping: true,
+            pasteLinesPerSelection: true,
             extraKeys: {
                 'Enter': function (cm) {
                     const pos = cm.getCursor();
@@ -87,7 +88,8 @@ export default () => ({
                     // 默认行为
                     cm.execCommand('newlineAndIndent');
                 }
-            }
+            },
+
         });
 
         // 设置初始内容
@@ -275,27 +277,7 @@ export default () => ({
             }
         });
     },
-    insertBlockquote() {
-        // @ts-ignore
-        this.insertMarkdown((cm, selection) => {
-            const doc = cm.getDoc();
-            const cursor = doc.getCursor();
-            const line = doc.getLine(cursor.line);
 
-            if (line.trim() === '') {
-                // 空行直接插入
-                doc.replaceRange('> ', cursor);
-                doc.setCursor(cursor.line, cursor.ch + 2);
-            } else if (!line.match(/^>\s/)) {
-                // 非引用行，添加引用
-                doc.replaceRange('> ', { line: cursor.line, ch: 0 });
-                doc.setCursor(cursor.line, cursor.ch + 2);
-            } else {
-                // 已是引用行，移除引用
-                doc.replaceRange('', { line: cursor.line, ch: 0 }, { line: cursor.line, ch: 2 });
-            }
-        });
-    },
     // 插入任务列表
     insertTaskList() {
         // @ts-ignore
@@ -347,7 +329,7 @@ export default () => ({
                 } else {
                     const cursor = doc.getCursor();
                     doc.replaceRange('![图片描述](' + url + ')', cursor);
-                    // 光标选中“图片描述”
+                    // 光标选中"图片描述"
                     doc.setSelection(
                         { line: cursor.line, ch: cursor.ch + 2 },
                         { line: cursor.line, ch: cursor.ch + 6 }
@@ -356,14 +338,53 @@ export default () => ({
             }
         });
     },
-    insertQuote(content: string) {
+    insertBlockquote() {
         // @ts-ignore
         this.insertMarkdown((cm, selection) => {
             const doc = cm.getDoc();
             const cursor = doc.getCursor();
-            doc.replaceRange('> ' + content, cursor);
-            doc.setCursor(cursor.line, cursor.ch + 2);
+            const line = doc.getLine(cursor.line);
 
+            if (line.trim() === '') {
+                // 空行直接插入
+                doc.replaceRange('> ', cursor);
+                doc.setCursor(cursor.line, cursor.ch + 2);
+            } else if (!line.match(/^>\s/)) {
+                // 非引用行，添加引用
+                doc.replaceRange('> ', { line: cursor.line, ch: 0 });
+                doc.setCursor(cursor.line, cursor.ch + 2);
+            } else {
+                // 已是引用行，移除引用
+                doc.replaceRange('', { line: cursor.line, ch: 0 }, { line: cursor.line, ch: 2 });
+            }
         });
     },
+
+    insertQuoteByPaste(content: string) {
+        // @ts-ignore
+        this.insertMarkdown((cm, selection) => {
+            const quotedContent = content
+                    .split('\n')
+                    .map(line => `> ${line}`)
+                    .join('\n') + '\n';
+
+            // 创建粘贴事件
+            const clipboardData = new DataTransfer();
+            clipboardData.setData('text/plain', quotedContent);
+
+            const pasteEvent = new ClipboardEvent('paste', {
+                clipboardData,
+                bubbles: true,
+                cancelable: true
+            });
+
+            // 让编辑器获得焦点
+            // @ts-ignore
+            cm.focus();
+
+            // 触发粘贴事件
+            // @ts-ignore
+            cm.getInputField().dispatchEvent(pasteEvent);
+        });
+    }
 });

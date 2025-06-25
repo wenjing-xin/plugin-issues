@@ -34,7 +34,7 @@ export interface IssueContent {
      * @type {Array<IssueMedia>}
      * @memberof IssueContent
      */
-    'medium': Array<IssueMedia>;
+    'medium'?: Array<IssueMedia>;
     /**
      * Raw of content
      * @type {string}

@@ -322,6 +322,7 @@ function getStatusDotState(status: string) {
               v-for="comment in issueComments"
               :key="comment.issueComment.metadata.name"
               :comment="comment"
+              @update-issue-comments="refetch()"
               :comments="issueComments"
             ></IssueCommentItem>
           </VEntityContainer>

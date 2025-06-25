@@ -23,6 +23,7 @@
     "dayjs": "^1.11.13",
     "lodash-es": "^4.17.21",
     "lodash.clonedeep": "^4.5.0",
+    "ua-parser-js": "^2.0.3",
     "vue": "^3.4.31",
     "vue-datepicker-next": "^1.0.3",
     "vue-router": "4.4.0",

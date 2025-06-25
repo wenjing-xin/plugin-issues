@@ -6,14 +6,25 @@ import {
   VDropdownItem,
   VDropdownDivider,
   VAvatar,
+  Dialog,
+  Toast,
+  VTag,
 } from "@halo-dev/components";
-import { computed, inject, ref, type Ref } from "vue";
-import type { IssueComment, ListedIssueComment } from "@/api/generated";
+import { computed, inject, type Ref } from "vue";
+import type { Issue, IssueComment, ListedIssueComment } from "@/api/generated";
+import { useUserAgent } from "@/composables/use-user-agent";
+import { issueApiClient, issueCommentApiClient } from "@/api";
 import { formatDatetime, relativeTimeTo } from "@/utils/date";
+
 const props = defineProps<{
   comment: ListedIssueComment;
   comments: ListedIssueComment[];
 }>();
+const emit = defineEmits<{
+  (event: "updateIssueComments"): void;
+}>();
+
+const { os, browser } = useUserAgent(props.comment.issueComment.spec.userAgent);
 
 // Show hovered reply
 const hoveredIssueComment = inject<Ref<ListedIssueComment | undefined>>(
@@ -53,10 +64,38 @@ const handleShowQuoteReply = (show: boolean) => {
 
 function handleApprove(comment: IssueComment) {
   // 审核逻辑
+  issueCommentApiClient.issueComment.patchIssueComment({
+    name: comment.metadata.name,
+    jsonPatchInner: [
+      {
+        op: "add",
+        path: "/spec/approved",
+        value: true,
+      },
+    ],
+  });
 }
 
 function handleDeleteComment(comment: IssueComment) {
-  // 删除逻辑
+  Dialog.warning({
+    title: "删除所选Issue评论",
+    description: "此操作将会删除此Issue评论",
+    confirmType: "danger",
+    confirmText: "确定",
+    cancelText: "取消",
+    onConfirm: async () => {
+      try {
+        await issueCommentApiClient.issueComment.deleteIssueComment({
+          name: comment.metadata.name,
+        });
+        Toast.success("删除成功");
+      } catch (e) {
+        console.error("Failed to delete issueMessage in batch", e);
+      } finally {
+        emit("updateIssueComments");
+      }
+    },
+  });
 }
 </script>
 <template>
@@ -86,6 +125,12 @@ function handleDeleteComment(comment: IssueComment) {
               <span class="text-sm text-gray-900 whitespace-nowrap">
                 回复
               </span>
+              <VTag v-bind="{theme:'primary'}" v-tooltip="comment.issueComment.spec.userAgent">
+                {{ os }} {{ browser }}
+              </VTag>
+              <VTag v-bind="{theme:'secondary'}" v-tooltip="'IP地址'" v-if="comment.issueComment.spec.ipAddress">
+                {{ comment.issueComment.spec.ipAddress }}
+              </VTag>
             </div>
             <div class="space-y-1 text-sm text-gray-900">
               <a
@@ -136,6 +181,7 @@ function handleDeleteComment(comment: IssueComment) {
 
     <template #dropdownItems>
       <VDropdownItem
+        v-if="!comment.issueComment.spec.approved"
         v-permission="['plugin:issues:comment:manage']"
         @click="handleApprove(comment.issueComment)"
         >审核</VDropdownItem

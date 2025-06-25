@@ -8,6 +8,8 @@ import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueCommentService;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.AuthorityUtils;
+import com.webjing.issues.util.HaloUtils;
+import com.webjing.issues.util.IpAddressUtils;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -175,6 +177,8 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                 .flatMap(issueComment -> {
                     issueComment.getSpec().setApproved(false);
                     issueComment.getSpec().setOwner(user.getName());
+                    issueComment.getSpec().setIpAddress(IpAddressUtils.getIpAddress(request));
+                    issueComment.getSpec().setUserAgent(HaloUtils.userAgentFrom(request));
                     var roles = AuthorityUtils.authoritiesToRoles(user.getAuthorities());
                     return roleService.joint(roles,
                             Set.of(AuthorityUtils.ISSUE_COMMENT_PUBLISH_APPROVAL_ROLE_NAME,

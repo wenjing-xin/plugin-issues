@@ -32,7 +32,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
              th:attr="x-data=|{issueId:'${issueVO.metadata.name}', quoteCommentId: ''}|">
             <div class="lg:piw-w-[68%] piw-w-full" x-data="issueEditor">
                 <!--  初始化issue编辑器  -->
-                <div class="piw-w-full" th:attr="x-data=|{issueLink: '${issueVO.status.permalink}', issueContent: '${issueVO.spec.content.raw}'}|">
+                <div class="piw-w-full" th:attr="x-data=|{issueLink: '${issueVO.status.permalink}', issueName: '${issueVO.metadata.name}'}|">
                     <!--  原有的issue信息  -->
                     <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full">
                         <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block">
@@ -62,7 +62,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                             <span class="piw-text-sm">复制链接</span>
                                         </div>
                                         <hr class="piw-w-full piw-bg-slate-200" />
-                                        <div class="issue-item-operation t-lazy-item" @click="insertQuote(issueContent);close();">
+                                        <div class="issue-item-operation t-lazy-item" @click="insertQuoteByPaste(issueRawContent);close();" x-data="{issueRawContent: ''}"
+                                             x-init="const issueContent = await main.getIssueContent(issueName);issueRawContent = issueContent.raw;">
                                             <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
                                             <span class="piw-text-sm">引用回复</span>
                                         </div>
@@ -78,7 +79,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     </div>
                     <!-- issue 评论数据  -->
                     <th:block th:if="${ not #lists.isEmpty(issueComments)}" th:each="issueComment : ${issueComments}">
-                        <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}', issueCommentContent: '${issueComment.spec.content.raw}'}|" :id="commentId">
+                        <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}', issueCommentName: '${issueComment.metadata.name}'}|" :id="commentId">
                             <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block lg:piw-pt-4">
                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
                             </div>
@@ -111,7 +112,10 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                                     <span class="piw-text-sm">复制链接</span>
                                                 </div>
                                                 <hr class="piw-w-full piw-bg-slate-200" />
-                                                <div class="issue-item-operation t-lazy-item" @click="insertQuote(issueCommentContent);close();">
+                                                <div class="issue-item-operation t-lazy-item"
+                                                     @click="insertQuoteByPaste(issueCommentRawContent);close();"
+                                                     x-data="{issueCommentRawContent: ''}"
+                                                     x-init="const issueCommentContent = await main.getIssueCommentContent(issueCommentName);issueCommentRawContent = issueCommentContent.raw;">
                                                     <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
                                                     <span class="piw-text-sm">引用回复</span>
                                                 </div>
@@ -163,7 +167,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     <div class="piw-flex piw-flex-wrap piw-items-center piw-gap-1.5"
                          th:if="${#lists.size(issueVO.spec.labels) > 0}"
                          th:attr="x-data=|{labels: '${issueVO.spec.labels}', bgColorLabels: []}|"
-                         x-init=" bgColorLabels = main.generateColors(labels);console.log(bgColorLabels)">
+                         x-init="bgColorLabels = main.generateColors(labels);">
                         <template x-for="(item,index) in bgColorLabels" :key="index">
                             <span x-text="item.label" :style="'background-color: ' + item.bgColor" class="piw-px-3 piw-py-1.5 piw-text-xs piw-rounded-full piw-text-white"></span>
                         </template>

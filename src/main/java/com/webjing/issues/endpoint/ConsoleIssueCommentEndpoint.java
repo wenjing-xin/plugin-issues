@@ -7,6 +7,8 @@ import com.webjing.issues.query.IssueCommentQuery;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueCommentService;
 import com.webjing.issues.service.RoleService;
+import com.webjing.issues.util.HaloUtils;
+import com.webjing.issues.util.IpAddressUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.fn.builders.schema.Builder;
@@ -77,18 +79,19 @@ public class ConsoleIssueCommentEndpoint implements CustomEndpoint {
             .flatMap(listedIssueComments -> ServerResponse.ok().bodyValue(listedIssueComments));
     }
 
-    private Mono<ServerResponse> createIssueComment(ServerRequest serverRequest) {
+    private Mono<ServerResponse> createIssueComment(ServerRequest request) {
         return roleService.getCurrentUser()
-            .flatMap(curUser -> serverRequest.bodyToMono(IssueComment.class)
+            .flatMap(curUser -> request.bodyToMono(IssueComment.class)
                 .map(issueComment -> {
                     issueComment.getSpec().setApproved(true);
                     issueComment.getSpec().setApprovedTime(Instant.now());
+                    issueComment.getSpec().setIpAddress(IpAddressUtils.getIpAddress(request));
+                    issueComment.getSpec().setUserAgent(HaloUtils.userAgentFrom(request));
                     return issueComment;
                 }))
             .flatMap(issueCommentService::create)
             .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
-
 
 
     @Override
