@@ -77,7 +77,8 @@ haloPlugin {
                                 "/apis/console.api.issueTemplate.webjing.com/v1alpha1/**",
                                 "/apis/console.api.issueSubject.webjing.com/v1alpha1/**",
                                 "/apis/console.api.issueComment.webjing.com/v1alpha1/**",
-                                "/apis/uc.api.issueComment.webjing.com/v1alpha1/**"
+                                "/apis/uc.api.issueComment.webjing.com/v1alpha1/**",
+                                "/apis/console.api.issueLabel.webjing.com/v1alpha1/**"
                 ]
             }
         }

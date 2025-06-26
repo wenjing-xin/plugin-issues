@@ -32,7 +32,7 @@ import run.halo.app.extension.GroupVersion;
 import run.halo.app.extension.ListResult;
 
 /**
- * 控制台端的issue留言
+ * 控制台的 issue API
  * @author: webjing
  * @date: 2025年03月06日 14:41
  */
@@ -75,10 +75,17 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(ListedIssue.class)
                     ))
-            .GET("labels", this::listMyLabels,
-                builder -> builder.operationId("ListLabels")
-                    .description("List all issue message labels.")
+            .GET("labels", this::listSubjectLabels,
+                builder -> builder.operationId("ListSubjectLabels")
+                    .description("List current issueSubject all issue labels.")
                     .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("subjectName")
+                        .in(ParameterIn.QUERY)
+                        .description("subject name to query")
+                        .required(false)
+                        .implementation(String.class)
+                    )
                     .parameter(parameterBuilder()
                         .name("name")
                         .in(ParameterIn.QUERY)
@@ -150,7 +157,7 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
             .flatMap(listedIssues -> ServerResponse.ok().bodyValue(listedIssues));
     }
 
-    private Mono<ServerResponse> listMyLabels(ServerRequest request) {
+    private Mono<ServerResponse> listSubjectLabels(ServerRequest request) {
         String name = request.queryParam("name").orElse(null);
         IssueQuery issueQuery = new IssueQuery(request.exchange());
         return issueService.listAllLabels(issueQuery)

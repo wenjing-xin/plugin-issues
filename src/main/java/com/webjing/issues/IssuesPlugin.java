@@ -2,6 +2,7 @@ package com.webjing.issues;
 
 import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.extension.Issue;
+import com.webjing.issues.extension.IssueLabel;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.extension.IssueTemplate;
 import org.apache.commons.lang3.BooleanUtils;
@@ -134,7 +135,33 @@ public class IssuesPlugin extends BasePlugin {
                 }))
             );
         });
-
+        schemeManager.register(IssueLabel.class, indexSpecs -> {
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.labelName")
+                .setIndexFunc(simpleAttribute(IssueLabel.class,
+                    issueLabel -> issueLabel.getSpec().getLabelName())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.description")
+                .setIndexFunc(simpleAttribute(IssueLabel.class,
+                    issueLabel -> issueLabel.getSpec().getDescription())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.isGlobal")
+                .setIndexFunc(simpleAttribute(IssueLabel.class, issueLabel -> {
+                    var isGlobalLabel = issueLabel.getSpec().getIsGlobal();
+                    return isGlobalLabel == null ? null : isGlobalLabel.toString();
+                }))
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.subjectName")
+                .setIndexFunc(simpleAttribute(IssueLabel.class,
+                    issueLabel -> issueLabel.getSpec().getSubjectName())
+                )
+            );
+        });
         schemeManager.register(IssueComment.class, indexSpecs -> {
             indexSpecs.add(new IndexSpec()
                 .setName("spec.approved")
