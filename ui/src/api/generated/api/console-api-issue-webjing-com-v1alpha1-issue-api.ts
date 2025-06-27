@@ -84,14 +84,14 @@ export const ConsoleApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = functi
             };
         },
         /**
-         * Create a IssueMessage.
+         * Create a Issue.
          * @param {Issue} issue 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createIssueMessage: async (issue: Issue, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createIssue: async (issue: Issue, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'issue' is not null or undefined
-            assertParamExists('createIssueMessage', 'issue', issue)
+            assertParamExists('createIssue', 'issue', issue)
             const localVarPath = `/apis/console.api.issue.webjing.com/v1alpha1/issues`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -276,12 +276,13 @@ export const ConsoleApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = functi
             };
         },
         /**
-         * List all issue message labels.
+         * List current issueSubject all issue labels.
+         * @param {string} [subjectName] subject name to query
          * @param {string} [name] Label name to query
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listLabels: async (name?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listSubjectLabels: async (subjectName?: string, name?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/apis/console.api.issue.webjing.com/v1alpha1/labels`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -301,6 +302,10 @@ export const ConsoleApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = functi
             // authentication bearerAuth required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (subjectName !== undefined) {
+                localVarQueryParameter['subjectName'] = subjectName;
+            }
 
             if (name !== undefined) {
                 localVarQueryParameter['name'] = name;
@@ -341,15 +346,15 @@ export const ConsoleApiIssueWebjingComV1alpha1IssueApiFp = function(configuratio
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Create a IssueMessage.
+         * Create a Issue.
          * @param {Issue} issue 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createIssueMessage(issue: Issue, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createIssueMessage(issue, options);
+        async createIssue(issue: Issue, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createIssue(issue, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueWebjingComV1alpha1IssueApi.createIssueMessage']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueWebjingComV1alpha1IssueApi.createIssue']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -389,15 +394,16 @@ export const ConsoleApiIssueWebjingComV1alpha1IssueApiFp = function(configuratio
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * List all issue message labels.
+         * List current issueSubject all issue labels.
+         * @param {string} [subjectName] subject name to query
          * @param {string} [name] Label name to query
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listLabels(name?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<string>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listLabels(name, options);
+        async listSubjectLabels(subjectName?: string, name?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<string>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listSubjectLabels(subjectName, name, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueWebjingComV1alpha1IssueApi.listLabels']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueWebjingComV1alpha1IssueApi.listSubjectLabels']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -420,13 +426,13 @@ export const ConsoleApiIssueWebjingComV1alpha1IssueApiFactory = function (config
             return localVarFp.closedIssue(requestParameters.closedComment, requestParameters.issue, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create a IssueMessage.
-         * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueMessageRequest} requestParameters Request parameters.
+         * Create a Issue.
+         * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createIssueMessage(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueMessageRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
-            return localVarFp.createIssueMessage(requestParameters.issue, options).then((request) => request(axios, basePath));
+        createIssue(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
+            return localVarFp.createIssue(requestParameters.issue, options).then((request) => request(axios, basePath));
         },
         /**
          * Get a issue message by name.
@@ -447,13 +453,13 @@ export const ConsoleApiIssueWebjingComV1alpha1IssueApiFactory = function (config
             return localVarFp.listIssues(requestParameters.subjectName, requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.ownerName, requestParameters.label, requestParameters.startDate, requestParameters.endDate, requestParameters.approved, requestParameters.issueTemplate, options).then((request) => request(axios, basePath));
         },
         /**
-         * List all issue message labels.
-         * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiListLabelsRequest} requestParameters Request parameters.
+         * List current issueSubject all issue labels.
+         * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabelsRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listLabels(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiListLabelsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<string>> {
-            return localVarFp.listLabels(requestParameters.name, options).then((request) => request(axios, basePath));
+        listSubjectLabels(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabelsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<string>> {
+            return localVarFp.listSubjectLabels(requestParameters.subjectName, requestParameters.name, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -480,15 +486,15 @@ export interface ConsoleApiIssueWebjingComV1alpha1IssueApiClosedIssueRequest {
 }
 
 /**
- * Request parameters for createIssueMessage operation in ConsoleApiIssueWebjingComV1alpha1IssueApi.
+ * Request parameters for createIssue operation in ConsoleApiIssueWebjingComV1alpha1IssueApi.
  * @export
- * @interface ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueMessageRequest
+ * @interface ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueRequest
  */
-export interface ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueMessageRequest {
+export interface ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueRequest {
     /**
      * 
      * @type {Issue}
-     * @memberof ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueMessage
+     * @memberof ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssue
      */
     readonly issue: Issue
 }
@@ -606,15 +612,22 @@ export interface ConsoleApiIssueWebjingComV1alpha1IssueApiListIssuesRequest {
 }
 
 /**
- * Request parameters for listLabels operation in ConsoleApiIssueWebjingComV1alpha1IssueApi.
+ * Request parameters for listSubjectLabels operation in ConsoleApiIssueWebjingComV1alpha1IssueApi.
  * @export
- * @interface ConsoleApiIssueWebjingComV1alpha1IssueApiListLabelsRequest
+ * @interface ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabelsRequest
  */
-export interface ConsoleApiIssueWebjingComV1alpha1IssueApiListLabelsRequest {
+export interface ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabelsRequest {
+    /**
+     * subject name to query
+     * @type {string}
+     * @memberof ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabels
+     */
+    readonly subjectName?: string
+
     /**
      * Label name to query
      * @type {string}
-     * @memberof ConsoleApiIssueWebjingComV1alpha1IssueApiListLabels
+     * @memberof ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabels
      */
     readonly name?: string
 }
@@ -638,14 +651,14 @@ export class ConsoleApiIssueWebjingComV1alpha1IssueApi extends BaseAPI {
     }
 
     /**
-     * Create a IssueMessage.
-     * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueMessageRequest} requestParameters Request parameters.
+     * Create a Issue.
+     * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ConsoleApiIssueWebjingComV1alpha1IssueApi
      */
-    public createIssueMessage(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueMessageRequest, options?: RawAxiosRequestConfig) {
-        return ConsoleApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).createIssueMessage(requestParameters.issue, options).then((request) => request(this.axios, this.basePath));
+    public createIssue(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiCreateIssueRequest, options?: RawAxiosRequestConfig) {
+        return ConsoleApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).createIssue(requestParameters.issue, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -671,14 +684,14 @@ export class ConsoleApiIssueWebjingComV1alpha1IssueApi extends BaseAPI {
     }
 
     /**
-     * List all issue message labels.
-     * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiListLabelsRequest} requestParameters Request parameters.
+     * List current issueSubject all issue labels.
+     * @param {ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabelsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ConsoleApiIssueWebjingComV1alpha1IssueApi
      */
-    public listLabels(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiListLabelsRequest = {}, options?: RawAxiosRequestConfig) {
-        return ConsoleApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).listLabels(requestParameters.name, options).then((request) => request(this.axios, this.basePath));
+    public listSubjectLabels(requestParameters: ConsoleApiIssueWebjingComV1alpha1IssueApiListSubjectLabelsRequest = {}, options?: RawAxiosRequestConfig) {
+        return ConsoleApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).listSubjectLabels(requestParameters.subjectName, requestParameters.name, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

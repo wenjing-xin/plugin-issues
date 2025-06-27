@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import PajamasIssueTypeObjective from "~icons/pajamas/issue-type-objective";
-import IssueSubjectItem from "../components/issue/IssueSubjectItem.vue";
+import IssueLabelListItem from "../components/issue/IssueLabelListItem.vue";
 import {
   IconAddCircle,
   VButton,
@@ -13,142 +13,136 @@ import {
   IconRefreshLine,
   Dialog,
   Toast,
+  VEntityContainer,
 } from "@halo-dev/components";
-import UserFilterDropdown from "@/components/common/UserFilterDropdown.vue";
 import { useRouteQuery } from "@vueuse/router";
 import { computed, provide, type Ref, ref, onMounted, watch } from "vue";
 import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
-import { useIssueSubjectListFetch } from "@/composables/use-consoleIssue";
+import { useIssueLabels } from "@/composables/use-issueLabels";
 import type {
-  Issue,
+  IssueLabel,
   IssueSubject,
-  IssueSubjectSpecSubjectTypeEnum,
-  IssueSubjectSpecSubjectVisibleEnum,
-  ListedIssueSubject,
+  ListedIssueLabel
 } from "@/api/generated";
-import { issueSubjectApiClient, issueTemplateApiClient } from "@/api";
-import IssueSubjectEditModal from "@/components/issue/IssueSubjectEditModal.vue";
-import { subjectTypeOptions } from "@/dictionary";
+import { issueLabelApiClient, issueSubjectApiClient } from "@/api";
+import IssueLabelEditModal from "@/components/issue/IssueLabelEditModal.vue";
 
-const ownerName = useRouteQuery<string | undefined>("ownerName");
-const selectedSubjectType = useRouteQuery<
-  IssueSubjectSpecSubjectTypeEnum | undefined
->("subjectType");
+const selectedSubjectName = useRouteQuery<string | undefined>("subjectName");
 const selectedSort = useRouteQuery<string | undefined>("sort");
-const selectedSubjectVisible = useRouteQuery<
-  IssueSubjectSpecSubjectVisibleEnum | undefined
->("subjectVisible");
-
+const selectedIsGlobal = useRouteQuery<string | undefined, boolean | undefined>(
+  "isGlobal",
+  undefined,
+  {
+    transform: (value) => {
+      return value ? value === "true" : undefined;
+    },
+  },
+);
 const hasFilters = computed(() => {
   return (
-    ownerName.value ||
-    selectedSort.value ||
-    selectedSubjectType.value ||
-    selectedSubjectVisible.value
+    selectedSubjectName.value || selectedIsGlobal.value || selectedSort.value
   );
 });
 
 const handleClearFilters = () => {
-  ownerName.value = undefined;
+  selectedSubjectName.value = undefined;
+  selectedIsGlobal.value = undefined;
   selectedSort.value = undefined;
-  selectedSubjectType.value = undefined;
-  selectedSubjectVisible.value = undefined;
 };
 
-const updateIssueSubject = ref<IssueSubject>();
-const checkedAll = ref(false);
-const selectedIssueSubjectNames = ref<string[]>([]);
-provide<Ref<string[]>>("selectedIssueSubjectNames", selectedIssueSubjectNames);
+const subjectOptions = ref<Array<{ label: string | undefined; value: string }>>(
+  [],
+);
 
-const issueTemplateFilterOptions = ref<
-  Array<{ label: string | undefined; value: string }>
->([]);
+const handlerIssueSubjectOptions = () => {
+  issueSubjectApiClient.issueSubject.listIssueSubject().then(({ data }) => {
+    data.items.forEach((it: IssueSubject) => {
+      const itemOption = {
+        label: it.spec.displayName,
+        value: it.metadata.name,
+      };
+      subjectOptions.value.push(itemOption);
+    });
+  });
+};
+const updateIssueLabel = ref<IssueLabel>();
+const checkedAll = ref(false);
+const selectedIssueLabelNames = ref<string[]>([]);
+provide<Ref<string[]>>("selectedIssueLabelNames", selectedIssueLabelNames);
 
 const editingModal = ref(false);
-const selectedIssueSubject = ref<Issue>();
+const selectedIssueLabel = ref<IssueLabel>();
 
 const page = ref(1);
 const size = ref(20);
 const keyword = ref("");
 
-const { issueSubjects, isLoading, isFetching, refetch, total } =
-  useIssueSubjectListFetch(
-    page,
-    size,
-    keyword,
-    selectedSort,
-    ownerName,
-    selectedSubjectType,
-    selectedSubjectVisible,
-  );
+const { issueLabels, isLoading, isFetching, refetch, total } = useIssueLabels(
+  page,
+  size,
+  keyword,
+  selectedSort,
+  selectedSubjectName,
+  selectedIsGlobal,
+);
 
 const handlerNewIssue = () => {
   editingModal.value = true;
 };
 
-//处理issue template的筛选过滤条件
-const handlerIssueTemplateOptions = () => {
-  issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
-    data.items.forEach((it) => {
-      const itemOption = { label: it.spec?.name, value: it.metadata.name };
-      issueTemplateFilterOptions.value.push(itemOption);
-    });
-  });
-};
-
 const handleCheckAllChange = (e: Event) => {
   const { checked } = e.target as HTMLInputElement;
   if (checked) {
-    selectedIssueSubjectNames.value =
-      issueSubjects.value?.map((listedIssueSubject: ListedIssueSubject) => {
-        return listedIssueSubject.issueSubject.metadata.name;
+    selectedIssueLabelNames.value =
+      issueLabels.value?.map((listedIssueLabel: ListedIssueLabel) => {
+        return listedIssueLabel.issueLabel.metadata.name;
       }) || [];
   } else {
-    selectedIssueSubjectNames.value = [];
+    selectedIssueLabelNames.value = [];
   }
 };
 
 const onEditingModalClose = async () => {
-  selectedIssueSubject.value = undefined;
+  selectedIssueLabel.value = undefined;
   editingModal.value = false;
   await refetch();
 };
-const checkSelection = (listedIssueSubject: ListedIssueSubject) => {
+const checkSelection = (listedIssueLabel: ListedIssueLabel) => {
   return (
-    listedIssueSubject.issueSubject.metadata.name ===
-      selectedIssueSubject.value?.metadata.name ||
-    selectedIssueSubjectNames.value.includes(
-      listedIssueSubject.issueSubject.metadata.name,
+    listedIssueLabel.issueLabel.metadata.name ===
+      selectedIssueLabel.value?.metadata.name ||
+    selectedIssueLabelNames.value.includes(
+      listedIssueLabel.issueLabel.metadata.name,
     )
   );
 };
 
 watch(
-  () => selectedIssueSubjectNames.value,
+  () => selectedIssueLabelNames.value,
   (newValue) => {
-    checkedAll.value = newValue.length === issueSubjects.value?.length;
+    checkedAll.value = newValue.length === issueLabels.value?.length;
   },
 );
 const handleDeleteInBatch = async () => {
   Dialog.warning({
-    title: "删除所选issuy依托主体",
-    description: "删除所选issue依托主体",
+    title: "删除所选issu标签",
+    description: "删除所选issue标签",
     confirmType: "danger",
     confirmText: "确定",
     cancelText: "取消",
     onConfirm: async () => {
       try {
-        const promises = selectedIssueSubjectNames.value.map((name: string) => {
-          return issueSubjectApiClient.issueSubject.deleteIssueSubject({
+        const promises = selectedIssueLabelNames.value.map((name: string) => {
+          return issueLabelApiClient.issueLabel.deleteIssueLabel({
             name: name,
           });
         });
         await Promise.all(promises);
-        selectedIssueSubjectNames.value = [];
+        selectedIssueLabelNames.value = [];
         Toast.success("删除成功");
       } catch (e) {
-        console.error("Failed to delete issueMessage in batch", e);
+        console.error("Failed to delete issue label in batch", e);
       } finally {
         refetch();
       }
@@ -156,26 +150,26 @@ const handleDeleteInBatch = async () => {
   });
 };
 
-const handlerUpdateIssueSubject = (issueSubject: ListedIssueSubject) => {
-  updateIssueSubject.value = issueSubject.issueSubject;
+const handlerUpdateIssueLabel = (issueLabel: IssueLabel) => {
+  updateIssueLabel.value = issueLabel;
   editingModal.value = true;
 };
-const emitUpdateIssueSubject = () => {
-  updateIssueSubject.value = undefined;
+const emitUpdateIssueLabel = () => {
+  updateIssueLabel.value = undefined;
   refetch();
 };
 
 onMounted(() => {
-  handlerIssueTemplateOptions();
+  handlerIssueSubjectOptions();
 });
 </script>
 
 <template>
-  <IssueSubjectEditModal
-    :issue-subject="updateIssueSubject"
+  <IssueLabelEditModal
+    :issue-label="updateIssueLabel"
     :visible="editingModal"
     @save="refetch()"
-    @update="emitUpdateIssueSubject"
+    @update="emitUpdateIssueLabel"
     @close="onEditingModalClose"
   />
   <VPageHeader title="Issue依托主体">
@@ -210,7 +204,7 @@ onMounted(() => {
                   />
                 </div>
                 <div class="w-full flex flex-1 sm:w-auto">
-                  <VSpace v-if="selectedIssueSubjectNames.length > 0">
+                  <VSpace v-if="selectedIssueLabelNames.length > 0">
                     <VButton type="danger" @click="handleDeleteInBatch">
                       删除
                     </VButton>
@@ -224,33 +218,27 @@ onMounted(() => {
                       @click="handleClearFilters"
                     />
                     <FilterDropdown
-                      v-model="selectedSubjectVisible"
-                      label="可见性"
+                      v-model="selectedIsGlobal"
+                      label="是否为全局标签"
                       :items="[
                         {
                           label: '默认',
                         },
                         {
-                          label: '公共',
-                          value: 'PUBLIC',
+                          label: '全局标签',
+                          value: true,
                         },
                         {
-                          label: '私有',
-                          value: 'PRIVATE',
+                          label: '非全局标签',
+                          value: false,
                         },
                       ]"
                     />
                     <FilterDropdown
-                      v-model="selectedSubjectType"
-                      :items="subjectTypeOptions"
-                      label="依托主体类型"
+                      v-model="selectedSubjectName"
+                      :items="subjectOptions"
+                      label="依托主体"
                     />
-                    <HasPermission :permissions="['system:users:view']">
-                      <UserFilterDropdown
-                        v-model="ownerName"
-                        :label="'发布者'"
-                      />
-                    </HasPermission>
                     <FilterDropdown
                       v-model="selectedSort"
                       label="排序"
@@ -286,10 +274,10 @@ onMounted(() => {
             </div>
           </template>
           <VLoading v-if="isLoading" />
-          <Transition v-else-if="!issueSubjects?.length" appear name="fade">
+          <Transition v-else-if="!issueLabels?.length" appear name="fade">
             <VEmpty
-              message="你可以尝试刷新或者新建issue依托主体"
-              title="当前没有任何Issue依托主体"
+              message="你可以尝试刷新或者新建issue标签"
+              title="当前没有任何Issue标签"
             >
               <template #actions>
                 <VSpace>
@@ -309,21 +297,15 @@ onMounted(() => {
             </VEmpty>
           </Transition>
           <Transition v-else appear name="fade">
-            <ul
-              class="box-border px-3 h-auto w-full divide-y divide-gray-100 grid xl:grid-cols-2 2xl:grid-cols-3 grid-cols-1 gap-3"
-              role="list"
-            >
-              <li
-                v-for="listedIssueSubject in issueSubjects"
-                :key="listedIssueSubject.issueSubject.metadata.name"
-              >
-                <IssueSubjectItem
-                  :listed-issue-subject="listedIssueSubject"
-                  :is-selected="checkSelection(listedIssueSubject)"
-                  @update="handlerUpdateIssueSubject"
-                />
-              </li>
-            </ul>
+            <VEntityContainer>
+              <IssueLabelListItem
+                v-for="listedIssueLabel in issueLabels"
+                :key="listedIssueLabel.issueLabel.metadata.name"
+                :issue-label="listedIssueLabel"
+                :is-selected="checkSelection(listedIssueLabel)"
+                @update="handlerUpdateIssueLabel"
+              />
+            </VEntityContainer>
           </Transition>
           <template #footer>
             <VPagination

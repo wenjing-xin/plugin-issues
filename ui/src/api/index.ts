@@ -9,7 +9,9 @@ import {
   ConsoleApiIssueCommentWebjingComV1alpha1IssueApi,
   UcApiIssueCommentWebjingComV1alpha1IssueCommentApi,
   IssueTemplateV1alpha1Api,
-  ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi
+  ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi,
+  IssueLabelV1alpha1Api,
+  ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi
 } from "./generated";
 
 const issueSubjectApiClient = {
@@ -53,6 +55,14 @@ const ucIssueApiClient = {
   issue: new UcApiIssueWebjingComV1alpha1IssueApi(undefined, "", axiosInstance),
 };
 
+const issueLabelApiClient = {
+  issueLabel: new IssueLabelV1alpha1Api(undefined, "", axiosInstance),
+};
+
+const consoleIssueLabelApiClient = {
+  issueLabel: new ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi(undefined, "", axiosInstance),
+};
+
 export {
   issueSubjectApiClient,
   consoleIssueSubjectApiClient,
@@ -63,5 +73,7 @@ export {
   consoleIssueCommentApiClient,
   ucIssueCommentApiClient,
   issueTemplateApiClient,
-  consoleIssueTemplateApiClient
+  consoleIssueTemplateApiClient,
+  issueLabelApiClient,
+  consoleIssueLabelApiClient
 };

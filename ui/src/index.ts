@@ -1,11 +1,13 @@
 import { definePlugin} from "@halo-dev/console-shared";
 import PajamasIssueTypeObjective from '~icons/pajamas/issue-type-objective';
 import FluentMailTemplate20Regular from "~icons/fluent/mail-template-20-regular";
+import MdiLabelMultipleOutline from '~icons/mdi/label-multiple-outline';
 import { markRaw} from "vue";
 import IssueSubjectList from "@/views/IssueSubjectList.vue";
 import IssueList from "@/views/IssueList.vue";
 import IssueTemplateList from "@/views/IssueTemplateList.vue";
 import IssueTemplateEditor from "@/views/IssueTemplateEditor.vue";
+import IssueLabelList from "@/views/IssueLabelList.vue";
 import "./styles/index.scss";
 export default definePlugin({
   components: {},
@@ -55,6 +57,21 @@ export default definePlugin({
                 name: "Issue模版",
                 group: "content",
                 icon: markRaw(FluentMailTemplate20Regular),
+              },
+            },
+          },
+          {
+            path: "issueLabel",
+            name: "IssueLabel",
+            component: IssueLabelList,
+            meta: {
+              title: "Issue标签管理",
+              searchable: true,
+              permissions: ["plugin:issue:labels:manage"],
+              menu: {
+                name: "Issue标签管理",
+                group: "content",
+                icon: markRaw(MdiLabelMultipleOutline),
               },
             },
           },

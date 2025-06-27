@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:44167",
+    "url" : "http://localhost:46334",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -138,8 +138,8 @@
         "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
       },
       "post" : {
-        "description" : "Create a IssueMessage.",
-        "operationId" : "CreateIssueMessage",
+        "description" : "Create a Issue.",
+        "operationId" : "CreateIssue",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -232,9 +232,16 @@
     },
     "/apis/console.api.issue.webjing.com/v1alpha1/labels" : {
       "get" : {
-        "description" : "List all issue message labels.",
-        "operationId" : "ListLabels",
+        "description" : "List current issueSubject all issue labels.",
+        "operationId" : "ListSubjectLabels",
         "parameters" : [ {
+          "description" : "subject name to query",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "description" : "Label name to query",
           "in" : "query",
           "name" : "name",
@@ -373,6 +380,120 @@
           }
         },
         "tags" : [ "console.api.issueComment.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issueLabel.webjing.com/v1alpha1/issuelabels" : {
+      "get" : {
+        "description" : "List IssueLabels.",
+        "operationId" : "ListIssueLabels",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueLabels filtered by keyword.",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "subject name.",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "label is global",
+          "in" : "query",
+          "name" : "isGlobal",
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueLabelList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueLabel.webjing.com/v1alpha1/IssueLabel" ]
+      },
+      "post" : {
+        "description" : "Create a issue label.",
+        "operationId" : "CreateIssueLabel",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueLabel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueLabel.webjing.com/v1alpha1/IssueLabel" ]
       }
     },
     "/apis/console.api.issueSubject.webjing.com/v1alpha1/issuesubjects" : {
@@ -814,6 +935,217 @@
           }
         },
         "tags" : [ "IssueCommentV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuelabels" : {
+      "get" : {
+        "description" : "List IssueLabel",
+        "operationId" : "listIssueLabel",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabelList"
+                }
+              }
+            },
+            "description" : "Response issuelabels"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "post" : {
+        "description" : "Create IssueLabel",
+        "operationId" : "createIssueLabel",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueLabel"
+              }
+            }
+          },
+          "description" : "Fresh issuelabel"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response issuelabels created just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuelabels/{name}" : {
+      "delete" : {
+        "description" : "Delete IssueLabel",
+        "operationId" : "deleteIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Response issuelabel deleted just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "get" : {
+        "description" : "Get IssueLabel",
+        "operationId" : "getIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response single issuelabel"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "patch" : {
+        "description" : "Patch IssueLabel",
+        "operationId" : "patchIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json-patch+json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/JsonPatch"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response issuelabel patched just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "put" : {
+        "description" : "Update IssueLabel",
+        "operationId" : "updateIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueLabel"
+              }
+            }
+          },
+          "description" : "Updated issuelabel"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response issuelabels updated just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
       }
     },
     "/apis/issue.webjing.com/v1alpha1/issues" : {
@@ -2249,6 +2581,104 @@
           }
         }
       },
+      "IssueLabel" : {
+        "required" : [ "apiVersion", "kind", "metadata", "spec" ],
+        "type" : "object",
+        "properties" : {
+          "apiVersion" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/Metadata"
+          },
+          "spec" : {
+            "$ref" : "#/components/schemas/IssueLabelSpec"
+          }
+        }
+      },
+      "IssueLabelList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueLabel"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueLabelSpec" : {
+        "required" : [ "isGlobal", "labelName" ],
+        "type" : "object",
+        "properties" : {
+          "color" : {
+            "type" : "string",
+            "description" : "标签颜色"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "标签描述"
+          },
+          "isGlobal" : {
+            "type" : "boolean",
+            "description" : "是否全局标签",
+            "default" : false
+          },
+          "labelName" : {
+            "type" : "string",
+            "description" : "标签名称"
+          },
+          "slug" : {
+            "type" : "string",
+            "description" : "标签模版路径"
+          },
+          "subjectName" : {
+            "type" : "string",
+            "description" : "非全局标签的归属主体ID"
+          }
+        }
+      },
       "IssueList" : {
         "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
         "type" : "object",
@@ -2745,6 +3175,69 @@
             "description" : "A chunk of items.",
             "items" : {
               "$ref" : "#/components/schemas/ListedIssueComment"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "ListedIssueLabel" : {
+        "required" : [ "issueLabel", "issueNumber" ],
+        "type" : "object",
+        "properties" : {
+          "issueLabel" : {
+            "$ref" : "#/components/schemas/IssueLabel"
+          },
+          "issueNumber" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "ListedIssueLabelList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/ListedIssueLabel"
             }
           },
           "last" : {

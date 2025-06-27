@@ -1,100 +1,66 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
 import { computed, nextTick, onMounted, ref, toRaw, watchEffect } from "vue";
-import type {Issue, IssueTemplate} from "@/api/generated";
+import type { IssueLabel, IssueSubject } from "@/api/generated";
 import cloneDeep from "lodash.clonedeep";
 import {
-  consoleIssueApiClient,
-  issueApiClient,
-  issueTemplateApiClient,
+  issueSubjectApiClient,
+  issueLabelApiClient,
+  consoleIssueLabelApiClient,
 } from "@/api";
 import { submitForm } from "@formkit/core";
-import { useRouteQuery } from "@vueuse/router";
-import TextEditor from "@/components/editor/index.vue";
-const modalTitle = ref("新增issue");
+const modalTitle = ref("新增 issue 标签");
 const saving = ref<boolean>(false);
 const props = withDefaults(
   defineProps<{
     visible: boolean;
-    issueMessage?: Issue | undefined;
+    issueLabel?: IssueLabel | undefined;
   }>(),
   {
     visible: false,
-    issueMessage: undefined,
+    issueLabel: undefined,
   },
 );
 const emit = defineEmits<{
   (event: "update:visible", value: boolean): void;
   (event: "close", value: boolean): void;
-  (event: "save", issueMessage: Issue): void;
-  (event: "update", issueMessage: Issue): void;
+  (event: "save", issueLabel: IssueLabel): void;
+  (event: "update", issueLabel: IssueLabel): void;
 }>();
 
-const currentIssueSubjectName = useRouteQuery<string>("subjectName");
-const issueTemplateFilterOptions = ref<
-  Array<{ label: string | undefined; value: string }>
->([]);
+const subjectOptions = ref<Array<{ label: string | undefined; value: string }>>(
+  [],
+);
 
-const initIssue: Issue = {
-  kind: "Issue",
+const initIssueLabel: IssueLabel = {
+  kind: "IssueLabel",
   apiVersion: "issue.webjing.com/v1alpha1",
   metadata: {
-    generateName: "issue-",
-    name: "",
+    generateName: "label-",
+    name: ""
   },
   spec: {
-    title: "",
-    content: {
-      raw: "",
-      html: "",
-      medium: []
-    },
-    releaseTime: new Date().toISOString(),
-    owner: "",
-    assignees: [],
-    labels: [],
-    closedAt: "",
-    approved: true,
-    approvedTime: "",
-    subjectName: currentIssueSubjectName.value,
-    top: false
-  },
-  status: {
-    observedVersion: 0,
-    permalink: "",
-    state: "AWAIT",
+    labelName: "",
+    description: "",
+    color: "#71C8A3",
+    slug: "",
+    isGlobal: false,
+    subjectName: "",
   },
 };
 
-const formState = ref<Issue>(cloneDeep(initIssue));
+const formState = ref<IssueLabel>(cloneDeep(initIssueLabel));
 
 watchEffect(() => {
-  if (props.issueMessage) {
-    formState.value = cloneDeep(props.issueMessage);
-    modalTitle.value = "编辑issue";
+  if (props.issueLabel) {
+    formState.value = cloneDeep(props.issueLabel);
+    modalTitle.value = "编辑 issue 标签";
   }
 });
 
 onMounted(() => {
-  handlerIssueTemplateOptions();
-  handlerLabelOptions();
+  handlerIssueSubjectOptions();
 });
-
-const labelOptions = ref<Array<{ label: string; value: string }>>([]);
-const handlerLabelOptions = () => {
-  consoleIssueApiClient.issue
-    .listSubjectLabels({
-      name: "",
-    })
-    .then((res) => {
-      labelOptions.value = res.data.map((itemLabel:string) => {
-        return {
-          label: itemLabel,
-          value: itemLabel,
-        };
-      });
-    });
-};
 
 const isUpdateMode = computed(
   () => !!formState.value.metadata.creationTimestamp,
@@ -142,41 +108,42 @@ const onSubmit = async () => {
     saving.value = false;
   }
   onVisibleChange(false);
-  formState.value = cloneDeep(initIssue);
+  formState.value = cloneDeep(initIssueLabel);
 };
 const handleUpdate = async () => {
-  const res = await issueApiClient.issue.updateIssue({
+  const res = await issueLabelApiClient.issueLabel.updateIssueLabel({
     name: formState.value.metadata.name,
-    issue: formState.value,
+    issueLabel: formState.value,
   });
   if (res.status == 200) {
     Toast.success("更新成功!");
   }
 };
 
-//处理issue template的筛选过滤条件
-const handlerIssueTemplateOptions = () => {
-  issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
-    data.items.forEach((it:IssueTemplate) => {
-      const itemOption = { label: it.spec?.name, value: it.metadata.name };
-      issueTemplateFilterOptions.value.push(itemOption);
+const handlerIssueSubjectOptions = () => {
+  issueSubjectApiClient.issueSubject.listIssueSubject().then(({ data }) => {
+    data.items.forEach((it: IssueSubject) => {
+      const itemOption = {
+        label: it.spec.displayName,
+        value: it.metadata.name,
+      };
+      subjectOptions.value.push(itemOption);
     });
   });
 };
 
 // 新增 issue
-const handleSave = async (issue: Issue) => {
-  issue.spec.releaseTime = new Date().toISOString();
-  issue.spec.approved = true;
-
-  const { data } = await consoleIssueApiClient.issue.createIssue({
-    issue: issue,
-  });
+const handleSave = async (issueLabel: IssueLabel) => {
+  const { data } = await consoleIssueLabelApiClient.issueLabel.createIssueLabel(
+    {
+      issueLabel: issueLabel
+    }
+  );
   emit("save", data);
-  Toast.success("发布成功");
+  Toast.success("成功新增标签");
 };
 const handleReset = () => {
-  formState.value = toRaw(cloneDeep(initIssue));
+  formState.value = toRaw(cloneDeep(initIssueLabel));
   isEditorEmpty.value = true;
 };
 </script>
@@ -199,51 +166,50 @@ const handleReset = () => {
       <!-- 提交表单  -->
       <div class="divide-gray-25 mt-5 px-3 md:col-span-3 md:mt-3 divide-y">
         <FormKit
-          id="issue-message"
+          id="issue-label"
+          v-model="formState.spec"
           type="form"
-          name="issue-message"
+          name="issue-label"
           :config="{ validationVisibility: 'submit' }"
           @submit="onSubmit"
         >
           <FormKit
-            v-model="formState.spec.title"
             type="text"
-            label="标题"
-            name="title"
+            label="标签名称"
+            name="labelName"
             validation="required"
           />
           <FormKit
-            v-model="formState.spec.labels"
-            type="select"
-            name="labels"
-            validation="required"
-            label="标签"
-            :options="labelOptions"
-            multiple
-            clearable
-            searchable
-            allow-create
+            name="color"
+            label="标签颜色"
+            type="color"
+          ></FormKit>
+          <FormKit
+            type="textarea"
+            rows="3"
+            name="description"
+            label="标签描述"
           />
           <FormKit
-            v-model="formState.spec.issueTemplate"
-            type="select"
-            name="issueTemplate"
+            type="radio"
+            name="isGlobal"
             clearable
             validation="required"
-            label="Issue留言模版"
-            :options="issueTemplateFilterOptions"
+            label="是否为全局标签"
+            :options="[
+              { label: '全局标签', value: true },
+              { label: '非全局标签', value: false },
+            ]"
+          />
+          <FormKit
+            v-if="!formState.spec.isGlobal"
+            type="select"
+            name="subjectName"
+            clearable
+            label="标签归属的主体"
+            :options="subjectOptions"
           />
         </FormKit>
-        <div class="space-y-2 my-2 py-2">
-          <p class="text-sm font-bold text-gray-600">Issue内容</p>
-          <TextEditor
-            v-model:raw="formState.spec.content.raw"
-            v-model:html="formState.spec.content.html"
-            v-model:is-empty="isEditorEmpty"
-            class="min-h-[15rem] p-3.5 rounded-md"
-            tabindex="-1"
-          />
-        </div>
       </div>
     </div>
     <div class="py-5">
@@ -263,7 +229,7 @@ const handleReset = () => {
           :key="formState.metadata.name"
           ref="annotationsFormRef"
           :value="formState.metadata.annotations"
-          kind="Issue"
+          kind="IssueLabel"
           group="issue.webjing.com"
         />
       </div>
@@ -273,7 +239,7 @@ const handleReset = () => {
         <VButton
           :loading="saving"
           type="secondary"
-          @click="submitForm('issue-message')"
+          @click="submitForm('issue-label')"
         >
           提交
         </VButton>

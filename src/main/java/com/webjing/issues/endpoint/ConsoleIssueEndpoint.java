@@ -61,7 +61,7 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     );
                 IssueQuery.buildParameters(builder);
             })
-            .GET("issues/{name}", this::getIssueMessage,
+            .GET("issues/{name}", this::getIssueByName,
                 builder -> builder.operationId("GetIssue")
                     .description("Get a issue message by name.")
                     .tag(tag)
@@ -96,9 +96,9 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementationArray(String.class)
                     ))
-            .POST("issues", this::createIssueMessage,
-                builder -> builder.operationId("CreateIssueMessage")
-                    .description("Create a IssueMessage.")
+            .POST("issues", this::createIssue,
+                builder -> builder.operationId("CreateIssue")
+                    .description("Create a Issue.")
                     .tag(tag)
                     .requestBody(requestBodyBuilder()
                         .required(true)
@@ -132,13 +132,13 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
             .build();
     }
 
-    private Mono<ServerResponse> getIssueMessage(ServerRequest request) {
+    private Mono<ServerResponse> getIssueByName(ServerRequest request) {
         var name = request.pathVariable("name");
         return issueService.findIssueByName(name)
             .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
 
-    private Mono<ServerResponse> createIssueMessage(ServerRequest serverRequest) {
+    private Mono<ServerResponse> createIssue(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(Issue.class)
             .map(issue -> {
                 issue.getSpec().setApproved(true);
@@ -148,7 +148,7 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                 return issue;
             })
             .flatMap(issueService::create)
-            .flatMap(issueMessage -> ServerResponse.ok().bodyValue(issueMessage));
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
 
     private Mono<ServerResponse> listIssues(ServerRequest serverRequest) {

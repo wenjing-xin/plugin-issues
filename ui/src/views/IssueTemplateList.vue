@@ -118,7 +118,7 @@ const handleDeleteInBatch = async () => {
 </script>
 
 <template>
-  <VPageHeader title="Issue留言模版">
+  <VPageHeader title="Issue 模版">
     <template #icon>
       <SystemUiconsMessage class="mr-2 self-center" />
     </template>

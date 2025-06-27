@@ -32,4 +32,5 @@ public interface IssueService {
     Mono<Issue> closeIssue(Issue issue,  String closedComment, String closedOwner);
 
     Mono<Issue.IssueContent> getIssueContent(String issueName);
+
 }

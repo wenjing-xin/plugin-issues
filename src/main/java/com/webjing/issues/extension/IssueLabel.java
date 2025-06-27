@@ -18,10 +18,8 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @GVK(group = Constant.GROUP, version = Constant.VERSION,
-    kind = IssueLabel.KIND, plural = "issuelabels", singular = "issuelabel")
+    kind = "IssueLabel", plural = "issuelabels", singular = "issuelabel")
 public class IssueLabel extends AbstractExtension {
-
-    public static final String KIND = "IssueLabel";
 
     @Schema(requiredMode = REQUIRED)
     private IssueLabel.IssueLabelSpec spec;
