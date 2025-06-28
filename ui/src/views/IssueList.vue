@@ -24,9 +24,12 @@ import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
 import { useIssueListFetch } from "@/composables/use-consoleIssue";
 import IssueEditModal from "@/components/issue/IssueEditModal.vue";
-import type { Issue, ListedIssue } from "@/api/generated";
-import LabelFilterDropdown from "../components/issue/LabelFilterDropdown.vue";
-import { issueApiClient, issueTemplateApiClient } from "@/api";
+import type { Issue, IssueLabelOptions, IssueSubject, ListedIssue } from "@/api/generated";
+import {
+  consoleIssueLabelApiClient,
+  issueApiClient,
+  issueTemplateApiClient,
+} from "@/api";
 
 const label = useRouteQuery<string | undefined>("label");
 const ownerName = useRouteQuery<string | undefined>("ownerName");
@@ -67,6 +70,9 @@ const selectedIssueMessageNames = ref<string[]>([]);
 provide<Ref<string[]>>("selectedIssueMessageNames", selectedIssueMessageNames);
 
 const issueTemplateFilterOptions = ref<
+  Array<{ label: string | undefined; value: string }>
+>([]);
+const issueLabelFilterOptions = ref<
   Array<{ label: string | undefined; value: string }>
 >([]);
 
@@ -114,7 +120,18 @@ const handlerIssueTemplateOptions = () => {
     });
   });
 };
-
+const handlerIssueLabelOptions = () => {
+  consoleIssueLabelApiClient.issueLabel
+    .listSubjectIssueLabels({ subjectName: currentIssueSubjectName.value })
+    .then(({ data }) => {
+      const labelOptionsData = data as IssueLabelOptions;
+      // @ts-ignore
+      issueLabelFilterOptions.value.push({label: "默认", value: undefined})
+      // @ts-ignore
+      issueLabelFilterOptions.value = labelOptionsData.issueLabelOptions;
+      
+    });
+};
 const releaseCurIssue = () => {};
 
 const cancelReleaseCurIssue = () => {};
@@ -216,6 +233,7 @@ const handlerUpdateIssueMessage = () => {
 };
 onMounted(() => {
   handlerIssueTemplateOptions();
+  handlerIssueLabelOptions();
 });
 </script>
 
@@ -288,7 +306,11 @@ onMounted(() => {
                       label="模版"
                       :items="issueTemplateFilterOptions"
                     />
-                    <LabelFilterDropdown v-model="label" :label="'标签'" />
+                    <FilterDropdown
+                      v-model="label"
+                      label="标签"
+                      :items="issueLabelFilterOptions"
+                    />
                     <FilterDropdown
                       v-model="selectedApprovedStatus"
                       label="状态"

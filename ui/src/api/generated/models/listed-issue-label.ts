@@ -35,5 +35,11 @@ export interface ListedIssueLabel {
      * @memberof ListedIssueLabel
      */
     'issueNumber': number;
+    /**
+     * 主体显示名称
+     * @type {string}
+     * @memberof ListedIssueLabel
+     */
+    'subjectDisplayName'?: string;
 }
 

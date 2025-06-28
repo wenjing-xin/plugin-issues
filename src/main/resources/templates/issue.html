@@ -165,12 +165,11 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                 <div class="piw-space-y-2 piw-py-3">
                     <p class="piw-text-sm piw-tracking-wider">标签</p>
                     <div class="piw-flex piw-flex-wrap piw-items-center piw-gap-1.5"
-                         th:if="${#lists.size(issueVO.spec.labels) > 0}"
-                         th:attr="x-data=|{labels: '${issueVO.spec.labels}', bgColorLabels: []}|"
-                         x-init="bgColorLabels = main.generateColors(labels);">
-                        <template x-for="(item,index) in bgColorLabels" :key="index">
-                            <span x-text="item.label" :style="'background-color: ' + item.bgColor" class="piw-px-3 piw-py-1.5 piw-text-xs piw-rounded-full piw-text-white"></span>
-                        </template>
+                         th:if="${#lists.size(issueVO.issueLabels) > 0}">
+                        <th:block th:each="item:${issueVO.issueLabels}">
+                            <span th:text="${item.spec.labelName}" th:attr="x-data=|{labelColor: '${item.spec.color}'}|" :style="'background-color: ' + labelColor"
+                                  class="piw-px-3 piw-py-1.5 piw-text-xs piw-rounded-full piw-text-white"></span>
+                        </th:block>
                     </div>
                     <p th:if="${ #lists.isEmpty(issueVO.spec.labels)}" class="piw-text-sm piw-tracking-wider">
                         暂无标签

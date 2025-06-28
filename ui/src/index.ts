@@ -1,8 +1,8 @@
 import { definePlugin} from "@halo-dev/console-shared";
 import PajamasIssueTypeObjective from '~icons/pajamas/issue-type-objective';
 import FluentMailTemplate20Regular from "~icons/fluent/mail-template-20-regular";
-import MdiLabelMultipleOutline from '~icons/mdi/label-multiple-outline';
-import { markRaw} from "vue";
+import PepiconsPrintLabelCircle from '~icons/pepicons-print/label-circle';
+import { markRaw } from "vue";
 import IssueSubjectList from "@/views/IssueSubjectList.vue";
 import IssueList from "@/views/IssueList.vue";
 import IssueTemplateList from "@/views/IssueTemplateList.vue";
@@ -71,7 +71,7 @@ export default definePlugin({
               menu: {
                 name: "Issue标签管理",
                 group: "content",
-                icon: markRaw(MdiLabelMultipleOutline),
+                icon: markRaw(PepiconsPrintLabelCircle),
               },
             },
           },

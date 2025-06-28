@@ -29,7 +29,10 @@ models/issue-comment-media.ts
 models/issue-comment-spec.ts
 models/issue-comment.ts
 models/issue-content.ts
+models/issue-label-item.ts
 models/issue-label-list.ts
+models/issue-label-options-list.ts
+models/issue-label-options.ts
 models/issue-label-spec.ts
 models/issue-label.ts
 models/issue-list.ts

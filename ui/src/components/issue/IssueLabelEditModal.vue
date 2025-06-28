@@ -9,6 +9,7 @@ import {
   consoleIssueLabelApiClient,
 } from "@/api";
 import { submitForm } from "@formkit/core";
+import { labelScopeTypeOptions, subjectTypeOptions } from "@/dictionary";
 const modalTitle = ref("新增 issue 标签");
 const saving = ref<boolean>(false);
 const props = withDefaults(
@@ -20,6 +21,13 @@ const props = withDefaults(
     visible: false,
     issueLabel: undefined,
   },
+);
+
+const labelScopeSelectionOptions = computed(() =>
+  labelScopeTypeOptions.value.filter((item) => item.label != "默认"),
+);
+const subjectSelectTypeOptions = computed(() =>
+  subjectTypeOptions.value.filter((item) => item.label != "默认"),
 );
 const emit = defineEmits<{
   (event: "update:visible", value: boolean): void;
@@ -37,14 +45,15 @@ const initIssueLabel: IssueLabel = {
   apiVersion: "issue.webjing.com/v1alpha1",
   metadata: {
     generateName: "label-",
-    name: ""
+    name: "",
   },
   spec: {
     labelName: "",
     description: "",
     color: "#71C8A3",
     slug: "",
-    isGlobal: false,
+    scope: "GLOBAL",
+    subjectType: "PROJECT",
     subjectName: "",
   },
 };
@@ -136,8 +145,8 @@ const handlerIssueSubjectOptions = () => {
 const handleSave = async (issueLabel: IssueLabel) => {
   const { data } = await consoleIssueLabelApiClient.issueLabel.createIssueLabel(
     {
-      issueLabel: issueLabel
-    }
+      issueLabel: issueLabel,
+    },
   );
   emit("save", data);
   Toast.success("成功新增标签");
@@ -178,12 +187,9 @@ const handleReset = () => {
             label="标签名称"
             name="labelName"
             validation="required"
+            modifiers="trim"
           />
-          <FormKit
-            name="color"
-            label="标签颜色"
-            type="color"
-          ></FormKit>
+          <FormKit name="color" label="标签颜色" type="color"></FormKit>
           <FormKit
             type="textarea"
             rows="3"
@@ -192,17 +198,24 @@ const handleReset = () => {
           />
           <FormKit
             type="radio"
-            name="isGlobal"
+            name="scope"
             clearable
             validation="required"
-            label="是否为全局标签"
-            :options="[
-              { label: '全局标签', value: true },
-              { label: '非全局标签', value: false },
-            ]"
+            label="标签作用范围"
+            modifiers="trim"
+            help="同名标签生效范围为全局<特定主体类型<特定主体"
+            :options="labelScopeSelectionOptions"
           />
           <FormKit
-            v-if="!formState.spec.isGlobal"
+            v-if="formState.spec.scope == 'SUBJECT_TYPE'"
+            type="select"
+            name="subjectType"
+            clearable
+            label="标签归属的主体类型"
+            :options="subjectSelectTypeOptions"
+          />
+          <FormKit
+            v-if="formState.spec.scope == 'SUBJECT'"
             type="select"
             name="subjectName"
             clearable

@@ -1,5 +1,7 @@
 package com.webjing.issues.query;
 
+import com.webjing.issues.extension.IssueLabel;
+import com.webjing.issues.extension.IssueSubject;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
@@ -47,16 +49,16 @@ public class IssueLabelQuery extends SortableRequest {
         return StringUtils.defaultIfBlank(queryParams.getFirst("keyword"), null);
     }
 
-
-    @Schema(description = "issuelable isGlobal")
-    public Boolean getIsGlobal() {
-        return convertBooleanOrNull(queryParams.getFirst("isGlobal"));
+    @Schema(description = "issuelable scope")
+    public String getLabelScope() {
+        return queryParams.getFirst("scope");
     }
 
-    private Boolean convertBooleanOrNull(String value) {
-        return StringUtils.isBlank(value) ? null : Boolean.parseBoolean(value);
+    @Schema(description = "subject type")
+    public String getSubjectType() {
+        String subjectType = queryParams.getFirst("subjectType");
+        return StringUtils.isBlank(subjectType) ? null : subjectType;
     }
-
 
     @Schema(description = "subject name.")
     public String getSubjectName() {
@@ -80,11 +82,14 @@ public class IssueLabelQuery extends SortableRequest {
             query = and(query, contains("spec.labelName", getKeyword()));
             query = and(query, contains("spec.description", getKeyword()));
         }
-        if (getIsGlobal() != null) {
-            query = and(query, equal("spec.isGlobal", Boolean.toString(getIsGlobal())));
+        if (getLabelScope() != null) {
+            query = and(query, equal("spec.scope", getLabelScope()));
         }
         if (StringUtils.isNotBlank(getSubjectName())) {
             query = and(query, equal("spec.subjectName", getSubjectName()));
+        }
+        if (StringUtils.isNotBlank(getSubjectType())) {
+            query = and(query, equal("spec.subjectType", getSubjectType()));
         }
         listOptions.setFieldSelector(FieldSelector.of(query));
         return listOptions;
@@ -115,9 +120,15 @@ public class IssueLabelQuery extends SortableRequest {
                 .required(false))
             .parameter(parameterBuilder()
                 .in(ParameterIn.QUERY)
-                .name("isGlobal")
-                .description("label is global")
-                .implementation(Boolean.class)
+                .name("subjectType")
+                .description("subject type.")
+                .implementation(IssueSubject.SubjectType.class)
+                .required(false))
+            .parameter(parameterBuilder()
+                .in(ParameterIn.QUERY)
+                .name("scope")
+                .description("label scope")
+                .implementation(IssueLabel.LabelScope.class)
                 .required(false))
         ;
     }

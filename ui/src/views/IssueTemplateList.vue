@@ -124,7 +124,7 @@ const handleDeleteInBatch = async () => {
     </template>
     <template #actions>
       <VSpace v-permission="['plugin:issueTemplates:manage']">
-        <VButton type="primary" size="md" @click="handlerNewIssueTemplate">
+        <VButton type="secondary" size="md" @click="handlerNewIssueTemplate">
           <template #icon>
             <IconAddCircle class="h-full w-full" />
           </template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import PajamasIssueTypeObjective from "~icons/pajamas/issue-type-objective";
+import PepiconsPrintLabelCircle from '~icons/pepicons-print/label-circle';
 import IssueLabelListItem from "../components/issue/IssueLabelListItem.vue";
 import {
   IconAddCircle,
@@ -21,34 +21,30 @@ import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
 import { useIssueLabels } from "@/composables/use-issueLabels";
 import type {
-  IssueLabel,
-  IssueSubject,
+  IssueLabel, IssueLabelSpecScopeEnum,
+  IssueSubject, IssueSubjectSpecSubjectTypeEnum,
   ListedIssueLabel
 } from "@/api/generated";
 import { issueLabelApiClient, issueSubjectApiClient } from "@/api";
 import IssueLabelEditModal from "@/components/issue/IssueLabelEditModal.vue";
+import { labelScopeTypeOptions, subjectTypeOptions } from "@/dictionary";
 
 const selectedSubjectName = useRouteQuery<string | undefined>("subjectName");
 const selectedSort = useRouteQuery<string | undefined>("sort");
-const selectedIsGlobal = useRouteQuery<string | undefined, boolean | undefined>(
-  "isGlobal",
-  undefined,
-  {
-    transform: (value) => {
-      return value ? value === "true" : undefined;
-    },
-  },
-);
+const selectedLabelScope = useRouteQuery<IssueLabelSpecScopeEnum | undefined>("labelScope");
+const selectedSubjectType = useRouteQuery<IssueSubjectSpecSubjectTypeEnum | undefined>("subjectType");
+
 const hasFilters = computed(() => {
   return (
-    selectedSubjectName.value || selectedIsGlobal.value || selectedSort.value
+    selectedSubjectName.value || selectedLabelScope.value || selectedSort.value || selectedSubjectType.value
   );
 });
 
 const handleClearFilters = () => {
   selectedSubjectName.value = undefined;
-  selectedIsGlobal.value = undefined;
+  selectedLabelScope.value = undefined;
   selectedSort.value = undefined;
+  selectedSubjectType.value = undefined;
 };
 
 const subjectOptions = ref<Array<{ label: string | undefined; value: string }>>(
@@ -84,7 +80,8 @@ const { issueLabels, isLoading, isFetching, refetch, total } = useIssueLabels(
   keyword,
   selectedSort,
   selectedSubjectName,
-  selectedIsGlobal,
+  selectedLabelScope,
+  selectedSubjectType
 );
 
 const handlerNewIssue = () => {
@@ -172,9 +169,9 @@ onMounted(() => {
     @update="emitUpdateIssueLabel"
     @close="onEditingModalClose"
   />
-  <VPageHeader title="Issue依托主体">
+  <VPageHeader title="Issue标签管理">
     <template #icon>
-      <PajamasIssueTypeObjective class="mr-2 self-center" />
+      <PepiconsPrintLabelCircle class="mr-2 self-center" />
     </template>
     <template #actions>
       <VSpace v-permission="['plugin:issues:manage']">
@@ -218,21 +215,14 @@ onMounted(() => {
                       @click="handleClearFilters"
                     />
                     <FilterDropdown
-                      v-model="selectedIsGlobal"
-                      label="是否为全局标签"
-                      :items="[
-                        {
-                          label: '默认',
-                        },
-                        {
-                          label: '全局标签',
-                          value: true,
-                        },
-                        {
-                          label: '非全局标签',
-                          value: false,
-                        },
-                      ]"
+                      v-model="selectedLabelScope"
+                      label="标签作用范围"
+                      :items="labelScopeTypeOptions"
+                    />
+                    <FilterDropdown
+                      v-model="selectedSubjectType"
+                      :items="subjectTypeOptions"
+                      label="依托主体类型"
                     />
                     <FilterDropdown
                       v-model="selectedSubjectName"

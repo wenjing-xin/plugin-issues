@@ -3,6 +3,7 @@ package com.webjing.issues.finder.impl;
 import com.webjing.issues.entity.IssueStats;
 import com.webjing.issues.entity.ListedIssue;
 import com.webjing.issues.extension.IssueComment;
+import com.webjing.issues.extension.IssueLabel;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.finder.IssueFinder;
@@ -28,6 +29,7 @@ import run.halo.app.extension.router.selector.FieldSelector;
 import run.halo.app.theme.finders.Finder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static run.halo.app.extension.index.query.QueryFactory.*;
@@ -167,6 +169,14 @@ public class IssueFinderImpl implements IssueFinder {
                 return client.fetch(User.class, owner)
                     .map(ContributorVO::from)
                     .doOnNext(imv::setContributorVo)
+                    .thenReturn(imv);
+            })
+            .flatMap(imv -> {
+                Set<String> labels = imv.getSpec().getLabels();
+                return Flux.fromStream(labels.stream())
+                    .flatMap(label -> client.fetch(IssueLabel.class, label))
+                    .collectList()
+                    .doOnNext(imv::setIssueLabels)
                     .thenReturn(imv);
             })
             .defaultIfEmpty(issueVo);

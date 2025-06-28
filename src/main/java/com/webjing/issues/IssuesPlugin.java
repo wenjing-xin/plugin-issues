@@ -135,6 +135,7 @@ public class IssuesPlugin extends BasePlugin {
                 }))
             );
         });
+
         schemeManager.register(IssueLabel.class, indexSpecs -> {
             indexSpecs.add(new IndexSpec()
                 .setName("spec.labelName")
@@ -149,11 +150,16 @@ public class IssuesPlugin extends BasePlugin {
                 )
             );
             indexSpecs.add(new IndexSpec()
-                .setName("spec.isGlobal")
-                .setIndexFunc(simpleAttribute(IssueLabel.class, issueLabel -> {
-                    var isGlobalLabel = issueLabel.getSpec().getIsGlobal();
-                    return isGlobalLabel == null ? null : isGlobalLabel.toString();
-                }))
+                .setName("spec.scope")
+                .setIndexFunc(simpleAttribute(IssueLabel.class,
+                    issueLabel ->  issueLabel.getSpec().getScope().name())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.subjectType")
+                .setIndexFunc(simpleAttribute(IssueLabel.class,
+                    issueLabel -> issueLabel.getSpec().getSubjectType().name())
+                )
             );
             indexSpecs.add(new IndexSpec()
                 .setName("spec.subjectName")
@@ -219,5 +225,6 @@ public class IssuesPlugin extends BasePlugin {
         schemeManager.unregister(schemeManager.get(Issue.class));
         schemeManager.unregister(schemeManager.get(IssueComment.class));
         schemeManager.unregister(schemeManager.get(IssueTemplate.class));
+        schemeManager.unregister(schemeManager.get(IssueLabel.class));
     }
 }

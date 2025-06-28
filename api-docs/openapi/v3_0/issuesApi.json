@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:46334",
+    "url" : "http://localhost:53634",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -447,11 +447,20 @@
             "type" : "string"
           }
         }, {
-          "description" : "label is global",
+          "description" : "subject type.",
           "in" : "query",
-          "name" : "isGlobal",
+          "name" : "subjectType",
           "schema" : {
-            "type" : "boolean"
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          }
+        }, {
+          "description" : "label scope",
+          "in" : "query",
+          "name" : "scope",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "GLOBAL", "SUBJECT_TYPE", "SUBJECT" ]
           }
         } ],
         "responses" : {
@@ -487,6 +496,41 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueLabel.webjing.com/v1alpha1/IssueLabel" ]
+      }
+    },
+    "/apis/console.api.issueLabel.webjing.com/v1alpha1/issuelabels/{subjectName}" : {
+      "get" : {
+        "description" : "List IssueLabels.",
+        "operationId" : "ListSubjectIssueLabels",
+        "parameters" : [ {
+          "description" : "IssueSubject name",
+          "in" : "path",
+          "name" : "subjectName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueLabel name",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabelOptionsList"
                 }
               }
             },
@@ -2599,6 +2643,17 @@
           }
         }
       },
+      "IssueLabelItem" : {
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
       "IssueLabelList" : {
         "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
         "type" : "object",
@@ -2648,8 +2703,69 @@
           }
         }
       },
+      "IssueLabelOptions" : {
+        "type" : "object",
+        "properties" : {
+          "issueLabelOptions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueLabelItem"
+            }
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "IssueLabelOptionsList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueLabelOptions"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
       "IssueLabelSpec" : {
-        "required" : [ "isGlobal", "labelName" ],
+        "required" : [ "labelName", "scope" ],
         "type" : "object",
         "properties" : {
           "color" : {
@@ -2660,14 +2776,15 @@
             "type" : "string",
             "description" : "标签描述"
           },
-          "isGlobal" : {
-            "type" : "boolean",
-            "description" : "是否全局标签",
-            "default" : false
-          },
           "labelName" : {
             "type" : "string",
             "description" : "标签名称"
+          },
+          "scope" : {
+            "type" : "string",
+            "description" : "标签生效范围",
+            "default" : "false",
+            "enum" : [ "GLOBAL", "SUBJECT_TYPE", "SUBJECT" ]
           },
           "slug" : {
             "type" : "string",
@@ -2675,7 +2792,12 @@
           },
           "subjectName" : {
             "type" : "string",
-            "description" : "非全局标签的归属主体ID"
+            "description" : "标签范围为主体时的归属主体ID"
+          },
+          "subjectType" : {
+            "type" : "string",
+            "description" : "当标签范围为主体类型的时候，为必填项",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
           }
         }
       },
@@ -3213,6 +3335,10 @@
           "issueNumber" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "subjectDisplayName" : {
+            "type" : "string",
+            "description" : "主体显示名称"
           }
         },
         "description" : "A chunk of items."

@@ -39,12 +39,30 @@ public class IssueLabel extends AbstractExtension {
         @Schema(description = "标签模版路径")
         private String slug;
 
-        @Schema(requiredMode = REQUIRED, description = "是否全局标签", defaultValue = "false")
-        private Boolean isGlobal;
+        @Schema(requiredMode = REQUIRED, description = "标签生效范围", defaultValue = "false")
+        private LabelScope scope;
 
-        @Schema(description = "非全局标签的归属主体ID")
+        @Schema(description = "当标签范围为主体类型的时候，为必填项")
+        private IssueSubject.SubjectType subjectType;
+
+        @Schema(description = "标签范围为主体时的归属主体ID")
         private String subjectName;
 
+    }
+
+    public enum LabelScope {
+        /**
+         * 全局
+         */
+        GLOBAL,
+        /**
+         * 针对某一主体类型
+         */
+        SUBJECT_TYPE,
+        /**
+         * 某一主体
+         */
+        SUBJECT
     }
 
 }

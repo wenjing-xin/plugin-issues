@@ -2,12 +2,14 @@ package com.webjing.issues.vo;
 
 import com.webjing.issues.entity.IssueStats;
 import com.webjing.issues.extension.Issue;
+import com.webjing.issues.extension.IssueLabel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.Assert;
 import run.halo.app.extension.MetadataOperator;
+import java.util.List;
 
 /**
  * 功能描述
@@ -30,6 +32,8 @@ public class IssueVO {
     private ContributorVO contributorVo;
 
     private IssueStats issueStats;
+
+    private List<IssueLabel> issueLabels;
 
     public static IssueVO from(Issue issueMessage) {
         Assert.notNull(issueMessage, "The issue message must not be null.");

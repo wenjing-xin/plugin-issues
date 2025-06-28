@@ -6,13 +6,17 @@ import {
 import { useQuery } from "@tanstack/vue-query";
 import type { Ref } from "vue";
 import { ref } from "vue";
-import type { ListedIssueLabel, ListedIssueTemplate } from "@/api/generated";
+import type {
+  IssueLabelSpecScopeEnum,
+  IssueSubjectSpecSubjectTypeEnum,
+  ListedIssueLabel
+} from "@/api/generated";
 
 export interface useLabelQueryFetchProps {
   keyword?: Ref<string | undefined>;
 }
 
-export function useConsoleLabelQueryFetch(
+export function useSubjectLabelQueryFetch(
   props: useLabelQueryFetchProps,
 ): ReturnType<typeof useQuery> {
   return useLabelQueryFetch("console", props);
@@ -56,7 +60,8 @@ export function useIssueLabels(
   keyword?: Ref<string>,
   selectedSort?: Ref<string | undefined>,
   subjectName?: Ref<string | undefined>,
-  isGlobal?: Ref<boolean | undefined>,
+  labelScope?: Ref<IssueLabelSpecScopeEnum | undefined>,
+  subjectType?: Ref<IssueSubjectSpecSubjectTypeEnum | undefined>
 ) {
   const total = ref(0);
   const {
@@ -65,7 +70,7 @@ export function useIssueLabels(
     isFetching,
     refetch,
   } = useQuery<ListedIssueLabel[]>({
-    queryKey: ["issueLabels", page, size, keyword, subjectName, selectedSort, isGlobal],
+    queryKey: ["issueLabels", page, size, keyword, subjectName, selectedSort, labelScope, subjectType],
     queryFn: async () => {
       const { data } =
         await consoleIssueLabelApiClient.issueLabel.listIssueLabels({
@@ -74,7 +79,8 @@ export function useIssueLabels(
           sort: [selectedSort?.value].filter(Boolean) as string[],
           keyword: keyword?.value,
           subjectName: subjectName?.value,
-          isGlobal: isGlobal?.value,
+          scope: labelScope?.value,
+          subjectType: subjectType?.value
         });
       total.value = data.total;
       return data.items;

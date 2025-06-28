@@ -53,7 +53,7 @@ const initIssueSubject: IssueSubject = {
       htmlContent: "",
       uid: "",
     },
-    subjectType: "TOPIC",
+    subjectType: "PRODUCT",
     issueTemplates: [],
     owner: "",
     description: "",
@@ -61,7 +61,9 @@ const initIssueSubject: IssueSubject = {
     subjectVisible: "PUBLIC"
   },
 };
-
+const subjectSelectTypeOptions = computed(() =>
+  subjectTypeOptions.value.filter((item) => item.label != "默认"),
+);
 const formState = ref<IssueSubject>(cloneDeep(initIssueSubject));
 
 watchEffect(() => {
@@ -195,7 +197,7 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
             v-model="formState.spec.subjectType"
             validation="required"
             label="Issue依托主体类型"
-            :options="subjectTypeOptions"
+            :options="subjectSelectTypeOptions"
             clearable
           />
           <template v-if="formState.spec.subjectType == 'POST'">

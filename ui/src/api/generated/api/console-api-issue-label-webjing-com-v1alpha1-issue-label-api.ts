@@ -24,6 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { IssueLabel } from '../models';
 // @ts-ignore
+import type { IssueLabelOptionsList } from '../models';
+// @ts-ignore
 import type { ListedIssueLabelList } from '../models';
 /**
  * ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi - axios parameter creator
@@ -83,11 +85,12 @@ export const ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiAxiosParamCreato
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {string} [keyword] IssueLabels filtered by keyword.
          * @param {string} [subjectName] subject name.
-         * @param {boolean} [isGlobal] label is global
+         * @param {ListIssueLabelsSubjectTypeEnum} [subjectType] subject type.
+         * @param {ListIssueLabelsScopeEnum} [scope] label scope
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listIssueLabels: async (page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, subjectName?: string, isGlobal?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listIssueLabels: async (page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, subjectName?: string, subjectType?: ListIssueLabelsSubjectTypeEnum, scope?: ListIssueLabelsScopeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/apis/console.api.issueLabel.webjing.com/v1alpha1/issuelabels`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -136,8 +139,58 @@ export const ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiAxiosParamCreato
                 localVarQueryParameter['subjectName'] = subjectName;
             }
 
-            if (isGlobal !== undefined) {
-                localVarQueryParameter['isGlobal'] = isGlobal;
+            if (subjectType !== undefined) {
+                localVarQueryParameter['subjectType'] = subjectType;
+            }
+
+            if (scope !== undefined) {
+                localVarQueryParameter['scope'] = scope;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List IssueLabels.
+         * @param {string} subjectName IssueSubject name
+         * @param {string} [keyword] IssueLabel name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listSubjectIssueLabels: async (subjectName: string, keyword?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'subjectName' is not null or undefined
+            assertParamExists('listSubjectIssueLabels', 'subjectName', subjectName)
+            const localVarPath = `/apis/console.api.issueLabel.webjing.com/v1alpha1/issuelabels/{subjectName}`
+                .replace(`{${"subjectName"}}`, encodeURIComponent(String(subjectName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (keyword !== undefined) {
+                localVarQueryParameter['keyword'] = keyword;
             }
 
 
@@ -182,14 +235,28 @@ export const ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiFp = function(co
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {string} [keyword] IssueLabels filtered by keyword.
          * @param {string} [subjectName] subject name.
-         * @param {boolean} [isGlobal] label is global
+         * @param {ListIssueLabelsSubjectTypeEnum} [subjectType] subject type.
+         * @param {ListIssueLabelsScopeEnum} [scope] label scope
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listIssueLabels(page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, subjectName?: string, isGlobal?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueLabelList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueLabels(page, size, labelSelector, fieldSelector, sort, keyword, subjectName, isGlobal, options);
+        async listIssueLabels(page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, subjectName?: string, subjectType?: ListIssueLabelsSubjectTypeEnum, scope?: ListIssueLabelsScopeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueLabelList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueLabels(page, size, labelSelector, fieldSelector, sort, keyword, subjectName, subjectType, scope, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi.listIssueLabels']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * List IssueLabels.
+         * @param {string} subjectName IssueSubject name
+         * @param {string} [keyword] IssueLabel name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listSubjectIssueLabels(subjectName: string, keyword?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueLabelOptionsList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listSubjectIssueLabels(subjectName, keyword, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi.listSubjectIssueLabels']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -218,7 +285,16 @@ export const ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiFactory = functi
          * @throws {RequiredError}
          */
         listIssueLabels(requestParameters: ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListIssueLabelsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<ListedIssueLabelList> {
-            return localVarFp.listIssueLabels(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.subjectName, requestParameters.isGlobal, options).then((request) => request(axios, basePath));
+            return localVarFp.listIssueLabels(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.subjectName, requestParameters.subjectType, requestParameters.scope, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * List IssueLabels.
+         * @param {ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabelsRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listSubjectIssueLabels(requestParameters: ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabelsRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueLabelOptionsList> {
+            return localVarFp.listSubjectIssueLabels(requestParameters.subjectName, requestParameters.keyword, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -293,11 +369,39 @@ export interface ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListIssueLab
     readonly subjectName?: string
 
     /**
-     * label is global
-     * @type {boolean}
+     * subject type.
+     * @type {'POST' | 'PROJECT' | 'PRODUCT' | 'TOPIC' | 'LEAVE_MESSAGE'}
      * @memberof ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListIssueLabels
      */
-    readonly isGlobal?: boolean
+    readonly subjectType?: ListIssueLabelsSubjectTypeEnum
+
+    /**
+     * label scope
+     * @type {'GLOBAL' | 'SUBJECT_TYPE' | 'SUBJECT'}
+     * @memberof ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListIssueLabels
+     */
+    readonly scope?: ListIssueLabelsScopeEnum
+}
+
+/**
+ * Request parameters for listSubjectIssueLabels operation in ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi.
+ * @export
+ * @interface ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabelsRequest
+ */
+export interface ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabelsRequest {
+    /**
+     * IssueSubject name
+     * @type {string}
+     * @memberof ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabels
+     */
+    readonly subjectName: string
+
+    /**
+     * IssueLabel name
+     * @type {string}
+     * @memberof ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabels
+     */
+    readonly keyword?: string
 }
 
 /**
@@ -326,7 +430,38 @@ export class ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi extends BaseAPI
      * @memberof ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi
      */
     public listIssueLabels(requestParameters: ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListIssueLabelsRequest = {}, options?: RawAxiosRequestConfig) {
-        return ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiFp(this.configuration).listIssueLabels(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.subjectName, requestParameters.isGlobal, options).then((request) => request(this.axios, this.basePath));
+        return ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiFp(this.configuration).listIssueLabels(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.subjectName, requestParameters.subjectType, requestParameters.scope, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List IssueLabels.
+     * @param {ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabelsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApi
+     */
+    public listSubjectIssueLabels(requestParameters: ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiListSubjectIssueLabelsRequest, options?: RawAxiosRequestConfig) {
+        return ConsoleApiIssueLabelWebjingComV1alpha1IssueLabelApiFp(this.configuration).listSubjectIssueLabels(requestParameters.subjectName, requestParameters.keyword, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
+/**
+ * @export
+ */
+export const ListIssueLabelsSubjectTypeEnum = {
+    Post: 'POST',
+    Project: 'PROJECT',
+    Product: 'PRODUCT',
+    Topic: 'TOPIC',
+    LeaveMessage: 'LEAVE_MESSAGE'
+} as const;
+export type ListIssueLabelsSubjectTypeEnum = typeof ListIssueLabelsSubjectTypeEnum[keyof typeof ListIssueLabelsSubjectTypeEnum];
+/**
+ * @export
+ */
+export const ListIssueLabelsScopeEnum = {
+    Global: 'GLOBAL',
+    SubjectType: 'SUBJECT_TYPE',
+    Subject: 'SUBJECT'
+} as const;
+export type ListIssueLabelsScopeEnum = typeof ListIssueLabelsScopeEnum[keyof typeof ListIssueLabelsScopeEnum];

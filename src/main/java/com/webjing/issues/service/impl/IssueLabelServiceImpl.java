@@ -1,12 +1,15 @@
 package com.webjing.issues.service.impl;
 
+import com.webjing.issues.entity.IssueLabelOptions;
 import com.webjing.issues.entity.ListedIssueLabel;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueLabel;
+import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.query.IssueLabelQuery;
 import com.webjing.issues.service.IssueLabelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -46,17 +49,29 @@ public class IssueLabelServiceImpl implements IssueLabelService {
         // 获取标签名称和主体名称
         String labelName = issueLabel.getSpec().getLabelName();
         String subjectName = issueLabel.getSpec().getSubjectName();
-        boolean isGlobal = issueLabel.getSpec().getIsGlobal();
-
+        String subjectType = issueLabel.getSpec().getSubjectType().name();
+        IssueLabel.LabelScope tagScope = issueLabel.getSpec().getScope();
         // 构建重复检测查询
         Mono<Boolean> duplicateCheck;
-        if (isGlobal) {
+        if (tagScope.name().equals("GLOBAL")) {
             // 全局标签：检测所有同名全局标签 - 修复布尔值类型
             duplicateCheck = client.listAll(IssueLabel.class,
                     ListOptions.builder()
                         .fieldQuery(QueryFactory.and(
                             QueryFactory.equal("spec.labelName", labelName),
-                            QueryFactory.equal("spec.isGlobal", "true") // 使用布尔值 true 而不是字符串 "true"
+                            QueryFactory.equal("spec.scope", "GLOBAL")
+                        )).build(),
+                    Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
+                .collectList()
+                .map(list -> !list.isEmpty());
+        }else if(tagScope.name().equals("SUBJECT_TYPE")){
+            // 针对某一主体类型增加
+            duplicateCheck = client.listAll(IssueLabel.class,
+                    ListOptions.builder()
+                        .fieldQuery(QueryFactory.and(
+                            QueryFactory.equal("spec.labelName", labelName),
+                            QueryFactory.equal("spec.scope", "SUBJECT_TYPE"),
+                            QueryFactory.equal("spec.subjectType", subjectType)
                         )).build(),
                     Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
                 .collectList()
@@ -67,7 +82,7 @@ public class IssueLabelServiceImpl implements IssueLabelService {
                     ListOptions.builder()
                         .fieldQuery(QueryFactory.and(
                             QueryFactory.equal("spec.labelName", labelName),
-                            QueryFactory.equal("spec.isGlobal", "false"),
+                            QueryFactory.equal("spec.scope", "SUBJECT"),
                             QueryFactory.equal("spec.subjectName", subjectName)
                         )).build(),
                     Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
@@ -78,13 +93,49 @@ public class IssueLabelServiceImpl implements IssueLabelService {
         // 执行检测并创建
         return duplicateCheck.flatMap(exists -> {
             if (exists) {
-                String errorMsg = isGlobal ?
-                    "全局标签名称重复: " + labelName :
-                    "主体内标签名称重复: " + labelName + " (主体: " + subjectName + ")";
-                return Mono.error(new IllegalArgumentException(errorMsg));
+                return switch (tagScope){
+                    case GLOBAL ->  Mono.error(new IllegalArgumentException("全局标签名称重复: " + labelName));
+                    case SUBJECT_TYPE -> Mono.error(new IllegalArgumentException("主体类型【" + IssueSubject.parseSubjectType(issueLabel.getSpec().getSubjectType()) + "】内标签名称重复: " + labelName));
+                    case SUBJECT -> client.fetch(IssueSubject.class, subjectName).flatMap(issueSubject -> Mono.error(new IllegalArgumentException("主体【" + issueSubject.getSpec().getDisplayName() + "】内标签名称重复: " + labelName)));
+                };
             }
             return client.create(issueLabel);
         });
+    }
+
+    @Override
+    public Mono<IssueLabelOptions> listSubjectIssueLabels(String subjectName, String keyword) {
+        // 查询全局标签 (isGlobal = true)
+        Flux<IssueLabel> globalLabels = client.listAll(IssueLabel.class,
+            buildQueryParam("GLOBAL", "", "", keyword),
+            Sort.by(Sort.Order.desc("metadata.creationTimestamp"))
+        ).map(issueLabel -> {
+            String labelName = issueLabel.getSpec().getLabelName();
+            issueLabel.getSpec().setLabelName(labelName + " - 全局标签");
+            return issueLabel;
+        });
+
+        // 查询指定主体类型的标签 (isGlobal = false 且 subjectType 匹配)
+        Flux<IssueLabel> subjectTypeLabels = client.get(IssueSubject.class, subjectName)
+            .flatMapMany(issueSubject -> client.listAll(IssueLabel.class, 
+                buildQueryParam("SUBJECT_TYPE", issueSubject.getSpec().getSubjectType().name(), "", keyword),
+                Sort.by(Sort.Order.desc("metadata.creationTimestamp"))));
+
+        // 查询指定主体的标签 (isGlobal = false 且 subjectName 匹配)
+        Flux<IssueLabel> subjectLabels = client.listAll(IssueLabel.class,
+            buildQueryParam("SUBJECT", "", subjectName, keyword),
+            Sort.by(Sort.Order.desc("metadata.creationTimestamp"))
+        );
+
+        // 合并两个结果流并转换为 IssueLabelOptions
+        return Flux.merge(globalLabels, subjectTypeLabels, subjectLabels)
+            .map(issueLabel -> IssueLabelOptions.IssueLabelItem.from(issueLabel))
+            .collectList()
+            .map(issueLabelItems -> {
+                IssueLabelOptions issueLabelOptions = new IssueLabelOptions();
+                issueLabelOptions.setIssueLabelOptions(issueLabelItems);
+                return issueLabelOptions;
+            });
     }
 
     private Mono<ListedIssueLabel> toListedIssueLabel(IssueLabel issueLabel) {
@@ -94,7 +145,16 @@ public class IssueLabelServiceImpl implements IssueLabelService {
             .map(ListedIssueLabel.ListedIssueLabelBuilder::build)
             .flatMap(lil -> fetchLabelSubIssueNum(issueLabel.getMetadata().getName())
                 .doOnNext(lil::setIssueNumber)
-                .thenReturn(lil));
+                .thenReturn(lil))
+            .flatMap(lil -> {
+                if(lil.getIssueLabel().getSpec().getScope().name().equals("SUBJECT")){
+                    return client.fetch(IssueSubject.class, lil.getIssueLabel().getSpec().getSubjectName())
+                        .map(issueSubject -> issueSubject.getSpec().getDisplayName())
+                        .doOnNext(lil::setSubjectDisplayName)
+                        .thenReturn(lil);
+                }
+                return Mono.just(lil);
+            });
     }
 
     private Mono<Integer> fetchLabelSubIssueNum(String labelName){
@@ -103,6 +163,52 @@ public class IssueLabelServiceImpl implements IssueLabelService {
                 .build(), Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
             .collectList()
            .map(issues -> issues.size());
+    }
+
+    private ListOptions buildQueryParam(String labelScope, String subjectType, String subjectName, String keyword){
+        if(StringUtils.isEmpty(keyword)){
+            if(labelScope.equals("GLOBAL")){
+                return ListOptions.builder()
+                    .fieldQuery(QueryFactory.equal("spec.scope", labelScope))
+                    .build();
+            }else if(labelScope.equals("SUBJECT_TYPE")){
+                return ListOptions.builder()
+                    .fieldQuery(QueryFactory.and(
+                        QueryFactory.equal("spec.scope", labelScope),
+                        QueryFactory.equal("spec.subjectType", subjectType)
+                    ))
+                    .build();
+            }
+            return ListOptions.builder()
+                .fieldQuery(QueryFactory.and(
+                    QueryFactory.equal("spec.scope", labelScope),
+                    QueryFactory.equal("spec.subjectName", subjectName)
+                ))
+                .build();
+        }else{
+            if(labelScope.equals("GLOBAL")){
+                return ListOptions.builder()
+                    .fieldQuery(QueryFactory.and(
+                        QueryFactory.equal("spec.scope", labelScope),
+                        QueryFactory.equal("spec.labelName", keyword)
+                    ))
+                    .build();
+            }else if(labelScope.equals("SUBJECT_TYPE")){
+                return ListOptions.builder()
+                    .fieldQuery(QueryFactory.and(
+                        QueryFactory.equal("spec.scope", labelScope),
+                        QueryFactory.equal("spec.subjectType", subjectType),
+                        QueryFactory.equal("spec.labelName", keyword)
+                    ))
+                    .build();
+            }
+            return ListOptions.builder().fieldQuery(QueryFactory.and(
+                    QueryFactory.equal("spec.scope", labelScope),
+                    QueryFactory.equal("spec.subjectName", subjectName),
+                    QueryFactory.equal("spec.labelName", keyword)
+                ))
+                .build();
+        }
     }
 
 }

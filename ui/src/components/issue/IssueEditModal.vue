@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
 import { computed, nextTick, onMounted, ref, toRaw, watchEffect } from "vue";
-import type {Issue, IssueTemplate} from "@/api/generated";
+import type { Issue, IssueLabelOptions, IssueTemplate } from "@/api/generated";
 import cloneDeep from "lodash.clonedeep";
 import {
-  consoleIssueApiClient,
+  consoleIssueApiClient, consoleIssueLabelApiClient,
   issueApiClient,
-  issueTemplateApiClient,
+  issueTemplateApiClient
 } from "@/api";
 import { submitForm } from "@formkit/core";
 import { useRouteQuery } from "@vueuse/router";
@@ -82,17 +82,12 @@ onMounted(() => {
 
 const labelOptions = ref<Array<{ label: string; value: string }>>([]);
 const handlerLabelOptions = () => {
-  consoleIssueApiClient.issue
-    .listSubjectLabels({
-      name: "",
-    })
-    .then((res) => {
-      labelOptions.value = res.data.map((itemLabel:string) => {
-        return {
-          label: itemLabel,
-          value: itemLabel,
-        };
-      });
+  consoleIssueLabelApiClient.issueLabel
+    .listSubjectIssueLabels({ subjectName: currentIssueSubjectName.value })
+    .then(({ data }) => {
+      const labelOptionsData = data as IssueLabelOptions;
+      // @ts-ignore
+      labelOptions.value = labelOptionsData.issueLabelOptions;
     });
 };
 
@@ -230,7 +225,7 @@ const handleReset = () => {
             name="issueTemplate"
             clearable
             validation="required"
-            label="Issue留言模版"
+            label="Issue模版"
             :options="issueTemplateFilterOptions"
           />
         </FormKit>

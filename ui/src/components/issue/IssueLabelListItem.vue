@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { formatDatetime } from "@/utils/date";
+import TablerCategoryFilled from '~icons/tabler/category-filled';
 import {
   Dialog,
   VDropdownItem,
@@ -7,14 +8,15 @@ import {
   VEntityField,
   Toast,
   VTag,
-  VStatusDot,
+  VStatusDot, VSpace, IconExternalLinkLine
 } from "@halo-dev/components";
-import { inject, type Ref, ref } from "vue";
+import { computed, inject, type Ref, ref } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
 import HugeiconsGlobal from "~icons/hugeicons/global";
 
 import type { IssueLabel, ListedIssueLabel } from "@/api/generated";
 import { issueLabelApiClient } from "@/api";
+import { subjectTypeOptions } from "@/dictionary";
 
 const queryClient = useQueryClient();
 
@@ -65,6 +67,11 @@ const handleDelete = async (issueLabel: ListedIssueLabel) => {
 const handlerEditIssueLabel = (issueLabel: ListedIssueLabel) => {
   emit("update", issueLabel.issueLabel);
 };
+
+const subjectTypeParseName = computed(()=> {
+  const filterRes = subjectTypeOptions.value.filter((item) => item.value == props.issueLabel.issueLabel.spec.subjectType);
+  return filterRes[0]?.label;
+})
 </script>
 <template>
   <VEntity :is-selected="isSelected">
@@ -113,7 +120,7 @@ const handlerEditIssueLabel = (issueLabel: ListedIssueLabel) => {
       <VEntityField>
         <template #description>
           <VTag
-            v-if="issueLabel.issueLabel.spec.isGlobal"
+            v-if="issueLabel.issueLabel.spec.scope == 'GLOBAL'"
             theme="primary"
             class="cursor-auto"
           >
@@ -122,7 +129,35 @@ const handlerEditIssueLabel = (issueLabel: ListedIssueLabel) => {
             </template>
             全局标签
           </VTag>
-          <VTag v-else theme="default" class="cursor-auto"> 全局标签 </VTag>
+          <VTag v-else-if="issueLabel.issueLabel.spec.scope == 'SUBJECT_TYPE'" theme="secondary" class="cursor-auto">
+            <template #leftIcon>
+              <TablerCategoryFilled />
+            </template>
+            主体类型标签 
+          </VTag>
+          <VTag v-else theme="default" class="cursor-auto"> 特定主体标签 </VTag>
+        </template>
+      </VEntityField>
+      <!--   针对主体类型和主体名称显示   -->
+      <VEntityField v-if="issueLabel.issueLabel.spec.scope !== 'GLOBAL'">
+        <template #extra>
+          <VSpace class="mt-1 sm:mt-0" v-if="issueLabel.issueLabel.spec.scope == 'SUBJECT'">
+            <a
+              target="_blank"
+              :href="'/subject/' + issueLabel.issueLabel?.spec?.subjectName"
+              class="hidden text-gray-600 transition-all group-hover:inline-block hover:text-gray-900"
+            >
+              <IconExternalLinkLine class="h-3 w-3" />
+            </a>
+          </VSpace>
+        </template>
+        <template #description>
+          <p v-if="issueLabel.issueLabel.spec.scope == 'SUBJECT'" class="px-2 py-0.5 text-xs rounded bg-gray-100" v-tooltip="issueLabel.issueLabel.spec.subjectName">
+            {{ issueLabel?.subjectDisplayName?.substring(0, 8) }}
+          </p>
+          <p v-else-if="issueLabel.issueLabel.spec.scope == 'SUBJECT_TYPE'" class="px-2 py-0.5 text-xs rounded bg-gray-100">
+            {{subjectTypeParseName}}
+          </p>
         </template>
       </VEntityField>
       <VEntityField v-if="issueLabel.issueLabel.metadata.deletionTimestamp">
