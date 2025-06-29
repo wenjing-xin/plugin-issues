@@ -68,8 +68,8 @@ const { issueComments, refetch, isLoading } = useIssueCommentListFetch(
 
 const handleDelete = async (issue: ListedIssue) => {
   Dialog.warning({
-    title: "删除issue留言",
-    description: "该操作会将issue留言删除，该操作不可恢复。",
+    title: "删除issue",
+    description: "该操作会将issue删除，该操作不可恢复。",
     confirmType: "danger",
     confirmText: "确定",
     cancelText: "取消",
@@ -96,8 +96,8 @@ const issueStatus = computed(() => {
       : "已关闭";
 });
 
-// 编辑issue留言
-const handlerEditIssueMessage = (issue: ListedIssue) => {
+// 编辑issue
+const handlerEditIssue = (issue: ListedIssue) => {
   emit("update", issue.issue);
 };
 const onSubmitClose = async () => {
@@ -278,7 +278,7 @@ function getStatusDotState(status: string) {
       </VEntityField>
     </template>
     <template #dropdownItems>
-      <VDropdownItem @click="handlerEditIssueMessage(issue)">
+      <VDropdownItem @click="handlerEditIssue(issue)">
         编辑
       </VDropdownItem>
       <HasPermission :permissions="['plugin:issues:manage']">

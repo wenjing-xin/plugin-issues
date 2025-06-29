@@ -18,6 +18,8 @@ public interface SettingConfigGetter {
 
         private String defaultClosedComment;
 
+        private String defaultAvatarMode;
+
     }
 
 }

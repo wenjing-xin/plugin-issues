@@ -209,8 +209,8 @@ const handleDeleteInBatch = async () => {
           <VLoading v-if="isLoading" />
           <Transition v-else-if="!issueTemplates?.length" appear name="fade">
             <VEmpty
-              message="你可以尝试刷新或者新建issue留言模版"
-              title="当前没有任何Issue留言模版"
+              message="你可以尝试刷新或者新建Issue模版"
+              title="当前没有任何Issue模版"
             >
               <template #actions>
                 <VSpace>

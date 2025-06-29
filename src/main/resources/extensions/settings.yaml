@@ -24,4 +24,14 @@ spec:
           label: Issue关闭原因
           value: Issue已解决
           help: "默认关闭Issued原因"
+        - $formkit: radio
+          name: defaultAvatarMode
+          label: 默认头像
+          value: "default"
+          help: "显示在Issue评论和登录头像中"
+          options:
+            - label: 默认
+              value: "default"
+            - label: 随机特征人脸头像
+              value: "random_figure"
 

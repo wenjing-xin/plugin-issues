@@ -201,7 +201,7 @@
     }
   };
 
-  // 关闭创建issue留言模版页面
+  // 关闭创建issue模版页面
   const handlerCloseTemplate = () => {
     Dialog.warning({
       title: "关闭页面",

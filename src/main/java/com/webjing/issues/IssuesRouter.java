@@ -98,6 +98,10 @@ public class IssuesRouter {
         return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getTitle());
     }
 
+    private Mono<String> getIssuesAvatarSetting(){
+        return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getDefaultAvatarMode());
+    }
+
     private Mono<UrlContextListResult<IssueVO>> issuePageList(ServerRequest request) {
         String path = request.path();
         int pageNum = pageNumInPathVariable(request);
@@ -127,6 +131,7 @@ public class IssuesRouter {
     private void buildCommonVariables(Map<String, Object> model) {
         String version = pluginContext.getVersion();
         model.put("pluginVersion", version);
+        model.put("issueAvatarMode", this.getIssuesAvatarSetting());
     }
 
 }

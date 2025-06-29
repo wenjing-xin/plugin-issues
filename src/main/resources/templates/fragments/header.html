@@ -27,8 +27,20 @@
                         <th:block th:if="${#strings.equals(#authentication.name,'anonymousUser')}">
                             <span class="piw-icon-[carbon--user-avatar] piw-text-2xl piw-font-bold"></span>
                         </th:block>
-                        <th:block th:unless="${#strings.equals(#authentication.name,'anonymousUser')}">
-                            <img width="24" height="24" class="piw-rounded-full" avatar-img="true" th:src="${currentUser.avatar}" th:alt="${currentUser.displayName}" />
+                        <th:block th:unless="${#strings.equals(#authentication.name, 'anonymousUser')}">
+                            <th:block th:if="${#strings.isEmpty(currentUser.avatar)}">
+                                <th:block th:if="${ #strings.equals(issueAvatarMode, 'default') }">
+                                    <div class="piw-size-full piw-h-6 piw-rounded-full piw-flex piw-items-center piw-justify-center piw-bg-slate-200 piw-border piw-border-slate-200">
+                                        <span class="piw-font-bold piw-text-xl piw-text-neutral-400" th:text="${#strings.substring(name, 0, 1)}"></span>
+                                    </div>
+                                </th:block>
+                                <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
+                                    <img class="piw-size-6 piw-rounded-full piw-border piw-border-slate-200" src="https://weavatar.com/avatar/plugin-issues?d=wavatar" draggable="false" th:alt="${name}" />
+                                </th:block>
+                            </th:block>
+                            <th:block th:if="${ not #strings.isEmpty(currentUser.avatar)}">
+                                <img width="24" height="24" class="piw-rounded-full" avatar-img="true" th:src="${currentUser.avatar}" th:alt="${currentUser.displayName}" />
+                            </th:block>
                         </th:block>
                     </div>
                     <div @mouseenter="open()" @mouseleave="close()" x-show="show"

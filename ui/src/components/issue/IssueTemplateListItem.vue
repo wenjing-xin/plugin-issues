@@ -25,8 +25,8 @@
 
   const handleDelete = async (issueTemplate: ListedIssueTemplate) => {
     Dialog.warning({
-      title: "删除issue留言",
-      description: "该操作会将issue留言删除，该操作不可恢复。",
+      title: "删除Issue模版",
+      description: "该操作会将issue模版，该操作不可恢复。",
       confirmType: "danger",
       confirmText: "确定",
       cancelText: "取消",
@@ -48,7 +48,7 @@
   const handleEditIssueTemplate = async (issueTemplate: ListedIssueTemplate) => {
     const curTmeplateIssueList = await issueApiClient.issue.listIssue({ fieldSelector: ["spec.issueTemplate=" + issueTemplate.issueTemplate.metadata.name] });
     if (curTmeplateIssueList.data.items.length > 0) {
-      Toast.warning("当前模版下已经存在留言，无法修改模版，请新建模版或删除该模版下的留言后进行修改！")
+      Toast.warning("当前模版下已经存在Issue，无法修改模版，请新建模版或删除该模版下的Issue后进行修改！")
     } else {
       router.push({ name: "IssueTemplateEditor", query: { name: issueTemplate.issueTemplate.metadata.name } });
     }

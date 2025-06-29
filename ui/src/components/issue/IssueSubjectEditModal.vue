@@ -212,8 +212,7 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
             type="select"
             v-model="formState.spec.issueTemplates"
             clearable
-            validation="required"
-            label="Issue留言模版"
+            label="Issue模版"
             multiple
             :options="issueTemplateFilterOptions"
           />
