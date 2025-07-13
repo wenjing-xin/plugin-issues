@@ -1,5 +1,5 @@
 import { axiosInstance } from "@halo-dev/api-client";
-import {Issue} from "../types";
+import { Issue } from "../types";
 
 const apiVersion = "/apis/uc.api.issue.webjing.com/v1alpha1";
 
@@ -11,4 +11,9 @@ export function fetchIssueContent(issueName: string){
 export function createIssue(issue: Issue) {
     const urlPath = `${apiVersion}/issues`;
     return axiosInstance.post(urlPath, issue);
+}
+
+export function fetchIssueTemplateDetails(templateName: string) {
+    const urlPath = `${apiVersion}/issuetemplates/${templateName}`;
+    return axiosInstance.get(urlPath);
 }

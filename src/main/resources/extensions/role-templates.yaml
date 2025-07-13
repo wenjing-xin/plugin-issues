@@ -51,7 +51,7 @@ metadata:
       ["uc:plugin:issues:publish"]
 rules:
   - apiGroups: ["uc.api.issue.webjing.com"]
-    resources: ["issues", "labels"]
+    resources: ["issues", "labels", "issuetemplates/*"]
     verbs: ["get", "list", "create", "update"]
 ---
 apiVersion: v1alpha1

@@ -1,17 +1,18 @@
-import type { Issue } from "../types";
-import { createIssue } from "../api";
+import type {Issue, IssueTemplateRender} from "../types";
+import { createIssue, fetchIssueTemplateDetails } from "../api";
 import message from "./message";
 
 const messageUtils = message();
 
-export default (subjectName:string)=> ({
+export default (subjectName:string, templateName:string)=> ({
 
     issueForm: {
         kind: "Issue",
         apiVersion: "issue.webjing.com/v1alpha1",
         metadata: {
             name: "",
-            generateName: "issue-"
+            generateName: "issue-",
+            annotations: {},
         },
         spec: {
             title: "",
@@ -40,6 +41,18 @@ export default (subjectName:string)=> ({
     saveLoading: false,
 
     submitText: '创建 Issue',
+
+    issueTemplateRender: {
+        displayName: "",
+        components: [],
+        annotationFields: []
+    } as IssueTemplateRender,
+
+    init(){
+        if(templateName){
+            this.getIssueTemplateOptions(templateName);
+        }
+    },
 
     submitForm(rawContent:string, preview:string){
         this.issueForm.spec.content.raw = rawContent;
@@ -92,9 +105,21 @@ export default (subjectName:string)=> ({
             this.submitText = '创建 Issue';
         });
     },
+
     cancelCreate(){
         window.location.href = `${window.location.origin}/subject/${subjectName}/issues`;
     },
 
+    getIssueTemplateOptions(templateName:string){
+        fetchIssueTemplateDetails(templateName).then(res=>{
+            if(res.status == 200){
+                this.issueTemplateRender = res.data;
+                this.issueTemplateRender.annotationFields?.forEach(filed=> {
+                    // @ts-ignore
+                    this.issueForm.metadata.annotations[filed] = "";
+                })
+            }
+        })
+    },
 
 })

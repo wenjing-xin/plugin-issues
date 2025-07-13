@@ -1,6 +1,7 @@
 package com.webjing.issues.service;
 
 import com.webjing.issues.entity.IssueTemplateOptions;
+import com.webjing.issues.entity.IssueTemplateRender;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.query.IssueTemplateQuery;
@@ -28,8 +29,10 @@ public interface IssueTemplateService {
 
     /**
      * 构建 Issue 模版数据
-     * @param issueTemplate
+     * @param templateName
      * @return
      */
-    Mono<Object> buildTemplateData(String issueTemplate);
+    Mono<IssueTemplateRender> buildTemplateData(String templateName);
+
+
 }

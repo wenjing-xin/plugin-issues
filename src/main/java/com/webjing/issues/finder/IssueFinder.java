@@ -28,7 +28,7 @@ public interface IssueFinder {
      * @param size page size.
      * @return a mono of list result.
      */
-    Mono<ListResult<IssueVO>> list(Integer page, Integer size);
+    Mono<ListResult<IssueVO>> list(Integer page, Integer size, String subjectName);
 
     /**
      * List issues by label.
@@ -42,7 +42,7 @@ public interface IssueFinder {
 
     Flux<IssueLabelVO> listAlllabels();
 
-    Mono<ListResult<IssueVO>> listByLabel(int pageNum, Integer pageSize, String labelName);
+    Mono<ListResult<IssueVO>> listByLabel(int pageNum, Integer pageSize, String labelName, String subjectName);
 
     /**
     * @Author webjing

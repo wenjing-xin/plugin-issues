@@ -26,7 +26,7 @@ import {
   type IssueSubject,
   type IssueTemplate,
   type TemplateField,
-  TemplateFieldTypeEnum
+  TemplateFieldTypeEnum,
 } from "@/api/generated";
 import UilText from "~icons/uil/text";
 import BiTextareaT from "~icons/bi/textarea-t";
@@ -38,8 +38,9 @@ import { useRouteQuery } from "@vueuse/router";
 
 import { useCurrentUserDetailFetch } from "@/composables/use-consoleApiclient";
 import {
-  consoleIssueTemplateApiClient, issueSubjectApiClient,
-  issueTemplateApiClient
+  consoleIssueTemplateApiClient,
+  issueSubjectApiClient,
+  issueTemplateApiClient,
 } from "@/api";
 import { subjectTypeOptions, templateScopeTypeOptions } from "@/dictionary";
 const currentEditTempalte = useRouteQuery<string | undefined>("name");
@@ -57,7 +58,7 @@ const initIssueTemplate = ref<IssueTemplate>({
   apiVersion: "issue.webjing.com/v1alpha1",
   kind: "IssueTemplate",
   metadata: {
-    generateName: "issue-template-",
+    generateName: "template-",
     name: "",
   },
   spec: {
@@ -89,7 +90,7 @@ const basicComponents = ref<Component[]>([
       type: TemplateFieldTypeEnum.Text,
       requiredMode: "",
       placeholder: "",
-      fieldOptions: {},
+      fieldOptions: [],
       helpText: "",
       minLength: 0,
       maxLength: 20,
@@ -109,7 +110,7 @@ const basicComponents = ref<Component[]>([
       type: TemplateFieldTypeEnum.TextArea,
       requiredMode: "",
       placeholder: "",
-      fieldOptions: {},
+      fieldOptions: [],
       helpText: "",
       minLength: 0,
       maxLength: 100,
@@ -130,7 +131,7 @@ const basicComponents = ref<Component[]>([
       requiredMode: "",
       placeholder: "",
       helpText: "",
-      fieldOptions: {},
+      fieldOptions: [],
       minLength: 0,
       maxLength: 0,
       rows: 0,
@@ -150,7 +151,7 @@ const basicComponents = ref<Component[]>([
       requiredMode: "",
       placeholder: "",
       helpText: "",
-      fieldOptions: {},
+      fieldOptions: [],
       minLength: 0,
       maxLength: 0,
       rows: 0,
@@ -170,7 +171,7 @@ const basicComponents = ref<Component[]>([
       requiredMode: "",
       placeholder: "",
       helpText: "",
-      fieldOptions: {},
+      fieldOptions: [],
       minLength: 0,
       maxLength: 0,
       rows: 0,
@@ -190,7 +191,7 @@ const basicComponents = ref<Component[]>([
       requiredMode: "",
       placeholder: "",
       helpText: "",
-      fieldOptions: {},
+      fieldOptions: [],
       minLength: 0,
       maxLength: 0,
       rows: 0,
@@ -224,7 +225,7 @@ const onLayoutChange = (event: any) => {
     const uniqueKey = `${event.added.element.id}${Date.now()}`;
     event.added.element.attrs.key = uniqueKey;
     event.added.element.attrs.title = uniqueKey;
-    event.added.element.attrs.fieldOptions = {};
+    event.added.element.attrs.fieldOptions = [];
   }
 };
 
@@ -308,33 +309,30 @@ const cloneComponent = (original: Component) => {
     ...original,
     attrs: {
       ...original.attrs,
-      fieldOptions: { ...original.attrs.fieldOptions },
+      fieldOptions: original.attrs.fieldOptions,
     },
   };
 };
-
-// Function to convert fieldOptions object to array
-const convertFieldOptionsToArray = (fieldOptions: {
-  [key: string]: string;
-}) => {
-  return Object.entries(fieldOptions).map(([key, value]) => ({
-    label: value,
-    value,
-  }));
-};
-
-// Function to add a new option
 const addOption = (component: Component) => {
   if (component.attrs.fieldOptions) {
-    const label = `option${Date.now()}`;
-    component.attrs.fieldOptions[label] = "选项值";
+    component.attrs.fieldOptions = [
+      ...component.attrs.fieldOptions,
+      {
+        label: `选项值`,
+        value: `选项值`,
+        generateVal: `option${Date.now()}`,
+      },
+    ];
   }
 };
 
 // Function to remove an option
 const removeOption = (component: Component, label: string) => {
   if (component.attrs.fieldOptions) {
-    delete component.attrs.fieldOptions[label];
+    const filterOptions = component.attrs.fieldOptions.filter(
+      (option) => option.label !== label,
+    );
+    component.attrs.fieldOptions = filterOptions;
   }
 };
 
@@ -357,7 +355,7 @@ const convertIssueTemplateToComponents = (
           icon: basicComponent.icon, // Use the icon from basicComponents
           attrs: {
             ...field,
-            fieldOptions: field.fieldOptions || {},
+            fieldOptions: field.fieldOptions || [],
           },
         };
         components.push(component);
@@ -395,7 +393,6 @@ const initCurEditTemplate = async () => {
     });
     const editIssueTemplate = result.data as IssueTemplate;
     initIssueTemplate.value = editIssueTemplate;
-    console.log(editIssueTemplate, "current update template");
     isUpdateMode.value = true;
 
     // Convert IssueTemplate to Component[]
@@ -531,9 +528,7 @@ onBeforeMount(async () => {
                 :validation="element.attrs.required"
                 :type="element.value"
                 :placeholder="element.attrs?.placeholder"
-                :options="
-                  convertFieldOptionsToArray(element.attrs.fieldOptions)
-                "
+                :options="element.attrs.fieldOptions"
               ></FormKit>
               <IconDeleteBin
                 class="absolute right-1 top-1 cursor-pointer text-red-600"
@@ -690,19 +685,20 @@ onBeforeMount(async () => {
                   class="space-y-2"
                 >
                   <div
-                    v-for="(label, key) in selectedComponent.attrs.fieldOptions"
+                    v-for="(item, key) in selectedComponent.attrs.fieldOptions"
                     :key="key"
                     class="flex items-center justify-between gap-x-2 border rounded px-2"
                   >
                     <input
-                      v-model="selectedComponent.attrs.fieldOptions[key]"
+                      v-model="item.label"
                       class="border-none p-1 text-sm outline-none"
                       placeholder="选项值"
+                      @input="item.value = item.label"
                     />
                     <VButton
                       type="danger"
                       size="xs"
-                      @click="removeOption(selectedComponent, key as string)"
+                      @click="removeOption(selectedComponent, item.label)"
                       >删除
                     </VButton>
                   </div>

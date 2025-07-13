@@ -5,6 +5,7 @@ import static org.springdoc.core.fn.builders.content.Builder.contentBuilder;
 import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
 import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuilder;
 
+import com.webjing.issues.entity.IssueTemplateRender;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueService;
@@ -79,18 +80,18 @@ public class UcIssueEndpoint implements CustomEndpoint {
                         .implementation(Issue.IssueContent.class)
                     )
             )
-            .GET("issues/template", this::fetchIssueTemplateData, builder ->
+            .GET("issuetemplates/{templateName}", this::fetchIssueTemplateData, builder ->
                 builder.operationId("FetchIssueTemplateData")
                     .description("fetch issue template.")
                     .tag(tag)
                     .parameter(parameterBuilder()
-                        .name("issueTemplate")
-                        .in(ParameterIn.QUERY)
+                        .name("templateName")
+                        .in(ParameterIn.PATH)
                         .required(true)
                         .implementation(String.class)
                     )
                     .response(responseBuilder()
-                        .implementation(Issue.IssueContent.class)
+                        .implementation(IssueTemplateRender.class)
                     )
             )
             .GET("issues/{name}", this::getMyIssue,
@@ -200,7 +201,7 @@ public class UcIssueEndpoint implements CustomEndpoint {
     }
 
     private Mono<ServerResponse> fetchIssueTemplateData(ServerRequest request) {
-        var issueTemplate = request.pathVariable("issueTemplate");
+        String issueTemplate = request.pathVariable("templateName");
         return issueTemplateService.buildTemplateData(issueTemplate)
             .flatMap(templateData -> ServerResponse.ok().bodyValue(templateData));
     }

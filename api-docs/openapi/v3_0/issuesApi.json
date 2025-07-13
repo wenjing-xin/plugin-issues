@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:49187",
+    "url" : "http://localhost:40984",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -2099,33 +2099,6 @@
         "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
       }
     },
-    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/template" : {
-      "get" : {
-        "description" : "fetch issue template.",
-        "operationId" : "FetchIssueTemplateData",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "issueTemplate",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "default" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/IssueContent"
-                }
-              }
-            },
-            "description" : "default response"
-          }
-        },
-        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
-      }
-    },
     "/apis/uc.api.issue.webjing.com/v1alpha1/issues/{name}" : {
       "delete" : {
         "description" : "Delete a My Issue.",
@@ -2204,6 +2177,33 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issuetemplates/{templateName}" : {
+      "get" : {
+        "description" : "fetch issue template.",
+        "operationId" : "FetchIssueTemplateData",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "templateName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplateRender"
                 }
               }
             },
@@ -3357,6 +3357,26 @@
           }
         }
       },
+      "IssueTemplateRender" : {
+        "type" : "object",
+        "properties" : {
+          "annotationFields" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "components" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TemplateField"
+            }
+          },
+          "displayName" : {
+            "type" : "string"
+          }
+        }
+      },
       "IssueTemplateSpec" : {
         "required" : [ "scope" ],
         "type" : "object",
@@ -3921,9 +3941,12 @@
             "type" : "string"
           },
           "fieldOptions" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
             }
           },
           "helpText" : {

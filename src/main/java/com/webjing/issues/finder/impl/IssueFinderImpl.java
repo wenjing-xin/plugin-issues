@@ -60,9 +60,9 @@ public class IssueFinderImpl implements IssueFinder {
     }
 
     @Override
-    public Mono<ListResult<IssueVO>> list(Integer page, Integer size) {
+    public Mono<ListResult<IssueVO>> list(Integer page, Integer size, String subjectName) {
         var pageRequest = PageRequestImpl.of(pageNullSafe(page), sizeNullSafe(size), defaultSort());
-        return pageIssues(null, pageRequest);
+        return pageIssues(null, pageRequest, subjectName);
     }
 
     @Override
@@ -110,14 +110,14 @@ public class IssueFinderImpl implements IssueFinder {
     }
 
     @Override
-    public Mono<ListResult<IssueVO>> listByLabel(int pageNum, Integer pageSize, String labelName) {
+    public Mono<ListResult<IssueVO>> listByLabel(int pageNum, Integer pageSize, String labelName, String subjectName) {
         var query = all();
         if (StringUtils.isNoneBlank(labelName)) {
             query = and(query, equal("spec.labels", labelName));
         }
         var pageRequest =
             PageRequestImpl.of(pageNullSafe(pageNum), sizeNullSafe(pageSize), defaultSort());
-        return pageIssues(FieldSelector.of(query), pageRequest);
+        return pageIssues(FieldSelector.of(query), pageRequest, subjectName);
     }
 
     @Override
@@ -133,11 +133,14 @@ public class IssueFinderImpl implements IssueFinder {
 
     record IssueMessageLabelPair(String labelName, String issueMessageName){}
 
-    private Mono<ListResult<IssueVO>> pageIssues(FieldSelector fieldSelector, PageRequest page) {
+    private Mono<ListResult<IssueVO>> pageIssues(FieldSelector fieldSelector, PageRequest page, String subjectName) {
         var listOptions = new ListOptions();
         var query = FIXED_QUERY;
         if (fieldSelector != null) {
             query = and(query, fieldSelector.query());
+        }
+        if(subjectName != null){
+            query = and(query, equal("spec.subjectName", subjectName));
         }
         listOptions.setFieldSelector(FieldSelector.of(query));
         return client.listBy(Issue.class, listOptions, page)

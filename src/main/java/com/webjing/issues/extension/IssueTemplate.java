@@ -4,6 +4,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import com.webjing.issues.Constant;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.Data;
@@ -72,7 +73,7 @@ public class IssueTemplate extends AbstractExtension {
         private Integer rows;
 
         // 正对选择器的options选项
-        private Map<String, String> fieldOptions;
+        private List<Map<String, String>> fieldOptions;
 
         // 正则校验表达式
         private String validate;

@@ -48,6 +48,7 @@ models/issue-template-item.ts
 models/issue-template-list.ts
 models/issue-template-options-list.ts
 models/issue-template-options.ts
+models/issue-template-render.ts
 models/issue-template-spec.ts
 models/issue-template.ts
 models/issue.ts

@@ -9,3 +9,5 @@ export * from  "./issue/issue-status";
 export * from "./issue/issue-content";
 export * from "./issue/issue-media";
 export * from "./issue/state-transition";
+export * from "./issueTemplate/issue-template-render";
+export * from "./issueTemplate/template-field";

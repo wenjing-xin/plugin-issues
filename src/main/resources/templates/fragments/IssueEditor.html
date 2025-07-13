@@ -1,12 +1,12 @@
 <div class="piw-w-full piw-rounded-md piw-border">
     <div class="piw-w-full piw-flex piw-items-center piw-gap-x-0 piw-bg-slate-100 piw-h-9 piw-rounded-t-md">
         <button :class="{ 'tab-button-active piw-border-r piw-border-slate-200 piw-rounded-tr-md': activeTab === 'editor'}"
-                @click="switchTab('editor')" class="tab-button piw-rounded-tl-md">
+                @click="switchTab('editor')" class="tab-button piw-rounded-tl-md" type="button">
             <span class="piw-icon-[lucide--edit]"></span>
             <span class="piw-text-sm piw-whitespace-nowrap">编辑</span>
         </button>
         <button :class="{ 'tab-button-active piw-border-x piw-border-x piw-border-slate-200 piw-rounded-t-md': activeTab === 'preview'}"
-                @click="switchTab('preview')" class="tab-button">
+                @click="switchTab('preview')" class="tab-button" type="button">
             <span class="piw-icon-[icon-park-outline--preview-open] piw-text-lg"></span>
             <span class="piw-text-sm piw-whitespace-nowrap">预览</span>
         </button>

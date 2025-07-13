@@ -108,7 +108,7 @@ public class IssuesRouter {
                 model.put("title",  getIssuesTitle());
                 model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                 model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
-                model.put("issueItems", issuePageList(request));
+                model.put("issueItems", issuePageList(request, subjectName));
                 buildCommonVariables(model);
                 return ServerResponse.ok().render(templateName, model);
             });
@@ -122,14 +122,13 @@ public class IssuesRouter {
         return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getDefaultAvatarMode());
     }
 
-    private Mono<UrlContextListResult<IssueVO>> issuePageList(ServerRequest request) {
+    private Mono<UrlContextListResult<IssueVO>> issuePageList(ServerRequest request, String subjectName) {
         String path = request.path();
         int pageNum = pageNumInPathVariable(request);
-
         return settingConfigGetter.getIssuesBasic()
             .map(SettingConfigGetter.IssuesBasic::getPageSize)
             .defaultIfEmpty(10)
-            .flatMap(pageSize -> issueFinder.list(pageNum, pageSize)
+            .flatMap(pageSize -> issueFinder.list(pageNum, pageSize, subjectName)
                 .map(list -> new UrlContextListResult.Builder<IssueVO>()
                     .listResult(list)
                     .nextUrl(PageUrlUtils.nextPageUrl(path, totalPage(list)))

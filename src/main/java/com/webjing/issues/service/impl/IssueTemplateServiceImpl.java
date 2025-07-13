@@ -2,6 +2,7 @@ package com.webjing.issues.service.impl;
 
 import com.webjing.issues.entity.IssueLabelOptions;
 import com.webjing.issues.entity.IssueTemplateOptions;
+import com.webjing.issues.entity.IssueTemplateRender;
 import com.webjing.issues.extension.IssueLabel;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.extension.IssueTemplate;
@@ -20,6 +21,7 @@ import run.halo.app.extension.ListOptions;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
 import run.halo.app.extension.index.query.QueryFactory;
+import java.util.Map;
 
 /**
  * issue 模版功能
@@ -84,9 +86,24 @@ public class IssueTemplateServiceImpl implements IssueTemplateService {
             });
     }
 
+    /**
+     * 构建前端组件渲染的 数据
+     * @param templateName
+     * @return
+     */
     @Override
-    public Mono<Object> buildTemplateData(String issueTemplate) {
-        return null;
+    public Mono<IssueTemplateRender> buildTemplateData(String templateName) {
+        return client.get(IssueTemplate.class, templateName).map(issueTemplate -> {
+            IssueTemplateRender issueTemplateRender = new IssueTemplateRender();
+            issueTemplateRender.setDisplayName(issueTemplate.getSpec().getName());
+            issueTemplateRender.setComponents(issueTemplate.getSpec().getFields().values().stream()
+                .toList());
+            issueTemplateRender.setAnnotationFields(issueTemplate.getSpec().getFields().entrySet()
+                .stream()
+                .map(Map.Entry::getKey)
+                .toList());
+            return issueTemplateRender;
+        });
     }
 
     private Mono<ListedIssueTemplate> toListedIssueTemplate(IssueTemplate issueTemplate) {
