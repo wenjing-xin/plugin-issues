@@ -9,20 +9,12 @@
         <!-- 项目标题 -->
         <div class="piw-w-full piw-flex piw-justify-between piw-items-center piw-pb-4 piw-border-b piw-border-dotted piw-border-slate-400">
             <div class="piw-inline-flex piw-gap-x-2 piw-items-center">
-                <th:block th:unless="${#strings.isEmpty(issueSubjectVO.createOwner.avatar)}">
-                    <img th:src="${issueSubjectVO.createOwner.avatar}"
+                <th:block th:unless="${#strings.isEmpty(issueSubjectVO.spec.subjectIcon)}">
+                    <img th:src="${issueSubjectVO.spec.subjectIcon}"
                          class="piw-size-8 piw-rounded-full piw-border-2 piw-border-neutral-300" />
                 </th:block>
-                <th:block th:if="${#strings.isEmpty(issueSubjectVO.createOwner.avatar)}">
-                    <th:block th:if="${ #strings.equals(issueAvatarMode, 'default') }">
-                        <div class="piw-size-full piw-h-6 piw-rounded-full piw-flex piw-items-center piw-justify-center piw-bg-slate-200 piw-border piw-border-slate-200">
-                            <span class="piw-font-bold piw-text-xl piw-text-neutral-400" th:text="${#strings.substring(name, 0, 1)}"></span>
-                        </div>
-                    </th:block>
-                    <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
-                        <img class="piw-size-8 piw-rounded-full piw-border-2 piw-border-neutral-300"
-                             src="https://weavatar.com/avatar/plugin-issues?d=wavatar" draggable="false" th:alt="${name}" />
-                    </th:block>
+                <th:block th:if="${#strings.isEmpty(issueSubjectVO.spec.subjectIcon)}">
+                    <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueSubjectVO.createOwner.avatar}, name=${issueSubjectVO.createOwner.displayName})}" />
                 </th:block>
                 <p class="piw-text-base piw-font-bold piw-text-neutral-900" th:text="${issueSubjectVO.spec.displayName}"></p>
             </div>

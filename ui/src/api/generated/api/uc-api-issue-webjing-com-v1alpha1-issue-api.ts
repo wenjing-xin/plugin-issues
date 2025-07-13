@@ -212,6 +212,50 @@ export const UcApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = function (c
             };
         },
         /**
+         * fetch issue template.
+         * @param {string} issueTemplate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        fetchIssueTemplateData: async (issueTemplate: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueTemplate' is not null or undefined
+            assertParamExists('fetchIssueTemplateData', 'issueTemplate', issueTemplate)
+            const localVarPath = `/apis/uc.api.issue.webjing.com/v1alpha1/issues/template`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (issueTemplate !== undefined) {
+                localVarQueryParameter['issueTemplate'] = issueTemplate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get a My Issue.
          * @param {string} name 
          * @param {*} [options] Override http request option.
@@ -509,6 +553,18 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFp = function(configuration?: C
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * fetch issue template.
+         * @param {string} issueTemplate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async fetchIssueTemplateData(issueTemplate: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueContent>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.fetchIssueTemplateData(issueTemplate, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UcApiIssueWebjingComV1alpha1IssueApi.fetchIssueTemplateData']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Get a My Issue.
          * @param {string} name 
          * @param {*} [options] Override http request option.
@@ -616,6 +672,15 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFactory = function (configurati
             return localVarFp.fetchIssueContent(requestParameters.issueName, options).then((request) => request(axios, basePath));
         },
         /**
+         * fetch issue template.
+         * @param {UcApiIssueWebjingComV1alpha1IssueApiFetchIssueTemplateDataRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        fetchIssueTemplateData(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiFetchIssueTemplateDataRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueContent> {
+            return localVarFp.fetchIssueTemplateData(requestParameters.issueTemplate, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get a My Issue.
          * @param {UcApiIssueWebjingComV1alpha1IssueApiGetMyIssueRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -715,6 +780,20 @@ export interface UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContentRequest {
      * @memberof UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContent
      */
     readonly issueName: string
+}
+
+/**
+ * Request parameters for fetchIssueTemplateData operation in UcApiIssueWebjingComV1alpha1IssueApi.
+ * @export
+ * @interface UcApiIssueWebjingComV1alpha1IssueApiFetchIssueTemplateDataRequest
+ */
+export interface UcApiIssueWebjingComV1alpha1IssueApiFetchIssueTemplateDataRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UcApiIssueWebjingComV1alpha1IssueApiFetchIssueTemplateData
+     */
+    readonly issueTemplate: string
 }
 
 /**
@@ -913,6 +992,17 @@ export class UcApiIssueWebjingComV1alpha1IssueApi extends BaseAPI {
      */
     public fetchIssueContent(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContentRequest, options?: RawAxiosRequestConfig) {
         return UcApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).fetchIssueContent(requestParameters.issueName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * fetch issue template.
+     * @param {UcApiIssueWebjingComV1alpha1IssueApiFetchIssueTemplateDataRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UcApiIssueWebjingComV1alpha1IssueApi
+     */
+    public fetchIssueTemplateData(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiFetchIssueTemplateDataRequest, options?: RawAxiosRequestConfig) {
+        return UcApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).fetchIssueTemplateData(requestParameters.issueTemplate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

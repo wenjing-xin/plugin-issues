@@ -68,7 +68,7 @@ ul {
 }
 
 .tab-transfer{
-    @apply piw-inline-block piw-inline-flex piw-items-center piw-py-1.5 piw-px-2 piw-gap-x-1.5
+    @apply piw-inline-block piw-inline-flex piw-items-center piw-py-1.5 piw-pr-2 piw-gap-x-1.5
 }
 .tab-transfer-active {
     @apply piw-border-b-2 piw-border-[#EE9279]

@@ -24,6 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { IssueTemplate } from '../models';
 // @ts-ignore
+import type { IssueTemplateOptionsList } from '../models';
+// @ts-ignore
 import type { ListedIssueTemplateList } from '../models';
 /**
  * ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi - axios parameter creator
@@ -68,6 +70,52 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiAxiosParam
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(issueTemplate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List issueTemplate options.
+         * @param {string} subjectType IssueSubject type
+         * @param {string} [subjectName] IssueSubject name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listIssueTemplateOptions: async (subjectType: string, subjectName?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'subjectType' is not null or undefined
+            assertParamExists('listIssueTemplateOptions', 'subjectType', subjectType)
+            const localVarPath = `/apis/console.api.issueTemplate.webjing.com/v1alpha1/issuetemplates/{subjectType}`
+                .replace(`{${"subjectType"}}`, encodeURIComponent(String(subjectType)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (subjectName !== undefined) {
+                localVarQueryParameter['subjectName'] = subjectName;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -184,6 +232,19 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFp = funct
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * List issueTemplate options.
+         * @param {string} subjectType IssueSubject type
+         * @param {string} [subjectName] IssueSubject name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listIssueTemplateOptions(subjectType: string, subjectName?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueTemplateOptionsList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueTemplateOptions(subjectType, subjectName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi.listIssueTemplateOptions']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * List issueTemplates.
          * @param {number} [page] Page number. Default is 0.
          * @param {number} [size] Size number. Default is 0.
@@ -224,6 +285,15 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFactory = 
             return localVarFp.createIssueTemplate(requestParameters.issueTemplate, options).then((request) => request(axios, basePath));
         },
         /**
+         * List issueTemplate options.
+         * @param {ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listIssueTemplateOptions(requestParameters: ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueTemplateOptionsList> {
+            return localVarFp.listIssueTemplateOptions(requestParameters.subjectType, requestParameters.subjectName, options).then((request) => request(axios, basePath));
+        },
+        /**
          * List issueTemplates.
          * @param {ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplatesRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -247,6 +317,27 @@ export interface ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiCreate
      * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiCreateIssueTemplate
      */
     readonly issueTemplate: IssueTemplate
+}
+
+/**
+ * Request parameters for listIssueTemplateOptions operation in ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi.
+ * @export
+ * @interface ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest
+ */
+export interface ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest {
+    /**
+     * IssueSubject type
+     * @type {string}
+     * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptions
+     */
+    readonly subjectType: string
+
+    /**
+     * IssueSubject name
+     * @type {string}
+     * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptions
+     */
+    readonly subjectName?: string
 }
 
 /**
@@ -342,6 +433,17 @@ export class ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi extends B
      */
     public createIssueTemplate(requestParameters: ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiCreateIssueTemplateRequest, options?: RawAxiosRequestConfig) {
         return ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFp(this.configuration).createIssueTemplate(requestParameters.issueTemplate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List issueTemplate options.
+     * @param {ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi
+     */
+    public listIssueTemplateOptions(requestParameters: ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest, options?: RawAxiosRequestConfig) {
+        return ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFp(this.configuration).listIssueTemplateOptions(requestParameters.subjectType, requestParameters.subjectName, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

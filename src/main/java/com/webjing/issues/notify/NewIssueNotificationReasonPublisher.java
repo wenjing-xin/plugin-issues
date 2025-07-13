@@ -16,6 +16,7 @@ import run.halo.app.extension.ExtensionClient;
 import run.halo.app.infra.ExternalLinkProcessor;
 import run.halo.app.notification.NotificationReasonEmitter;
 import run.halo.app.notification.UserIdentity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +49,7 @@ public class NewIssueNotificationReasonPublisher {
         //只针对没有通知的issue进行通知
         if (Objects.equals(newIssueNotified,"false")) {
             client.fetch(IssueSubject.class, issue.getSpec().getSubjectName()).map(issueSubject -> {
-                List<String> participateUsers = issueSubject.getSpec().getParticipateUsers();
+                List<String> participateUsers = new ArrayList<>(issueSubject.getSpec().getParticipateUsers());
                 participateUsers.add(issueSubject.getSpec().getOwner());
                 String issueSubjectTypeName = IssueSubject.parseSubjectType(issueSubject.getSpec()
                     .getSubjectType());

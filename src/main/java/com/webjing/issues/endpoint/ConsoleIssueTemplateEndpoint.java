@@ -2,12 +2,17 @@ package com.webjing.issues.endpoint;
 
 import static org.springdoc.core.fn.builders.apiresponse.Builder.responseBuilder;
 import static org.springdoc.core.fn.builders.content.Builder.contentBuilder;
+import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
 import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuilder;
 
+import com.webjing.issues.entity.IssueLabelOptions;
+import com.webjing.issues.entity.IssueTemplateOptions;
+import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.query.IssueTemplateQuery;
 import com.webjing.issues.service.IssueTemplateService;
 import com.webjing.issues.entity.ListedIssueTemplate;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.fn.builders.schema.Builder;
@@ -49,6 +54,28 @@ public class ConsoleIssueTemplateEndpoint implements CustomEndpoint {
                     );
                 IssueTemplateQuery.buildParameters(builder);
             })
+            .GET("issuetemplates/{subjectType}", this::listIssueTemplateOptions, builder ->
+                builder.operationId("ListIssueTemplateOptions")
+                    .description("List issueTemplate options.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("subjectType")
+                        .in(ParameterIn.PATH)
+                        .description("IssueSubject type")
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .parameter(parameterBuilder()
+                        .name("subjectName")
+                        .in(ParameterIn.QUERY)
+                        .description("IssueSubject name")
+                        .required(false)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementation(ListResult.generateGenericClass(IssueTemplateOptions.class))
+                    )
+            )
             .POST("issuetemplates", this::createIssueTemplate, builder ->
                 builder.operationId("CreateIssueTemplate")
                     .description("create issue template.")
@@ -71,8 +98,15 @@ public class ConsoleIssueTemplateEndpoint implements CustomEndpoint {
             .flatMap(listedIssueTemplate -> ServerResponse.ok().bodyValue(listedIssueTemplate));
     }
 
+    private Mono<ServerResponse> listIssueTemplateOptions(ServerRequest serverRequest){
+        String subjectType = serverRequest.pathVariable("subjectType");
+        String subjectName = serverRequest.queryParam("subjectName").orElse( null);
+        return issueTemplateService.listIssueTemplateOptions(subjectType, subjectName)
+            .flatMap(listedIssueLabelOptions -> ServerResponse.ok().bodyValue(listedIssueLabelOptions));
+    }
+
     /**
-     * 创建 issue 留言模版
+     * 创建 issue 模版
      * @param request
      * @return
      */

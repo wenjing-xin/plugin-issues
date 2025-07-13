@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:43866",
+    "url" : "http://localhost:49187",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -784,6 +784,41 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/IssueTemplate"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueTemplate.webjing.com/v1alpha1/IssueTemplate" ]
+      }
+    },
+    "/apis/console.api.issueTemplate.webjing.com/v1alpha1/issuetemplates/{subjectType}" : {
+      "get" : {
+        "description" : "List issueTemplate options.",
+        "operationId" : "ListIssueTemplateOptions",
+        "parameters" : [ {
+          "description" : "IssueSubject type",
+          "in" : "path",
+          "name" : "subjectType",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueSubject name",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplateOptionsList"
                 }
               }
             },
@@ -2064,6 +2099,33 @@
         "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
       }
     },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/template" : {
+      "get" : {
+        "description" : "fetch issue template.",
+        "operationId" : "FetchIssueTemplateData",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "issueTemplate",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueContent"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
     "/apis/uc.api.issue.webjing.com/v1alpha1/issues/{name}" : {
       "delete" : {
         "description" : "Delete a My Issue.",
@@ -3174,6 +3236,17 @@
           }
         }
       },
+      "IssueTemplateItem" : {
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
       "IssueTemplateList" : {
         "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
         "type" : "object",
@@ -3195,6 +3268,67 @@
             "description" : "A chunk of items.",
             "items" : {
               "$ref" : "#/components/schemas/IssueTemplate"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueTemplateOptions" : {
+        "type" : "object",
+        "properties" : {
+          "issueTemplateOptions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueTemplateItem"
+            }
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "IssueTemplateOptionsList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueTemplateOptions"
             }
           },
           "last" : {

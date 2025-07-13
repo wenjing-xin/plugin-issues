@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
-import { computed, nextTick, onMounted, ref, toRaw, watchEffect } from "vue";
-import type { IssueSubject } from "@/api/generated";
+import {computed, nextTick, onMounted, ref, toRaw, watch, watchEffect} from "vue";
+import type {
+  IssueSubject, IssueTemplateOptions,
+} from "@/api/generated";
 import { subjectTypeOptions } from "@/dictionary";
 import cloneDeep from "lodash.clonedeep";
 import {
   issueSubjectApiClient,
   consoleIssueSubjectApiClient,
-  issueTemplateApiClient,
+  consoleIssueTemplateApiClient,
 } from "@/api";
 
 import TextEditor from "@/components/editor/index.vue";
@@ -34,9 +36,7 @@ const emit = defineEmits<{
   (event: "update", issueSubject: IssueSubject): void;
 }>();
 
-const issueTemplateFilterOptions = ref<
-  Array<{ label: string | undefined; value: string }>
->([]);
+const issueTemplateFilterOptions = ref<Array<IssueTemplateOptions>>();
 const attachmentSelectorModal = ref(false);
 
 const initIssueSubject: IssueSubject = {
@@ -47,6 +47,7 @@ const initIssueSubject: IssueSubject = {
     name: "",
   },
   spec: {
+    subjectIcon: '',
     displayName: "",
     content: {
       rawContent: "",
@@ -74,7 +75,7 @@ watchEffect(() => {
 });
 
 onMounted(() => {
-  handlerIssueTemplateOptions();
+  
 });
 
 const isUpdateMode = computed(
@@ -148,14 +149,19 @@ const handleReset = () => {
   formState.value = toRaw(cloneDeep(initIssueSubject));
   isEditorEmpty.value = true;
 };
-const handlerIssueTemplateOptions = () => {
-  issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
-    data.items.forEach((it) => {
-      const itemOption = { label: it.spec?.name, value: it.metadata.name };
-      issueTemplateFilterOptions.value.push(itemOption);
+
+// 监听 subjectType 变化，debounce 避免频繁请求
+watch(
+  () => formState.value.spec.subjectType, 
+  (newVal: string) => {
+    consoleIssueTemplateApiClient.issueTemplate.listIssueTemplateOptions(
+      {subjectType: newVal, subjectName: props.issueSubject?.metadata.name})
+      .then(({ data}) => {
+        // @ts-ignore
+        issueTemplateFilterOptions.value = data?.issueTemplateOptions as Array<IssueTemplateOptions>;
     });
-  });
-};
+  }
+);
 
 const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
 </script>
@@ -189,6 +195,13 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
             type="text"
             label="展示名称"
             validation="required"
+          />
+          <FormKit
+            v-model="formState.spec.subjectIcon"
+            type="attachment"
+            :accepts="['image/*']"
+            validation="length:0,1024"
+            label="主体展示图标"
           />
           <FormKit
             v-model="formState.spec.subjectType"

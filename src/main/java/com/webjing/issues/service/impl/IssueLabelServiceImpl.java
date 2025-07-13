@@ -127,7 +127,7 @@ public class IssueLabelServiceImpl implements IssueLabelService {
             Sort.by(Sort.Order.desc("metadata.creationTimestamp"))
         );
 
-        // 合并两个结果流并转换为 IssueLabelOptions
+        // 合并三个结果流并转换为 IssueLabelOptions
         return Flux.merge(globalLabels, subjectTypeLabels, subjectLabels)
             .map(issueLabel -> IssueLabelOptions.IssueLabelItem.from(issueLabel))
             .collectList()

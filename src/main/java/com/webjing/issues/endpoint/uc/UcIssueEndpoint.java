@@ -8,6 +8,7 @@ import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuil
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueService;
+import com.webjing.issues.service.IssueTemplateService;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.AuthorityUtils;
 import com.webjing.issues.entity.ListedIssue;
@@ -50,6 +51,8 @@ public class UcIssueEndpoint implements CustomEndpoint {
 
     private final RoleService roleService;
 
+    private final IssueTemplateService issueTemplateService;
+
     @Override
     public RouterFunction<ServerResponse> endpoint() {
         return SpringdocRouteBuilder.route()
@@ -62,7 +65,7 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     );
                 IssueQuery.buildParameters(builder);
             })
-            .GET("issues/content", this::fetchIssueContent, builder -> {
+            .GET("issues/content", this::fetchIssueContent, builder ->
                 builder.operationId("FetchIssueContent")
                     .description("fetch issue content.")
                     .tag(tag)
@@ -74,8 +77,22 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     )
                     .response(responseBuilder()
                         .implementation(Issue.IssueContent.class)
-                    );
-            })
+                    )
+            )
+            .GET("issues/template", this::fetchIssueTemplateData, builder ->
+                builder.operationId("FetchIssueTemplateData")
+                    .description("fetch issue template.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("issueTemplate")
+                        .in(ParameterIn.QUERY)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementation(Issue.IssueContent.class)
+                    )
+            )
             .GET("issues/{name}", this::getMyIssue,
                 builder -> builder.operationId("GetMyIssue")
                     .description("Get a My Issue.")
@@ -180,6 +197,12 @@ public class UcIssueEndpoint implements CustomEndpoint {
         String issueName = request.queryParam("issueName").get();
         return issueService.getIssueContent(issueName)
             .flatMap(issueContent -> ServerResponse.ok().bodyValue(issueContent));
+    }
+
+    private Mono<ServerResponse> fetchIssueTemplateData(ServerRequest request) {
+        var issueTemplate = request.pathVariable("issueTemplate");
+        return issueTemplateService.buildTemplateData(issueTemplate)
+            .flatMap(templateData -> ServerResponse.ok().bodyValue(templateData));
     }
 
     private Mono<ServerResponse> deleteMyIssue(ServerRequest request) {

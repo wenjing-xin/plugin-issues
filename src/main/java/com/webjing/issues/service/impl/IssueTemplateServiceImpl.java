@@ -1,5 +1,8 @@
 package com.webjing.issues.service.impl;
 
+import com.webjing.issues.entity.IssueLabelOptions;
+import com.webjing.issues.entity.IssueTemplateOptions;
+import com.webjing.issues.extension.IssueLabel;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.query.IssueTemplateQuery;
@@ -8,12 +11,15 @@ import com.webjing.issues.vo.ContributorVO;
 import com.webjing.issues.entity.ListedIssueTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.User;
+import run.halo.app.extension.ListOptions;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
+import run.halo.app.extension.index.query.QueryFactory;
 
 /**
  * issue 模版功能
@@ -42,6 +48,45 @@ public class IssueTemplateServiceImpl implements IssueTemplateService {
                     listResult.getTotal(), list)
                 )
             );
+    }
+
+    @Override
+    public Mono<IssueTemplateOptions> listIssueTemplateOptions(String subjectTypeName, String subjectName) {
+        // 查询特定主体类型的模版
+        Flux<IssueTemplate> specialTypeTemplates = client.listAll(IssueTemplate.class,
+            ListOptions.builder().fieldQuery(QueryFactory.and(
+                    QueryFactory.equal("spec.scope", IssueTemplate.IssueTemplateScope.SUBJECT_TYPE.name()),
+                    QueryFactory.equal("spec.subjectType", subjectTypeName)))
+                .build(),
+            Sort.by(Sort.Order.desc("metadata.creationTimestamp"))
+        ).map(issueTemplate -> {
+            String templateName = issueTemplate.getSpec().getName();
+            issueTemplate.getSpec().setName(templateName + " - " + IssueSubject.parseSubjectType(IssueSubject.SubjectType.valueOf(subjectTypeName)));
+            return issueTemplate;
+        });
+
+        // 查询指定主体类型的模版
+        Flux<IssueTemplate> specialSubjectTemplates = client.listAll(IssueTemplate.class,
+            ListOptions.builder().fieldQuery(QueryFactory.and(
+                    QueryFactory.equal("spec.scope", IssueTemplate.IssueTemplateScope.SUBJECT.name()),
+                    QueryFactory.equal("spec.subjectName", subjectName)))
+                .build(),
+            Sort.by(Sort.Order.desc("metadata.creationTimestamp")));
+
+        // 合并两个结果流并转换为 IssueLabelOptions
+        return Flux.merge(specialTypeTemplates, specialSubjectTemplates)
+            .map(issueTemplate -> IssueTemplateOptions.IssueTemplateItem.from(issueTemplate))
+            .collectList()
+            .map(issueLabelItems -> {
+                IssueTemplateOptions issueTemplateOptions = new IssueTemplateOptions();
+                issueTemplateOptions.setIssueTemplateOptions(issueLabelItems);
+                return issueTemplateOptions;
+            });
+    }
+
+    @Override
+    public Mono<Object> buildTemplateData(String issueTemplate) {
+        return null;
     }
 
     private Mono<ListedIssueTemplate> toListedIssueTemplate(IssueTemplate issueTemplate) {

@@ -114,6 +114,11 @@ const handlerIssueSubjectType = (
     <div class="flex justify-between items-center">
       <div class="w-full flex items-center">
         <VSpace>
+          <VAvatar
+            size="xs"
+            :src="listedIssueSubject.issueSubject.spec.subjectIcon"
+            :alt="listedIssueSubject.issueSubject.spec.displayName"
+          />
           <RouterLink
             :to="{
               name: 'Issue',

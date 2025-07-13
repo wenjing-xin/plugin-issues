@@ -1,4 +1,4 @@
-<th:block th:fragment="ownerAvatar(avatar,name)">
+<th:block th:fragment="ownerAvatar(avatar, name)">
     <th:block th:if="${ not #strings.isEmpty(avatar) }">
         <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200" th:src="${avatar}" draggable="false" th:alt="${name}" />
     </th:block>

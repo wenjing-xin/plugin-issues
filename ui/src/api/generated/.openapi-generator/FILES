@@ -44,7 +44,10 @@ models/issue-subject-list.ts
 models/issue-subject-spec.ts
 models/issue-subject-stats.ts
 models/issue-subject.ts
+models/issue-template-item.ts
 models/issue-template-list.ts
+models/issue-template-options-list.ts
+models/issue-template-options.ts
 models/issue-template-spec.ts
 models/issue-template.ts
 models/issue.ts
