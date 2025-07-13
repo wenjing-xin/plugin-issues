@@ -12,6 +12,8 @@ public enum Constant {
 
     public static final String VERSION = "v1alpha1";
 
+    public static final String NEW_ISSUE_TEMPLATE_PARAM = "template";
+
     public static final String HAS_NEW_ISSUE_ON_SUBJECT = "someone-publish-new-issue";
 
     public static final String HAS_NEW_ISSUE_COMMENT = "someone-comment-issue";

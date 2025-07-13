@@ -83,10 +83,13 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiAxiosParam
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {string} [keyword] IssueMessages filtered by keyword.
          * @param {string} [owner] IssueTemplate owner.
+         * @param {ListIssueTemplatesScopeEnum} [scope] template scope
+         * @param {string} [subjectName] subject name.
+         * @param {ListIssueTemplatesSubjectTypeEnum} [subjectType] subject type.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listIssueTemplates: async (page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listIssueTemplates: async (page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, scope?: ListIssueTemplatesScopeEnum, subjectName?: string, subjectType?: ListIssueTemplatesSubjectTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/apis/console.api.issueTemplate.webjing.com/v1alpha1/issuetemplates`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -135,6 +138,18 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiAxiosParam
                 localVarQueryParameter['owner'] = owner;
             }
 
+            if (scope !== undefined) {
+                localVarQueryParameter['scope'] = scope;
+            }
+
+            if (subjectName !== undefined) {
+                localVarQueryParameter['subjectName'] = subjectName;
+            }
+
+            if (subjectType !== undefined) {
+                localVarQueryParameter['subjectType'] = subjectType;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -177,11 +192,14 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFp = funct
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {string} [keyword] IssueMessages filtered by keyword.
          * @param {string} [owner] IssueTemplate owner.
+         * @param {ListIssueTemplatesScopeEnum} [scope] template scope
+         * @param {string} [subjectName] subject name.
+         * @param {ListIssueTemplatesSubjectTypeEnum} [subjectType] subject type.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listIssueTemplates(page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueTemplateList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueTemplates(page, size, labelSelector, fieldSelector, sort, keyword, owner, options);
+        async listIssueTemplates(page?: number, size?: number, labelSelector?: Array<string>, fieldSelector?: Array<string>, sort?: Array<string>, keyword?: string, owner?: string, scope?: ListIssueTemplatesScopeEnum, subjectName?: string, subjectType?: ListIssueTemplatesSubjectTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListedIssueTemplateList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueTemplates(page, size, labelSelector, fieldSelector, sort, keyword, owner, scope, subjectName, subjectType, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi.listIssueTemplates']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -212,7 +230,7 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFactory = 
          * @throws {RequiredError}
          */
         listIssueTemplates(requestParameters: ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplatesRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<ListedIssueTemplateList> {
-            return localVarFp.listIssueTemplates(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, options).then((request) => request(axios, basePath));
+            return localVarFp.listIssueTemplates(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.scope, requestParameters.subjectName, requestParameters.subjectType, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -285,6 +303,27 @@ export interface ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIs
      * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplates
      */
     readonly owner?: string
+
+    /**
+     * template scope
+     * @type {'SUBJECT_TYPE' | 'SUBJECT'}
+     * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplates
+     */
+    readonly scope?: ListIssueTemplatesScopeEnum
+
+    /**
+     * subject name.
+     * @type {string}
+     * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplates
+     */
+    readonly subjectName?: string
+
+    /**
+     * subject type.
+     * @type {'POST' | 'PROJECT' | 'PRODUCT' | 'TOPIC' | 'LEAVE_MESSAGE'}
+     * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplates
+     */
+    readonly subjectType?: ListIssueTemplatesSubjectTypeEnum
 }
 
 /**
@@ -313,7 +352,26 @@ export class ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi extends B
      * @memberof ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi
      */
     public listIssueTemplates(requestParameters: ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplatesRequest = {}, options?: RawAxiosRequestConfig) {
-        return ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFp(this.configuration).listIssueTemplates(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, options).then((request) => request(this.axios, this.basePath));
+        return ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFp(this.configuration).listIssueTemplates(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.scope, requestParameters.subjectName, requestParameters.subjectType, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
+/**
+ * @export
+ */
+export const ListIssueTemplatesScopeEnum = {
+    SubjectType: 'SUBJECT_TYPE',
+    Subject: 'SUBJECT'
+} as const;
+export type ListIssueTemplatesScopeEnum = typeof ListIssueTemplatesScopeEnum[keyof typeof ListIssueTemplatesScopeEnum];
+/**
+ * @export
+ */
+export const ListIssueTemplatesSubjectTypeEnum = {
+    Post: 'POST',
+    Project: 'PROJECT',
+    Product: 'PRODUCT',
+    Topic: 'TOPIC',
+    LeaveMessage: 'LEAVE_MESSAGE'
+} as const;
+export type ListIssueTemplatesSubjectTypeEnum = typeof ListIssueTemplatesSubjectTypeEnum[keyof typeof ListIssueTemplatesSubjectTypeEnum];

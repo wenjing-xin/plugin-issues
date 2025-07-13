@@ -82,7 +82,7 @@ public class IssueLabelQuery extends SortableRequest {
             query = and(query, contains("spec.labelName", getKeyword()));
             query = and(query, contains("spec.description", getKeyword()));
         }
-        if (getLabelScope() != null) {
+        if (StringUtils.isNotBlank(getLabelScope())) {
             query = and(query, equal("spec.scope", getLabelScope()));
         }
         if (StringUtils.isNotBlank(getSubjectName())) {

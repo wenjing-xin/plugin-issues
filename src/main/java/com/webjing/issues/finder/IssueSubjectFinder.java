@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import reactor.core.publisher.Mono;
+import java.util.List;
 
 /**
  * @author: webjing
@@ -28,5 +29,16 @@ public interface IssueSubjectFinder {
         private String name;
         private IssueSubject.SubjectType subjectType;
         private String title;
+        private List<IssueTemplateInfo> issueTemplates;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class IssueTemplateInfo{
+        private String templateName;
+        private String metadataName;
+        private String description;
+    }
+
 }

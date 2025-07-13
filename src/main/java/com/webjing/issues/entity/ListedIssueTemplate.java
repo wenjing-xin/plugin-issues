@@ -22,4 +22,6 @@ public class ListedIssueTemplate {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private ContributorVO contributorVo;
 
+    private String subjectDisplayName;
+
 }

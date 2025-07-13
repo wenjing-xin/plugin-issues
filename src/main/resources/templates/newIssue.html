@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '创建新Issue',
+content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
+<th:block th:fragment="head">
+
+</th:block>
+<th:block th:fragment="content" th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}">
+    <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
+    totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
+    <main class="piw-container piw-mx-auto piw-py-6 piw-flex lg:piw-flex-nowrap lg:piw-gap-x-4 piw-flex-wrap"
+        th:attr="x-data=|{issueSubjectName:'${issueSubjectInfo.name}'}|">
+        <!-- 表单提交部分  -->
+        <div class="lg:piw-w-[68%] piw-w-full" x-data="issueSubmit(issueSubjectName)">
+            <!-- 基础信息表单  -->
+            <form class="piw-w-full piw-rounded piw-py-4 piw-space-y-6" x-data="issueEditor" onsubmit="return false;">
+                <!-- 标题 -->
+                <div>
+                    <label class="piw-block piw-text-sm piw-font-medium piw-mb-1" for="title">
+                        标题 <span class="piw-text-red-500">*</span>
+                    </label>
+                    <input id="title" x-model="issueForm.spec.title" type="text" required
+                           class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400 piw-transition"
+                           placeholder="请输入标题">
+                </div>
+                <!--    模版表单  -->
+
+                <!-- 描述 -->
+                <div>
+                    <label class="piw-block piw-text-sm piw-font-medium piw-mb-2">描述</label>
+                    <th:block th:replace="~{fragments/IssueEditor}" />
+                </div>
+                <!-- 提交按钮 -->
+                <div class="piw-flex piw-justify-end piw-space-x-2">
+                    <button type="button"
+                            class="piw-bg-gray-100 piw-text-gray-600 piw-text-sm piw-px-3 piw-py-1 piw-rounded-md piw-border piw-border-gray-200 piw-transition hover:piw-bg-gray-200"
+                            @click="cancelCreate()">取消</button>
+                    <button type="button" :disabled="saveLoading"  @click="submitForm(rawContent, preview)"
+                            class="piw-bg-green-600 piw-px-4 piw-py-1 piw-rounded-md piw-shadow-sm piw-transition hover:piw-bg-green-700 transition-all duration-300 inline-flex items-center gap-x-1">
+                        <span class="text-lg piw-icon-[eos-icons--loading]" x-show="saveLoading"></span>
+                        <span x-text="submitText" class="piw-text-white piw-text-sm"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!--  右侧信息栏 -->
+        <div class="lg:piw-w-[28%] lg:piw-sticky piw-w-full piw-h-full piw-space-y-2 piw-divide-y piw-divide-slate-200">
+            <div class="piw-space-y-2 piw-py-3">
+                <p class="piw-text-sm piw-tracking-wider">经办人</p>
+                <p class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+                    暂无经办人
+                </p>
+            </div>
+            <div class="piw-space-y-2 piw-py-3">
+                <p class="piw-text-sm piw-tracking-wider">标签</p>
+                <p class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+                    暂无标签
+                </p>
+            </div>
+        </div>
+    </main>
+</th:block>
+
+</html>

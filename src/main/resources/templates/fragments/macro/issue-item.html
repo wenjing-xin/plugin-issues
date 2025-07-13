@@ -5,10 +5,13 @@
                 <a class="piw-text-base piw-font-medium piw-text-neutral-800"
                    th:href="${'/subject/' + issueVO.spec.subjectName + '/issues/' + issueVO.metadata.name}"
                    th:text="${issueVO.spec.title}"></a>
-                <th:block th:each="label:${issueVO.spec.labels}">
-                    <span class="piw-px-2 piw-py-0.5 piw-rounded-xl piw-text-xs piw-font-medium piw-border piw-border-green-100"
-                            th:text="${label}"></span>
-                </th:block>
+                <div class="piw-flex piw-items-center piw-gap-1.5 piw-overflow-hidden"
+                     th:if="${#lists.size(issueVO.issueLabels) > 0}">
+                    <th:block th:each="item:${issueVO.issueLabels}">
+                            <span th:text="${item.spec.labelName}" th:attr="x-data=|{labelColor: '${item.spec.color}'}|" :style="'background-color: ' + labelColor"
+                                  class="piw-px-2 piw-py-1 piw-text-xs piw-rounded-full piw-text-white"></span>
+                    </th:block>
+                </div>
             </div>
             <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-neutral-500" x-data="dateUtils">
                 <span th:text="${'#' + issueVO.metadata.name}" class="piw-text-sm"></span>

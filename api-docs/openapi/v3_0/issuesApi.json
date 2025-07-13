@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:53634",
+    "url" : "http://localhost:43866",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -726,6 +726,29 @@
           "name" : "owner",
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "description" : "template scope",
+          "in" : "query",
+          "name" : "scope",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "SUBJECT_TYPE", "SUBJECT" ]
+          }
+        }, {
+          "description" : "subject name.",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "subject type.",
+          "in" : "query",
+          "name" : "subjectType",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
           }
         } ],
         "responses" : {
@@ -3201,6 +3224,7 @@
         }
       },
       "IssueTemplateSpec" : {
+        "required" : [ "scope" ],
         "type" : "object",
         "properties" : {
           "description" : {
@@ -3218,8 +3242,17 @@
           "owner" : {
             "type" : "string"
           },
-          "subjectUid" : {
+          "scope" : {
+            "type" : "string",
+            "description" : "IssueTemplate scope",
+            "enum" : [ "SUBJECT_TYPE", "SUBJECT" ]
+          },
+          "subjectName" : {
             "type" : "string"
+          },
+          "subjectType" : {
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
           }
         }
       },
@@ -3521,6 +3554,9 @@
           },
           "issueTemplate" : {
             "$ref" : "#/components/schemas/IssueTemplate"
+          },
+          "subjectDisplayName" : {
+            "type" : "string"
           }
         },
         "description" : "A chunk of items."

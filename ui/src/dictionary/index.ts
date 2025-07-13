@@ -82,5 +82,23 @@ const labelScopeTypeOptions = ref<
     value: "SUBJECT",
   },
 ]);
-
-export { subjectTypeOptions, accepts, labelScopeTypeOptions };
+const templateScopeTypeOptions = ref<
+  Array<{
+    label: string | undefined;
+    value: IssueLabelSpecScopeEnum | undefined;
+  }>
+>([
+  {
+    label: "默认",
+    value: undefined,
+  },
+  {
+    label: "特定主体类型",
+    value: "SUBJECT_TYPE",
+  },
+  {
+    label: "特定主体",
+    value: "SUBJECT",
+  },
+]);
+export { subjectTypeOptions, accepts, labelScopeTypeOptions,templateScopeTypeOptions };

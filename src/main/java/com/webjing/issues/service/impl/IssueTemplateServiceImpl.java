@@ -1,5 +1,6 @@
 package com.webjing.issues.service.impl;
 
+import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.query.IssueTemplateQuery;
 import com.webjing.issues.service.IssueTemplateService;
@@ -48,7 +49,16 @@ public class IssueTemplateServiceImpl implements IssueTemplateService {
             .issueTemplate(issueTemplate);
         return Mono.just(templateBuilder)
             .map(ListedIssueTemplate.ListedIssueTemplateBuilder::build)
-            .flatMap(li -> setOwner(issueTemplate.getSpec().getOwner(), li));
+            .flatMap(li -> setOwner(issueTemplate.getSpec().getOwner(), li))
+            .flatMap(li -> {
+                if(li.getIssueTemplate().getSpec().getScope().name().equals("SUBJECT")){
+                    return client.fetch(IssueSubject.class, li.getIssueTemplate().getSpec().getSubjectName())
+                        .map(issueSubject -> issueSubject.getSpec().getDisplayName())
+                        .doOnNext(li::setSubjectDisplayName)
+                        .thenReturn(li);
+                }
+                return Mono.just(li);
+            });
     }
 
     private Mono<ListedIssueTemplate> setOwner(String owner, ListedIssueTemplate issueTemplate) {

@@ -38,5 +38,11 @@ export interface ListedIssueTemplate {
      * @memberof ListedIssueTemplate
      */
     'issueTemplate': IssueTemplate;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListedIssueTemplate
+     */
+    'subjectDisplayName'?: string;
 }
 

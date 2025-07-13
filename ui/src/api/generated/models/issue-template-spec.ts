@@ -48,10 +48,39 @@ export interface IssueTemplateSpec {
      */
     'owner'?: string;
     /**
+     * IssueTemplate scope
+     * @type {string}
+     * @memberof IssueTemplateSpec
+     */
+    'scope': IssueTemplateSpecScopeEnum;
+    /**
      * 
      * @type {string}
      * @memberof IssueTemplateSpec
      */
-    'subjectUid'?: string;
+    'subjectName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof IssueTemplateSpec
+     */
+    'subjectType'?: IssueTemplateSpecSubjectTypeEnum;
 }
+
+export const IssueTemplateSpecScopeEnum = {
+    SubjectType: 'SUBJECT_TYPE',
+    Subject: 'SUBJECT'
+} as const;
+
+export type IssueTemplateSpecScopeEnum = typeof IssueTemplateSpecScopeEnum[keyof typeof IssueTemplateSpecScopeEnum];
+export const IssueTemplateSpecSubjectTypeEnum = {
+    Post: 'POST',
+    Project: 'PROJECT',
+    Product: 'PRODUCT',
+    Topic: 'TOPIC',
+    LeaveMessage: 'LEAVE_MESSAGE'
+} as const;
+
+export type IssueTemplateSpecSubjectTypeEnum = typeof IssueTemplateSpecSubjectTypeEnum[keyof typeof IssueTemplateSpecSubjectTypeEnum];
+
 

@@ -2,6 +2,7 @@ package com.webjing.issues.finder.impl;
 
 import com.webjing.issues.entity.IssueSubjectStats;
 import com.webjing.issues.extension.IssueSubject;
+import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.finder.IssueSubjectFinder;
 import com.webjing.issues.service.IssueSubjectService;
 import com.webjing.issues.vo.ContributorVO;
@@ -13,7 +14,9 @@ import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.User;
 import run.halo.app.extension.ReactiveExtensionClient;
 import run.halo.app.theme.finders.Finder;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @description:
@@ -38,10 +41,16 @@ public class IssueSubjectFinderImpl implements IssueSubjectFinder {
     @Override
     public Mono<IssueSubjectBasicInfo> getSubjectBasicInfo(String issueSubjectName) {
         return client.get(IssueSubject.class, issueSubjectName).map(issueSubject -> {
-            IssueSubjectBasicInfo issueSubjectBasicInfo = new IssueSubjectBasicInfo(issueSubject.getMetadata().getName(),
-                    issueSubject.getSpec().getSubjectType(), issueSubject.getSpec().getDisplayName());
+            IssueSubjectBasicInfo issueSubjectBasicInfo = new IssueSubjectBasicInfo();
+                issueSubjectBasicInfo.setName(issueSubject.getMetadata().getName());
+                issueSubjectBasicInfo.setSubjectType(issueSubject.getSpec().getSubjectType());
+                issueSubjectBasicInfo.setTitle(issueSubject.getSpec().getDisplayName());
             return issueSubjectBasicInfo;
-        });
+        }) .flatMap(isv -> client.fetch(IssueSubject.class, issueSubjectName)
+            .flatMap(issueSubject -> fetchIssueTemplateInfos(issueSubject.getSpec().getIssueTemplates()))
+            .doOnNext(isv::setIssueTemplates)
+            .thenReturn(isv)
+        );
     }
 
     @Override
@@ -85,5 +94,18 @@ public class IssueSubjectFinderImpl implements IssueSubjectFinder {
             .thenReturn(issueSubjectVO);
     }
 
+    private Mono<List<IssueTemplateInfo>> fetchIssueTemplateInfos(Set<String> issueTemplateNames){
+        return Flux.fromIterable(issueTemplateNames)
+            .flatMap(templateName -> client.fetch(IssueTemplate.class, templateName)
+                .map(issueTemplate -> {
+                    IssueTemplateInfo info = new IssueTemplateInfo();
+                    info.setTemplateName(issueTemplate.getSpec().getName());
+                    info.setMetadataName(issueTemplate.getMetadata().getName());
+                    info.setDescription(issueTemplate.getSpec().getDescription());
+                    return info;
+                })
+            )
+            .collectList();
+    }
 
 }

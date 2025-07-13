@@ -1,5 +1,8 @@
 package com.webjing.issues.query;
 
+import com.webjing.issues.extension.IssueLabel;
+import com.webjing.issues.extension.IssueSubject;
+import com.webjing.issues.extension.IssueTemplate;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +52,23 @@ public class IssueTemplateQuery extends SortableRequest {
         return StringUtils.isBlank(ownerName) ? null : ownerName;
     }
 
+    @Schema(description = "issueTemplate scope")
+    public String getTemplateScope() {
+        return queryParams.getFirst("scope");
+    }
+
+    @Schema(description = "subject type")
+    public String getSubjectType() {
+        String subjectType = queryParams.getFirst("subjectType");
+        return StringUtils.isBlank(subjectType) ? null : subjectType;
+    }
+
+    @Schema(description = "subject name.")
+    public String getSubjectName() {
+        String subjectName = queryParams.getFirst("subjectName");
+        return StringUtils.isBlank(subjectName) ? null : subjectName;
+    }
+
     /**
      * Build {@link ListOptions} from query params.
      *
@@ -62,6 +82,18 @@ public class IssueTemplateQuery extends SortableRequest {
             query = and(query, equal("spec.owner", getOwnerName()));
         }
 
+        if (StringUtils.isNotBlank(getTemplateScope())) {
+            query = and(query, equal("spec.scope", getTemplateScope()));
+        }
+
+        if (StringUtils.isNotBlank(getSubjectName())) {
+            query = and(query, equal("spec.subjectName", getSubjectName()));
+        }
+
+        if (StringUtils.isNotBlank(getSubjectType())) {
+            query = and(query, equal("spec.subjectType", getSubjectType()));
+        }
+
         if (listOptions.getFieldSelector() != null) {
             query = and(query, listOptions.getFieldSelector().query());
         }
@@ -69,6 +101,7 @@ public class IssueTemplateQuery extends SortableRequest {
             query = and(query, contains("spec.name", getKeyword()));
             query = and(query, contains("spec.description", getKeyword()));
         }
+
         listOptions.setFieldSelector(FieldSelector.of(query));
         return listOptions;
     }
@@ -95,6 +128,24 @@ public class IssueTemplateQuery extends SortableRequest {
                 .name("owner")
                 .description("IssueTemplate owner.")
                 .implementation(String.class)
+                .required(false))
+            .parameter(parameterBuilder()
+                .in(ParameterIn.QUERY)
+                .name("scope")
+                .description("template scope")
+                .implementation(IssueTemplate.IssueTemplateScope.class)
+                .required(false))
+            .parameter(parameterBuilder()
+                .in(ParameterIn.QUERY)
+                .name("subjectName")
+                .description("subject name.")
+                .implementation(String.class)
+                .required(false))
+            .parameter(parameterBuilder()
+                .in(ParameterIn.QUERY)
+                .name("subjectType")
+                .description("subject type.")
+                .implementation(IssueSubject.SubjectType.class)
                 .required(false))
         ;
     }

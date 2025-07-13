@@ -2,16 +2,16 @@
 <html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = ${issueVO.spec.title},
 content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
 <th:block th:fragment="head">
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
+<!--    <style>-->
+<!--        [x-cloak] { display: none !important; }-->
+<!--    </style>-->
     <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
 </th:block>
 <th:block th:fragment="content" th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}">
     <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
     totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
     <main class="piw-container piw-mx-auto piw-py-6 piw-space-y-4" x-data="dateUtils">
-        <div class="piw-w-full piw-flex piw-items-center piw-flex-wrap piw-justify-between piw-gap-x-3 piw-pb-3 piw-border-b piw-border-slate-300">
+        <div class="piw-w-full piw-flex piw-items-center piw-flex-wrap piw-justify-between piw-gap-x-3 piw-pb-3 piw-border-b piw-border-slate-300"  x-data="{issueTemplateModal: false}">
             <div class="piw-inline-flex piw-items-center piw-flex-wrap piw-gap-x-1.5">
                 <p class="piw-text-xl piw-tracking-wider piw-text-sm piw-font-bold piw-text-neutral-700" th:text="${issueVO.spec.title}"></p>
                 <th:block th:switch="${issueVO.status.state + ''}">
@@ -26,9 +26,15 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     </th:block>
                 </th:block>
             </div>
-            <button class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8">New issue</button>
+            <a th:if="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" th:href="${'/subject/' + issueSubjectInfo.name + '/issues/new'}"
+               class="piw-outline-none piw-inline-block piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8">New issue</a>
+            <button th:unless="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8" @click="issueTemplateModal = true">New issue</button>
+            <!-- 模版选择   -->
+            <th:block th:if="${ not #lists.isEmpty(issueSubjectInfo.issueTemplates)}">
+                <th:block th:replace="~{fragments/issue-template-select}" />
+            </th:block>
         </div>
-        <div class="piw-w-full piw-flex lg:piw-flex-nowrap lg:piw-gap-x-3 piw-flex-wrap"
+        <div class="piw-w-full piw-flex lg:piw-flex-nowrap lg:piw-gap-x-4 piw-flex-wrap"
              th:attr="x-data=|{issueId:'${issueVO.metadata.name}', quoteCommentId: ''}|">
             <div class="lg:piw-w-[68%] piw-w-full" x-data="issueEditor">
                 <!--  初始化issue编辑器  -->
@@ -54,7 +60,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                 <div class="piw-relative issue-item-tools" x-data="dropdown" @click="open();main.triggerLazyAnimation('.issue-item-tools ')"
                                      @mouseenter="main.showTooltip('操作', $event)" @mouseleave="main.hideTooltip()">
                                     <span class="piw-icon-[pepicons-pencil--dots-x] piw-text-2xl hover:piw-cursor-pointer"></span>
-                                    <div x-show="show" @click.outside="close();"
+                                    <div x-show="show" @click.outside="close();"  @mouseleave="setTimeout(() => {close();}, 800)"
                                          class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md
                                          piw-flex piw-flex-col piw-items-center piw-space-y-1 piw-p-2">
                                         <div class="issue-item-operation t-lazy-item" @click="main.copyLink(issueLink);close();">
@@ -62,7 +68,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                             <span class="piw-text-sm">复制链接</span>
                                         </div>
                                         <hr class="piw-w-full piw-bg-slate-200" />
-                                        <div class="issue-item-operation t-lazy-item" @click="insertQuoteByPaste(issueRawContent);close();" x-data="{issueRawContent: ''}"
+                                        <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"
+                                             @click="insertQuoteByPaste(issueRawContent);"
                                              x-init="const issueContent = await main.getIssueContent(issueName);issueRawContent = issueContent.raw;">
                                             <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
                                             <span class="piw-text-sm">引用回复</span>
@@ -104,7 +111,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                              @mouseenter="main.showTooltip('操作', $event)"
                                              @mouseleave="main.hideTooltip()">
                                             <span class="piw-icon-[pepicons-pencil--dots-x] piw-text-2xl hover:piw-cursor-pointer"></span>
-                                            <div x-show="show" @click.outside="close();"
+                                            <div x-show="show" @click.outside="close();" @mouseleave="setTimeout(() => {close();}, 800)"
                                                  class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md
                                              piw-flex piw-flex-col piw-items-center piw-space-y-1 piw-p-2">
                                                 <div class="issue-item-operation t-lazy-item" @click="main.copyLink(issueLink + '#' + commentId);close();close();">
@@ -113,7 +120,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                                 </div>
                                                 <hr class="piw-w-full piw-bg-slate-200" />
                                                 <div class="issue-item-operation t-lazy-item"
-                                                     @click="insertQuoteByPaste(issueCommentRawContent);close();"
+                                                     @click="insertQuoteByPaste(issueCommentRawContent)"
                                                      x-data="{issueCommentRawContent: ''}"
                                                      x-init="const issueCommentContent = await main.getIssueCommentContent(issueCommentName);issueCommentRawContent = issueCommentContent.raw;">
                                                     <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
@@ -171,7 +178,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                   class="piw-px-3 piw-py-1.5 piw-text-xs piw-rounded-full piw-text-white"></span>
                         </th:block>
                     </div>
-                    <p th:if="${ #lists.isEmpty(issueVO.spec.labels)}" class="piw-text-sm piw-tracking-wider">
+                    <p th:if="${ #lists.isEmpty(issueVO.spec.labels)}" class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
                         暂无标签
                     </p>
                 </div>

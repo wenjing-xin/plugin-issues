@@ -58,7 +58,7 @@ const initIssueSubject: IssueSubject = {
     owner: "",
     description: "",
     participateUsers: [],
-    subjectVisible: "PUBLIC"
+    subjectVisible: "PUBLIC",
   },
 };
 const subjectSelectTypeOptions = computed(() =>
@@ -157,8 +157,6 @@ const handlerIssueTemplateOptions = () => {
   });
 };
 
-
-
 const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
 </script>
 <template>
@@ -187,14 +185,14 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
           @submit="onSubmit"
         >
           <FormKit
+            v-model="formState.spec.displayName"
             type="text"
             label="展示名称"
-            v-model="formState.spec.displayName"
             validation="required"
           />
           <FormKit
-            type="select"
             v-model="formState.spec.subjectType"
+            type="select"
             validation="required"
             label="Issue依托主体类型"
             :options="subjectSelectTypeOptions"
@@ -209,8 +207,8 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
             />
           </template>
           <FormKit
-            type="select"
             v-model="formState.spec.issueTemplates"
+            type="select"
             clearable
             label="Issue模版"
             multiple
@@ -224,16 +222,21 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
             :accepts="accepts"
             @select="onAttachmentsSelect"
           />
-          <FormKit label="描述" v-model="formState.spec.description" type="textarea" rows="1" />
-          <FormKit 
-            label="参与者" 
-            v-model="formState.spec.participateUsers" 
-            type="select" 
+          <FormKit
+            v-model="formState.spec.description"
+            label="描述"
+            type="textarea"
+            rows="1"
+          />
+          <FormKit
+            v-model="formState.spec.participateUsers"
+            label="参与者"
+            type="select"
             multiple
             clearable
             searchable
             action="/apis/api.console.halo.run/v1alpha1/users?fieldSelector=name!=anonymousUser&fieldSelector=name!=ghost"
-            :requestOption="{
+            :request-option="{
               method: 'get',
               pageField: 'page',
               sizeField: 'size',
@@ -241,17 +244,20 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};
               itemsField: 'items',
               labelField: 'user.spec.displayName',
               valueField: 'user.metadata.name',
-              fieldSelectorKey: 'metadata.name'
+              fieldSelectorKey: 'metadata.name',
             }"
             help="创建者和参与者将会在有新issue时收到通知"
           />
           <FormKit
-            type="select"
             v-model="formState.spec.subjectVisible"
+            type="select"
             clearable
             validation="required"
             label="可见性"
-            :options="[{label: '公共', value: 'PUBLIC'},{label: '私有', value: 'PRIVATE'}]"
+            :options="[
+              { label: '公共', value: 'PUBLIC' },
+              { label: '私有', value: 'PRIVATE' },
+            ]"
           />
         </FormKit>
         <div

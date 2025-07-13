@@ -367,7 +367,6 @@ export default () => ({
                     .split('\n')
                     .map(line => `> ${line}`)
                     .join('\n') + '\n';
-
             // 创建粘贴事件
             const clipboardData = new DataTransfer();
             clipboardData.setData('text/plain', quotedContent);
@@ -385,6 +384,7 @@ export default () => ({
             // 触发粘贴事件
             // @ts-ignore
             cm.getInputField().dispatchEvent(pasteEvent);
+
         });
     }
 });

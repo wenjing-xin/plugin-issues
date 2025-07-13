@@ -152,7 +152,7 @@ const subjectTypeParseName = computed(()=> {
           </VSpace>
         </template>
         <template #description>
-          <p v-if="issueLabel.issueLabel.spec.scope == 'SUBJECT'" class="px-2 py-0.5 text-xs rounded bg-gray-100" v-tooltip="issueLabel.issueLabel.spec.subjectName">
+          <p v-if="issueLabel.issueLabel.spec.scope == 'SUBJECT'" class="px-2 py-0.5 text-xs rounded bg-gray-100" v-tooltip="issueLabel.subjectDisplayName">
             {{ issueLabel?.subjectDisplayName?.substring(0, 8) }}
           </p>
           <p v-else-if="issueLabel.issueLabel.spec.scope == 'SUBJECT_TYPE'" class="px-2 py-0.5 text-xs rounded bg-gray-100">

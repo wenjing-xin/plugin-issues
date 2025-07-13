@@ -9,9 +9,9 @@ import upvote from "./alpine-data/upvote";
 import message from "./alpine-data/message";
 import dateUtils from "./alpine-data/date";
 import issueEditor from "./alpine-data/issue-editor";
+import issueSubmit from "./alpine-data/issue-submit";
 import {IssueComment, IssueCommentContent, IssueContent} from "./types";
 import { createIssueComment, fetchIssueContent, fetchIssueCommentContent } from "./api";
-
 
 window.Alpine = Alpine;
 Alpine.data("dropdown", dropdown);
@@ -21,7 +21,8 @@ Alpine.data("uiPermission", uiPermission);
 Alpine.data("upvote", upvote);
 Alpine.data("messageBox", message);
 Alpine.data("dateUtils", dateUtils);
-Alpine.data("issueEditor", issueEditor)
+Alpine.data("issueEditor", issueEditor);
+Alpine.data("issueSubmit", issueSubmit);
 Alpine.start();
 
 const messageUtils = message();

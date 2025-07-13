@@ -5,6 +5,7 @@ import com.webjing.issues.finder.IssueSubjectFinder;
 import com.webjing.issues.service.SettingConfigGetter;
 import com.webjing.issues.vo.IssueVO;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,7 @@ public class IssuesRouter {
     RouterFunction<ServerResponse> issueRouterFunction() {
         return route(GET("/subject/{subjectName}"), this::handlerIssueSubjectFunction)
             .andRoute(GET("/subject/{subjectName}/issues").or(GET("/subject/{subjectName}/issues/page/{page:\\d+}")), this::handlerIssuePageFunction)
+            .andRoute(GET("/subject/{subjectName}/issues/new"), this::newIssueRouter)
             .andRoute(GET("/subject/{subjectName}/issues/{issueName}"), this::issueDetailRouter);
     }
 
@@ -75,6 +77,24 @@ public class IssuesRouter {
                 Map<String, Object> model = new HashMap<>(3);
                 model.put("title",  getIssuesTitle());
                 model.put("issueSubjectVO", issueSubjectFinder.get(subjectName));
+                buildCommonVariables(model);
+                return ServerResponse.ok().render(templateName, model);
+            });
+    }
+
+    private Mono<ServerResponse> newIssueRouter(ServerRequest request){
+        final var subjectName = request.pathVariable("subjectName");
+        String templateVal = request.queryParam(Constant.NEW_ISSUE_TEMPLATE_PARAM)
+            .filter(StringUtils::isNotBlank)
+            .orElse(null);
+        return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"newIssue")
+            .flatMap(templateName -> {
+                Map<String, Object> model = new HashMap<>(3);
+                model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
+                model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
+                if(StringUtils.isNotBlank(templateVal)){
+                    // 获取模板元数据信息渲染
+                }
                 buildCommonVariables(model);
                 return ServerResponse.ok().render(templateName, model);
             });

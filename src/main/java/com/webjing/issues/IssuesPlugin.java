@@ -216,6 +216,24 @@ public class IssuesPlugin extends BasePlugin {
                     issueTemplate.getSpec().getOwner())
                 )
             );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.scope")
+                .setIndexFunc(simpleAttribute(IssueTemplate.class,
+                    issueTemplate ->  issueTemplate.getSpec().getScope().name())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.subjectName")
+                .setIndexFunc(simpleAttribute(IssueTemplate.class,
+                    issueTemplate ->  issueTemplate.getSpec().getSubjectName())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.subjectType")
+                .setIndexFunc(simpleAttribute(IssueTemplate.class,
+                    issueTemplate ->  issueTemplate.getSpec().getSubjectType().name())
+                )
+            );
         });
     }
 

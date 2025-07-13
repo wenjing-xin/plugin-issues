@@ -32,7 +32,12 @@ public class IssueTemplate extends AbstractExtension {
     @Data
     public static class IssueTemplateSpec {
 
-        private String subjectUid;
+        @Schema(description = "IssueTemplate scope", requiredMode = REQUIRED)
+        private IssueTemplateScope scope;
+
+        private String subjectName;
+
+        private IssueSubject.SubjectType subjectType;
 
         private String name;
 
@@ -86,6 +91,11 @@ public class IssueTemplate extends AbstractExtension {
         RADIO,// radio 单选
         PASSWORD,//密码
         EMAIL, // 邮箱
+    }
+
+    public enum IssueTemplateScope{
+        SUBJECT_TYPE, // 特定主体类型
+        SUBJECT, // 特定主体
     }
 
 }
