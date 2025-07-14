@@ -9,7 +9,9 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.Assert;
 import run.halo.app.extension.MetadataOperator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 功能描述
@@ -34,6 +36,8 @@ public class IssueVO {
     private IssueStats issueStats;
 
     private List<IssueLabel> issueLabels;
+
+    private List<Map<String, String>> templateData;
 
     public static IssueVO from(Issue issueMessage) {
         Assert.notNull(issueMessage, "The issue message must not be null.");

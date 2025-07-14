@@ -79,8 +79,56 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                             </div>
                             <div class="piw-w-full piw-p-3">
                                 <!-- 模版元数据信息 -->
-                                <div></div>
-                                <div class="markdown-body piw-text-sm" th:utext="${issueVO.spec.content.html}"></div>
+                                <div class="piw-mb-2 piw-space-y-3.5">
+                                    <th:block th:each="templateItem:${issueVO.templateData}">
+                                        <div class="piw-w-full piw-space-y-1">
+                                            <label class="piw-block piw-text-sm piw-font-medium piw-mb-1" th:for="${templateItem.title}">
+                                                <span th:text="${templateItem.title}"></span>
+                                            </label>
+                                            <th:block th:switch="${templateItem.type + ''}">
+                                                <th:block th:case="'TEXT'">
+                                                    <input type="text" readonly th:value="${templateItem.value}"
+                                                           class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2  focus:piw-outline-none">
+                                                </th:block>
+                                                <th:block th:case="'TEXT_AREA'">
+                                                     <textarea th:rows="${templateItem.rows}" th:value="${#strings.isEmpty(templateItem.value) ? '暂未填写' : templateItem.value}" readonly
+                                                               class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-p-2 focus:piw-outline-none"></textarea>
+                                                </th:block>
+                                                <th:block th:case="'EMAIL'">
+                                                    <input type="email" th:value="${templateItem.value}" readonly
+                                                           class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 focus:piw-outline-none">
+                                                </th:block>
+                                                <th:block th:case="'PASSWORD'">
+                                                    <input type="password" th:value="${templateItem.value}"
+                                                           class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 focus:piw-outline-none">
+                                                </th:block>
+                                                <th:block th:case="'SELECT'">
+                                                    <div class="piw-relative">
+                                                        <button type="button" class="piw-w-full piw-text-left piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-bg-white piw-flex piw-justify-between piw-items-center">
+                                                            <span th:text="${templateItem.selectLabel}"></span>
+                                                            <span class="piw-ml-2 piw-icon-[tabler--chevron-down]"></span>
+                                                        </button>
+                                                    </div>
+                                                </th:block>
+                                                <th:block th:case="'RADIO'">
+                                                    <div th:if="${not #strings.isEmpty(templateItem.checkBoxLabels)}" class="piw-flex piw-flex-wrap piw-gap-2" th:with="checkboxLabels = ${#strings.arraySplit(templateItem.checkBoxLabels, ',')}">
+                                                        <th:block th:each="label:${checkboxLabels}">
+                                                            <label class="piw-inline-flex piw-items-center piw-px-2 piw-py-1 piw-border piw-border-gray-300 piw-rounded piw-cursor-pointer piw-bg-blue-50 piw-border-blue-400">
+                                                                <input type="checkbox" class="piw-mr-1" th:value="${label}" checked="checked" readonly>
+                                                                <span th:text="${label}" class="piw-text-sm piw-tracking-wider"></span>
+                                                            </label>
+                                                        </th:block>
+                                                    </div>
+                                                    <label th:if="${#strings.isEmpty(templateItem.checkBoxLabels)}" class="piw-inline-flex piw-items-center piw-px-2 piw-py-1 piw-border piw-border-gray-300 piw-rounded piw-cursor-pointer piw-bg-blue-50 piw-border-blue-400">
+                                                        <input type="checkbox" class="piw-mr-1" value="暂未选择" checked="checked" readonly>
+                                                        <span class="piw-text-sm piw-tracking-wider">暂未选择</span>
+                                                    </label>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </th:block>
+                                </div>
+                                <div class="markdown-body piw-text-sm piw-my-3" th:utext="${issueVO.spec.content.html}"></div>
                             </div>
                         </div>
                     </div>

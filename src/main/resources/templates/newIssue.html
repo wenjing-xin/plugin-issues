@@ -13,7 +13,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
         <div class="lg:piw-w-[68%] piw-w-full" x-data="issueSubmit(issueSubjectName, templateName)">
             <div class="piw-w-full piw-space-y-0.5">
                 <p class="piw-tracking-wider piw-font-bold">创建新 Issue</p>
-                <div class="piw-flex piw-items-center piw-gap-x-1 h-[22px]" x-show="templateName != ''">
+                <div class="piw-flex piw-items-center piw-gap-x-1 piw-h-6" x-show="templateName != ''">
                     <p class="piw-text-xs" x-text="issueTemplateRender.displayName"></p>
                     <button type="button"
                         class="piw-outline-none piw-text-xs piw-text-blue-500 hover:piw-border-b hover:piw-border-blue-500 piw-transition-all duration-300"
@@ -25,7 +25,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                 <th:block th:replace="~{fragments/issue-template-select}" />
             </th:block>
             <!-- 基础信息表单  -->
-            <form class="piw-w-full piw-rounded piw-py-4 piw-space-y-6" x-data="issueEditor"  @submit="submitForm(rawContent, preview)">
+            <form class="piw-w-full piw-rounded piw-py-4 piw-space-y-6" x-data="issueEditor"
+                @submit="submitForm(rawContent, preview)">
                 <!-- 标题 -->
                 <div>
                     <label class="piw-block piw-text-sm piw-font-medium piw-mb-1" for="title">
@@ -45,55 +46,98 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                             </label>
                             <!-- 文本输入框 -->
                             <template x-if="component.type === 'TEXT'">
-                                <input :id="component.key" type="text" :maxlength="component.maxLength" :minlength="component.minLength"
-                                       :required="component.requiredMode == 'required'" :value="component.defaultValue"
-                                       class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
-                                        :placeholder="component.placeholder || ''" x-model="issueForm.metadata.annotations[component.key]">
+                                <input :id="component.key" type="text" :maxlength="component.maxLength"
+                                    :minlength="component.minLength" :required="component.requiredMode == 'required'"
+                                    :value="component.defaultValue"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''"
+                                    x-model="issueForm.metadata.annotations[component.key]">
                             </template>
                             <!-- 密码框组 -->
                             <template x-if="component.type === 'PASSWORD'">
                                 <input :id="component.key" type="password" :value="component.defaultValue"
-                                       :required="component.requiredMode == 'required'"
-                                       class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
-                                       :placeholder="component.placeholder || ''"
-                                       x-model="issueForm.metadata.annotations[component.key]">
+                                    :required="component.requiredMode == 'required'"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''"
+                                    x-model="issueForm.metadata.annotations[component.key]">
                             </template>
                             <!-- 邮箱 -->
                             <template x-if="component.type === 'EMAIL'">
                                 <input :id="component.key" type="email" :value="component.defaultValue"
-                                       :required="component.requiredMode == 'required'"
-                                       class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
-                                       :placeholder="component.placeholder || ''"
-                                       x-model="issueForm.metadata.annotations[component.key]">
+                                    :required="component.requiredMode == 'required'"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''"
+                                    x-model="issueForm.metadata.annotations[component.key]">
                             </template>
                             <!-- 多行文本 -->
                             <template x-if="component.type === 'TEXT_AREA'">
-                                 <textarea :id="component.key" :rows="component.rows" :maxlength="component.maxLength" :minlength="component.minLength"
-                                            class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-p-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
-                                            :placeholder="component.placeholder || ''" :value="component.defaultValue"
-                                           :required="component.requiredMode == 'required'"
-                                            x-model="issueForm.metadata.annotations[component.key]"></textarea>
+                                <textarea :id="component.key" :rows="component.rows" :maxlength="component.maxLength"
+                                    :minlength="component.minLength"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-p-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''" :value="component.defaultValue"
+                                    :required="component.requiredMode == 'required'"
+                                    x-model="issueForm.metadata.annotations[component.key]"></textarea>
                             </template>
                             <!-- 下拉选择 -->
                             <template x-if="component.type === 'SELECT'">
-                                <select :id="component.key" class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-1 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
-                                        x-model="issueForm.metadata.annotations[component.key]">
-                                    <option value="" disabled selected>请选择</option>
-                                    <template x-for="option in component.fieldOptions" :key="option.value">
-                                        <option :value="option.generateVal" x-text="option.label"></option>
-                                    </template>
-                                </select>
+                                <!-- 自定义下拉选择 -->
+                                <div class="piw-relative" x-data="{
+                                    open: false,
+                                    select(val, label) {
+                                        issueForm.metadata.annotations[component.key] = val;
+                                        this.open = false;
+                                    }
+                                }">
+                                    <button type="button"
+                                        class="piw-w-full piw-text-left piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-bg-white piw-flex piw-justify-between piw-items-center"
+                                        @click="open = !open" :aria-expanded="open">
+                                        <span x-text="component.fieldOptions.find(opt => opt.generateVal === issueForm.metadata.annotations[component.key])?.label || (component.placeholder || '请选择')"></span>
+                                        <span class="piw-ml-2 piw-icon-[tabler--chevron-down]"></span>
+                                    </button>
+                                    <div x-show="open" x-transition:enter="piw-transition piw-ease-out piw-duration-100"
+                                        x-transition:enter-start="piw-opacity-0 piw-scale-95"
+                                        x-transition:enter-end="piw-opacity-100 piw-scale-100"
+                                        x-transition:leave="piw-transition piw-ease-in piw-duration-75"
+                                        x-transition:leave-start="piw-opacity-100 piw-scale-100"
+                                        x-transition:leave-end="piw-opacity-0 piw-scale-95"
+                                        class="piw-absolute piw-z-10 piw-mt-1 piw-w-full piw-bg-white piw-border piw-border-gray-200 piw-rounded-md piw-shadow-lg piw-max-h-60 piw-overflow-auto"
+                                        @click.away="open = false">
+                                        <template x-for="option in component.fieldOptions" :key="option.value">
+                                            <div class="piw-px-4 piw-py-2 piw-cursor-pointer hover:piw-bg-blue-50 piw-text-sm"
+                                                :class="{'piw-bg-blue-100 piw-font-bold': issueForm.metadata.annotations[component.key] === option.generateVal}"
+                                                @click="select(option.generateVal, option.label)" x-text="option.label">
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
                             </template>
                             <!-- 多选框 -->
                             <template x-if="component.type === 'RADIO'">
-                                <template x-for="option in component.fieldOptions" :key="option.value">
-                                    <label class="piw-inline-flex piw-items-center piw-mr-4">
-                                        <input type="checkbox" :value="option.generateVal" x-model="issueForm.metadata.annotations[component.key]" class="piw-mr-1">
-                                        <span x-text="option.label"></span>
-                                    </label>
-                                </template>
+                                <!-- 多选框组 -->
+                                <div class="piw-flex piw-flex-wrap piw-gap-2">
+                                    <template x-for="option in component.fieldOptions" :key="option.value">
+                                        <label
+                                            class="piw-inline-flex piw-items-center piw-px-2 piw-py-1 piw-border piw-border-gray-300 piw-rounded piw-cursor-pointer"
+                                            :class="{'piw-bg-blue-50 piw-border-blue-400': (issueForm.metadata.annotations[component.key] || []).includes(option.generateVal)}">
+                                            <input type="checkbox" class="piw-mr-1" :value="option.generateVal"
+                                                :checked="(issueForm.metadata.annotations[component.key] || []).includes(option.generateVal)"
+                                                @change="
+                                                    (issueForm.metadata.annotations[component.key] = issueForm.metadata.annotations[component.key] || []);
+                                                    if ($event.target.checked) {
+                                                        if (!issueForm.metadata.annotations[component.key].includes(option.generateVal)) {
+                                                            issueForm.metadata.annotations[component.key].push(option.generateVal)
+                                                        }
+                                                    } else {
+                                                        issueForm.metadata.annotations[component.key] = issueForm.metadata.annotations[component.key].filter(v => v !== option.generateVal)
+                                                    }
+                                                ">
+                                            <span x-text="option.label" class="piw-text-sm piw-tracking-wider"></span>
+                                        </label>
+                                    </template>
+                                </div>
                             </template>
-                            <p class="piw-text-sm piw-text-neutral-500 piw-mt-1" x-show="component.helpText !== ''" x-text="component.helpText"></p>
+                            <p class="piw-text-sm piw-text-neutral-500 piw-mt-1" x-show="component.helpText !== ''"
+                                x-text="component.helpText"></p>
                         </div>
                     </template>
                 </div>

@@ -1,9 +1,14 @@
 package com.webjing.issues.finder.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webjing.issues.entity.IssueStats;
 import com.webjing.issues.entity.ListedIssue;
 import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.extension.IssueLabel;
+import com.webjing.issues.extension.IssueTemplate;
+import com.webjing.issues.util.HaloUtils;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.finder.IssueFinder;
@@ -28,7 +33,11 @@ import run.halo.app.extension.index.query.Query;
 import run.halo.app.extension.router.selector.FieldSelector;
 import run.halo.app.theme.finders.Finder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -181,6 +190,64 @@ public class IssueFinderImpl implements IssueFinder {
                     .collectList()
                     .doOnNext(imv::setIssueLabels)
                     .thenReturn(imv);
+            })
+            .flatMap(imv -> {
+                String templateName = imv.getSpec().getIssueTemplate();
+                if (StringUtils.isBlank(templateName)) {
+                    return Mono.just(imv); // 模板为空则直接跳过处理
+                }
+                return client.fetch(IssueTemplate.class, templateName)
+                    .switchIfEmpty(Mono.empty()) // 模板不存在时跳过
+                    .flatMap(issueTemplate -> {
+                        List<Map<String, String>> templateData = new ArrayList<>();
+                        Map<String, IssueTemplate.TemplateField> fields = issueTemplate.getSpec().getFields();
+                        if (fields == null || fields.isEmpty()) {
+                            return Mono.just(imv); // 没有字段定义也直接返回
+                        }
+                        for (Map.Entry<String, IssueTemplate.TemplateField> entry : fields.entrySet()) {
+                            Map<String, String> itemData = new HashMap<>();
+                            IssueTemplate.TemplateField field = entry.getValue();
+                            itemData.put("title", field.getTitle());
+                            itemData.put("label", field.getKey());
+                            itemData.put("value", imv.getMetadata().getAnnotations().get(entry.getKey()));
+                            itemData.put("type", field.getType().name());
+                            if (field.getType().equals(IssueTemplate.TemplateFieldTypeEnum.TEXT_AREA)) {
+                                itemData.put("rows", field.getRows().toString());
+                            }
+                            if (field.getType().equals(IssueTemplate.TemplateFieldTypeEnum.SELECT)) {
+                                for(Map<String, String> option: field.getFieldOptions()){
+                                    if(option.get("generateVal").equals(imv.getMetadata().getAnnotations().get(entry.getKey()))){
+                                        itemData.put("selectLabel", option.get("label"));
+                                    }
+                                }
+                            }
+                            if (field.getType().equals(IssueTemplate.TemplateFieldTypeEnum.RADIO)) {
+                                if(StringUtils.isNotEmpty(imv.getMetadata().getAnnotations().get(field.getKey()))){
+                                    List<String> checkBoxArray = HaloUtils.convertStrToList(imv.getMetadata().getAnnotations().get(field.getKey()));
+                                    String labels = "";
+                                    for (String value : checkBoxArray) {
+                                        for (Map<String, String> option : field.getFieldOptions()) {
+                                            if (value.equals(option.get("generateVal"))) {
+                                                labels += ("," + option.get("label"));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    itemData.put("checkBoxLabels", labels);
+                                }else{
+                                    itemData.put("checkBoxLabels", "");
+                                }
+                            }
+                            templateData.add(itemData);
+                        }
+
+                        return Mono.just(templateData);
+                    })
+                    .map(data -> {
+                        imv.setTemplateData((List<Map<String, String>>) data);
+                        return imv;
+                    })
+                    .defaultIfEmpty(imv); // 如果模板不存在或出错，保留原始 imv
             })
             .defaultIfEmpty(issueVo);
     }

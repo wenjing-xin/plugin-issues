@@ -8,6 +8,11 @@ import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @description:
@@ -52,6 +57,29 @@ public class HaloUtils {
     public static String getYearText(Instant instant) {
         Assert.notNull(instant, "Instant must not be null");
         return String.valueOf(instant.atZone(ZoneId.systemDefault()).getYear());
+    }
+
+    public static List<String> convertStrToList(String arrayString) {
+        // 去除首尾括号
+        String content = arrayString.trim();
+        if (content.startsWith("[") && content.endsWith("]")) {
+            content = content.substring(1, content.length() - 1);
+        }
+
+        // 处理空数组
+        if (content.isEmpty()) {
+            return Arrays.asList(new String[0]);
+        }
+
+        // 按逗号分割，处理引号内的逗号
+        String[] parts = content.split(",");
+        String[] result = new String[parts.length];
+
+        for (int i = 0; i < parts.length; i++) {
+            // 去除前后空格和引号
+            result[i] = parts[i].trim().replaceAll("^\"|\"$", "");
+        }
+        return Arrays.asList(result);
     }
 
 
