@@ -22,7 +22,8 @@ import "vue-datepicker-next/locale/zh-cn.es";
 import { useIssueLabels } from "@/composables/use-issueLabels";
 import type {
   IssueLabel, IssueLabelSpecScopeEnum,
-  IssueSubject, IssueSubjectSpecSubjectTypeEnum,
+  IssueSubject,
+  IssueSubjectSpecSubjectTypeEnum,
   ListedIssueLabel
 } from "@/api/generated";
 import { issueLabelApiClient, issueSubjectApiClient } from "@/api";

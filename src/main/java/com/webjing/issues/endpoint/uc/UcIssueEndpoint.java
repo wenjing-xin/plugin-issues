@@ -223,8 +223,8 @@ public class UcIssueEndpoint implements CustomEndpoint {
                         Issue.IssueSpec newSpec = newIssue.getSpec();
                         newSpec.setOwner(oldSpec.getOwner());
                         newSpec.setReleaseTime(oldSpec.getReleaseTime());
-                        // Every update needs to be re-reviewed.
-                        newSpec.setApproved(false);
+                        // Every update needs to be re-reviewed. 暂时去掉 后续加入配置根据使用者情况自定义更新issue后是否重新审核
+                        // newSpec.setApproved(false);
                     })
                     .flatMap(issueService::updateBy);
             })

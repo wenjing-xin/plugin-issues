@@ -97,7 +97,7 @@ ul {
 }
 
 .issue-detail-state{
-    @apply piw-px-3 piw-py-1 piw-rounded-3xl piw-text-sm
+    @apply piw-px-2 piw-py-1 piw-rounded-3xl piw-text-xs
 }
 
 .tab-button{

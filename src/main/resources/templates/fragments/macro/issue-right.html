@@ -1,0 +1,39 @@
+<th:block th:fragment="issueRight(issueVO)">
+    <div class="piw-space-y-2 piw-py-3">
+        <p class="piw-text-sm piw-tracking-wider">经办人</p>
+        <div class="piw-flex piw-flex-wrap piw-items-center" th:if="${ not #lists.isEmpty(issueVO.spec.assignees)}" >
+            <th:block th:each="assign:${issueVO.spec.assignees}">
+                <th:block th:with="assignUser = ${contributorFinder.getContributor(assign)}">
+                    <img th:src="${assignUser.avatar}" th:alt="${assignUser.name}" th:title="${assignUser.name}" />
+                </th:block>
+            </th:block>
+        </div>
+        <p th:if="${ #lists.isEmpty(issueVO.spec.assignees) }" class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+            暂无经办人
+        </p>
+    </div>
+    <div class="piw-space-y-2 piw-py-3">
+        <p class="piw-text-sm piw-tracking-wider">标签</p>
+        <div class="piw-flex piw-flex-wrap piw-items-center piw-gap-1.5"
+             th:if="${#lists.size(issueVO.issueLabels) > 0}">
+            <th:block th:each="item:${issueVO.issueLabels}">
+                            <span th:text="${item.spec.labelName}" th:attr="x-data=|{labelColor: '${item.spec.color}'}|" :style="'background-color: ' + labelColor"
+                                  class="piw-px-3 piw-py-1 piw-text-xs piw-rounded-full piw-text-white"></span>
+            </th:block>
+        </div>
+        <p th:if="${ #lists.isEmpty(issueVO.spec.labels)}" class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+            暂无标签
+        </p>
+    </div>
+    <div class="piw-space-y-2 piw-py-3">
+        <div class="piw-flex piw-justify-between piw-items-center">
+            <p class="piw-text-xs piw-tracking-wider piw-font-bold">通知</p>
+            <p class="piw-text-xs piw-tracking-wider piw-font-bold">自定义</p>
+        </div>
+        <div class="piw-flex piw-py-2 piw-items-center piw-gap-x-2 piw-justify-center piw-w-full piw-rounded-md piw-bg-slate-100/80 piw-border piw-border-slate-200
+                                hover:piw-cursor-pointer hover:piw-bg-slate-200/80">
+            <span class="piw-icon-[iconamoon--notification] piw-text-base"></span>
+            <span class="piw-text-sm piw-text-neutral-600">订阅</span>
+        </div>
+    </div>
+</th:block>

@@ -164,6 +164,47 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
             };
         },
         /**
+         * Get a My IssueComment.
+         * @param {string} commentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMyIssueComment: async (commentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'commentName' is not null or undefined
+            assertParamExists('getMyIssueComment', 'commentName', commentName)
+            const localVarPath = `/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments/{commentName}`
+                .replace(`{${"commentName"}}`, encodeURIComponent(String(commentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * List My issues comment.
          * @param {string} issueName issue name.
          * @param {number} [page] Page number. Default is 0.
@@ -244,18 +285,14 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiAxiosParamCreator
         },
         /**
          * Update a My IssueComment.
-         * @param {string} name 
          * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateMyIssueComment: async (name: string, issueComment: IssueComment, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'name' is not null or undefined
-            assertParamExists('updateMyIssueComment', 'name', name)
+        updateMyIssueComment: async (issueComment: IssueComment, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'issueComment' is not null or undefined
             assertParamExists('updateMyIssueComment', 'issueComment', issueComment)
-            const localVarPath = `/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments/{name}`
-                .replace(`{${"name"}}`, encodeURIComponent(String(name)));
+            const localVarPath = `/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -336,6 +373,18 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp = function(con
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Get a My IssueComment.
+         * @param {string} commentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMyIssueComment(commentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueComment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMyIssueComment(commentName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.getMyIssueComment']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * List My issues comment.
          * @param {string} issueName issue name.
          * @param {number} [page] Page number. Default is 0.
@@ -356,13 +405,12 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp = function(con
         },
         /**
          * Update a My IssueComment.
-         * @param {string} name 
          * @param {IssueComment} issueComment 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateMyIssueComment(name: string, issueComment: IssueComment, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueComment>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateMyIssueComment(name, issueComment, options);
+        async updateMyIssueComment(issueComment: IssueComment, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueComment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateMyIssueComment(issueComment, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.updateMyIssueComment']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -405,6 +453,15 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFactory = functio
             return localVarFp.fetchIssueCommentContent(requestParameters.issueCommentName, options).then((request) => request(axios, basePath));
         },
         /**
+         * Get a My IssueComment.
+         * @param {UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueComment> {
+            return localVarFp.getMyIssueComment(requestParameters.commentName, options).then((request) => request(axios, basePath));
+        },
+        /**
          * List My issues comment.
          * @param {UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesCommentRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -420,7 +477,7 @@ export const UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFactory = functio
          * @throws {RequiredError}
          */
         updateMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueCommentRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueComment> {
-            return localVarFp.updateMyIssueComment(requestParameters.name, requestParameters.issueComment, options).then((request) => request(axios, basePath));
+            return localVarFp.updateMyIssueComment(requestParameters.issueComment, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -465,6 +522,20 @@ export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFetchIssueCom
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFetchIssueCommentContent
      */
     readonly issueCommentName: string
+}
+
+/**
+ * Request parameters for getMyIssueComment operation in UcApiIssueCommentWebjingComV1alpha1IssueCommentApi.
+ * @export
+ * @interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest
+ */
+export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueComment
+     */
+    readonly commentName: string
 }
 
 /**
@@ -538,13 +609,6 @@ export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesC
 export interface UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueCommentRequest {
     /**
      * 
-     * @type {string}
-     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueComment
-     */
-    readonly name: string
-
-    /**
-     * 
      * @type {IssueComment}
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueComment
      */
@@ -592,6 +656,17 @@ export class UcApiIssueCommentWebjingComV1alpha1IssueCommentApi extends BaseAPI 
     }
 
     /**
+     * Get a My IssueComment.
+     * @param {UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApi
+     */
+    public getMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiGetMyIssueCommentRequest, options?: RawAxiosRequestConfig) {
+        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).getMyIssueComment(requestParameters.commentName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * List My issues comment.
      * @param {UcApiIssueCommentWebjingComV1alpha1IssueCommentApiListMyIssuesCommentRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -610,7 +685,7 @@ export class UcApiIssueCommentWebjingComV1alpha1IssueCommentApi extends BaseAPI 
      * @memberof UcApiIssueCommentWebjingComV1alpha1IssueCommentApi
      */
     public updateMyIssueComment(requestParameters: UcApiIssueCommentWebjingComV1alpha1IssueCommentApiUpdateMyIssueCommentRequest, options?: RawAxiosRequestConfig) {
-        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).updateMyIssueComment(requestParameters.name, requestParameters.issueComment, options).then((request) => request(this.axios, this.basePath));
+        return UcApiIssueCommentWebjingComV1alpha1IssueCommentApiFp(this.configuration).updateMyIssueComment(requestParameters.issueComment, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

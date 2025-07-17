@@ -94,16 +94,10 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(Issue.class))
             )
-            .PUT("issuecomments/{name}", this::updateMyIssueComment,
+            .PUT("issuecomments", this::updateMyIssueComment,
                 builder -> builder.operationId("UpdateMyIssueComment")
                     .description("Update a My IssueComment.")
                     .tag(tag)
-                    .parameter(parameterBuilder()
-                        .name("name")
-                        .in(ParameterIn.PATH)
-                        .required(true)
-                        .implementation(String.class)
-                    )
                     .requestBody(requestBodyBuilder()
                         .required(true)
                         .content(contentBuilder()
@@ -126,6 +120,19 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
                     )
                     .response(responseBuilder().implementation(IssueComment.class))
             )
+            .GET("issuecomments/{commentName}", this::getMyIssueComment,
+                builder -> builder.operationId("GetMyIssueComment")
+                    .description("Get a My IssueComment.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("commentName")
+                        .in(ParameterIn.PATH)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementation(IssueComment.class))
+            )
             .build();
     }
 
@@ -139,24 +146,6 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
         var name = request.pathVariable("name");
         return getMyIssueCommentDetail(name)
             .flatMap(issueCommentService::deleteBy)
-            .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
-    }
-
-    private Mono<ServerResponse> updateMyIssueComment(ServerRequest request) {
-        var name = request.pathVariable("name");
-        return getMyIssueCommentDetail(name)
-            .flatMap(oldIssueMessage -> {
-                IssueComment.IssueCommentSpec oldSpec = oldIssueMessage.getSpec();
-
-                return request.bodyToMono(IssueComment.class)
-                    .doOnNext(newissueComment -> {
-                        IssueComment.IssueCommentSpec newSpec = newissueComment.getSpec();
-                        newSpec.setOwner(oldSpec.getOwner());
-                        // Every update needs to be re-reviewed.
-                        newSpec.setApproved(false);
-                    })
-                    .flatMap(issueCommentService::updateBy);
-            })
             .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
 
@@ -197,11 +186,40 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
             .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
 
+    private Mono<ServerResponse> updateMyIssueComment(ServerRequest request) {
+        return getCurrentUser()
+            .flatMap(user -> request.bodyToMono(IssueComment.class)
+                .flatMap(issueComment -> {
+                    var roles = AuthorityUtils.authoritiesToRoles(user.getAuthorities());
+                    return roleService.joint(roles,
+                            Set.of(AuthorityUtils.ISSUE_COMMENT_PUBLISH_APPROVAL_ROLE_NAME,
+                                AuthorityUtils.SUPER_ROLE_NAME))
+                        .doOnNext(result -> {
+                            if (result) {
+                                issueComment.getSpec().setApproved(true);
+                                issueComment.getSpec().setApprovedTime(Instant.now());
+                            }else{
+                                issueComment.getSpec().setApproved(false);
+                            }
+                        })
+                        .thenReturn(issueComment);
+                })
+            )
+            .flatMap(issueCommentService::updateBy)
+            .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
+    }
+
     private Mono<ServerResponse> listMyIssueComment(ServerRequest request) {
         return getCurrentUser()
             .map(user -> new IssueCommentQuery(request.exchange(), user.getName()))
             .flatMap(issueCommentService::listIssueComment)
             .flatMap(listedMoments -> ServerResponse.ok().bodyValue(listedMoments));
+    }
+
+    private Mono<ServerResponse> getMyIssueComment(ServerRequest request) {
+        var commentName = request.pathVariable("commentName");
+        return getMyIssueCommentDetail(commentName)
+            .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
     }
 
     private Mono<Authentication> getCurrentUser() {

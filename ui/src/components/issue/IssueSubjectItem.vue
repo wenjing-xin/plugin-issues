@@ -126,6 +126,7 @@ const handlerIssueSubjectType = (
                 subjectName: listedIssueSubject.issueSubject.metadata.name,
               },
             }"
+            v-tooltip="`查看改依托主体下的Issue`"
             class="flex items-center"
           >
             <p

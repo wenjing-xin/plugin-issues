@@ -9,11 +9,16 @@ export function createIssueComment(issueComment:IssueComment) {
 }
 
 export function updateMyIssueComment(issueComment:IssueComment) {
-    const urlPath = `${apiVersion}/issuecomments/${issueComment.metadata.name}`;
+    const urlPath = `${apiVersion}/issuecomments`;
     return axiosInstance.put(urlPath, issueComment)
 }
 
 export function fetchIssueCommentContent(issueCommentName: string){
     const urlPath = `${apiVersion}/issuecomments/content?issueCommentName=${issueCommentName}`;
+    return axiosInstance.get(urlPath)
+}
+
+export function fetchIssueCommentDetail(issueCommentName: string){
+    const urlPath = `${apiVersion}/issuecomments/${issueCommentName}`;
     return axiosInstance.get(urlPath)
 }

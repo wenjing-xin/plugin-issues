@@ -30,7 +30,7 @@ import type {
   ListedIssueComment,
   IssueComment,
 } from "@/api/generated";
-import { issueApiClient, consoleIssueApiClient } from "@/api";
+import { issueApiClient, consoleIssueApiClient, issueCommentApiClient } from "@/api";
 import { submitForm } from "@formkit/core";
 import { useIssueCommentListFetch } from "@/composables/use-consoleIssue";
 
@@ -82,7 +82,7 @@ const handleDelete = async (issue: ListedIssue) => {
       } catch (error) {
         console.error("Failed to delete issue", error);
       } finally {
-        await queryClient.invalidateQueries({ queryKey: ["issueMessages"] });
+        await queryClient.invalidateQueries({ queryKey: ["issues"] });
       }
     },
   });
@@ -95,6 +95,23 @@ const issueStatus = computed(() => {
       ? "进行中"
       : "已关闭";
 });
+
+//审核 issue
+const handlerAuditIssue = async (issue: Issue)=> {
+  // 审核逻辑
+  await issueApiClient.issue.patchIssue({
+    name: issue.metadata.name,
+    jsonPatchInner: [
+      {
+        op: "add",
+        path: "/spec/approved",
+        value: true,
+      },
+    ],
+  });
+  Toast.success('审核成功');
+  await queryClient.invalidateQueries({ queryKey: ["issues"] });
+}
 
 // 编辑issue
 const handlerEditIssue = (issue: ListedIssue) => {
@@ -264,6 +281,11 @@ function getStatusDotState(status: string) {
           ></VAvatar>
         </template>
       </VEntityField>
+      <VEntityField v-if="!issue.issue.spec.approved">
+        <template #description>
+          <VStatusDot v-tooltip="`等待审核`" state="warning" animate  text="等待审核" />
+        </template>
+      </VEntityField>
       <VEntityField v-if="issue.issue.metadata.deletionTimestamp">
         <template #description>
           <VStatusDot v-tooltip="`删除中`" state="warning" animate />
@@ -278,6 +300,9 @@ function getStatusDotState(status: string) {
       </VEntityField>
     </template>
     <template #dropdownItems>
+      <VDropdownItem @click="handlerAuditIssue(issue.issue)"  v-if="!issue.issue.spec.approved">
+        审核
+      </VDropdownItem>
       <VDropdownItem @click="handlerEditIssue(issue)">
         编辑
       </VDropdownItem>

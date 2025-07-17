@@ -71,6 +71,13 @@ public class IssuesPlugin extends BasePlugin {
                     issueSubject -> issueSubject.getSpec().getOwner())
                 )
             );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.issueTemplates")
+                .setIndexFunc(multiValueAttribute(IssueSubject.class, issueSubject -> {
+                    var templates = issueSubject.getSpec().getIssueTemplates();
+                    return templates == null ? Set.of() : templates;
+                }))
+            );
         });
 
         schemeManager.register(Issue.class, indexSpecs -> {

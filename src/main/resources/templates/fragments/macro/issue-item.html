@@ -14,7 +14,7 @@
                 </div>
             </div>
             <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-neutral-500" x-data="dateUtils">
-                <span th:text="${'#' + issueVO.metadata.name}" class="piw-text-sm"></span>
+                <span th:text="${'#' + issueVO.metadata.name}" class="piw-text-xs"></span>
                 <p class="piw-inline-flex piw-items-center piw-gap-x-2" th:attr="x-data=|{publishTime: '${issueVO.spec.releaseTime}'}|">
                     <span class="piw-text-sm" th:text="${issueVO.contributorVo.displayName}"></span>
                     <span class="piw-text-sm">发布于</span>
@@ -22,9 +22,22 @@
                 </p>
             </div>
         </div>
-        <div class="piw-inline-flex piw-items-center piw-gap-x-2">
-            <span class="piw-icon-[fluent--comment-24-regular]"></span>
-            <span class="piw-text-sm piw-text-neutral-600" th:text="${issueVO.issueStats.approvedIssueComment}"></span>
+        <div class="piw-flex piw-items-center piw-gap-x-2">
+            <th:block th:switch="${issueVO.status.state + ''}">
+                <th:block th:case="'AWAIT'">
+                    <p class="issue-detail-state piw-bg-indigo-600 piw-text-white">等待中</p>
+                </th:block>
+                <th:block th:case="'PROGRESS'">
+                    <p class="issue-detail-state piw-accent-green-700 piw-text-white">处理中</p>
+                </th:block>
+                <th:block th:case="'CLOSED'">
+                    <p class="issue-detail-state piw-accent-slate-400 piw-text-white">已关闭</p>
+                </th:block>
+            </th:block>
+            <div class="piw-inline-flex piw-items-center piw-gap-x-2">
+                <span class="piw-icon-[fluent--comment-24-regular]"></span>
+                <span class="piw-text-sm piw-text-neutral-600" th:text="${issueVO.issueStats.approvedIssueComment}"></span>
+            </div>
         </div>
     </div>
 </th:block>

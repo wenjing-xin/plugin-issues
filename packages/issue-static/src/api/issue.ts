@@ -17,3 +17,13 @@ export function fetchIssueTemplateDetails(templateName: string) {
     const urlPath = `${apiVersion}/issuetemplates/${templateName}`;
     return axiosInstance.get(urlPath);
 }
+
+export function fetchIssueDetail(issueName: string){
+    const urlPath = `${apiVersion}/issues/${issueName}`;
+    return axiosInstance.get(urlPath)
+}
+
+export function updateMyIssue(issue: Issue){
+    const urlPath = `${apiVersion}/issues/${issue.metadata.name}`;
+    return axiosInstance.put(urlPath, issue)
+}

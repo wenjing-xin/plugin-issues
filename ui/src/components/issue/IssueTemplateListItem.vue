@@ -15,7 +15,11 @@ import { computed, inject, type Ref, ref } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
 
 import type { ListedIssueTemplate } from "@/api/generated";
-import { issueApiClient, issueTemplateApiClient } from "@/api/index";
+import {
+  issueApiClient,
+  issueSubjectApiClient,
+  issueTemplateApiClient,
+} from "@/api/index";
 import { useRouter } from "vue-router";
 import { subjectTypeOptions } from "@/dictionary";
 const router = useRouter();
@@ -65,14 +69,17 @@ const handleDelete = async (issueTemplate: ListedIssueTemplate) => {
 };
 
 const handleEditIssueTemplate = async (issueTemplate: ListedIssueTemplate) => {
-  const curTmeplateIssueList = await issueApiClient.issue.listIssue({
-    fieldSelector: [
-      "spec.issueTemplate=" + issueTemplate.issueTemplate.metadata.name,
-    ],
-  });
-  if (curTmeplateIssueList.data.items.length > 0) {
+  const curTemplateSubjectList =
+    await issueSubjectApiClient.issueSubject.listIssueSubject({
+      fieldSelector: [
+        "spec.issueTemplates=(" +
+          issueTemplate.issueTemplate.metadata.name +
+          ")",
+      ],
+    });
+  if (curTemplateSubjectList.data.items.length > 0) {
     Toast.warning(
-      "当前模版下已经存在Issue，无法修改模版，请新建模版或删除该模版下的Issue后进行修改！",
+      "当前模版已有依托主体在使用，无法修改模版，请新建模版或删除该模版下的主体后进行修改！",
     );
   } else {
     router.push({
@@ -100,10 +107,7 @@ function handleRouteToUserDetail() {}
       <VEntityField
         width="27rem"
         :title="issueTemplate.issueTemplate.spec?.name"
-        :route="{
-          name: 'IssueTemplateEditor',
-          query: { name: issueTemplate.issueTemplate.metadata.name },
-        }"
+        @click="handleEditIssueTemplate(issueTemplate)"
       >
         <template #description>
           <p

@@ -78,7 +78,7 @@ const { issueTemplates, isLoading, isFetching, refetch, total } =
     ownerName,
     selectedTemplateScope,
     selectedSubjectType,
-    selectedSubjectName
+    selectedSubjectName,
   );
 
 const handlerNewIssueTemplate = () => {

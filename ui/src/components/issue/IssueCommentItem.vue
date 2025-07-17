@@ -9,11 +9,12 @@ import {
   Dialog,
   Toast,
   VTag,
+  VStatusDot
 } from "@halo-dev/components";
 import { computed, inject, type Ref } from "vue";
-import type { Issue, IssueComment, ListedIssueComment } from "@/api/generated";
+import type { IssueComment, ListedIssueComment } from "@/api/generated";
 import { useUserAgent } from "@/composables/use-user-agent";
-import { issueApiClient, issueCommentApiClient } from "@/api";
+import { issueCommentApiClient } from "@/api";
 import { formatDatetime, relativeTimeTo } from "@/utils/date";
 
 const props = defineProps<{
@@ -62,9 +63,9 @@ const handleShowQuoteReply = (show: boolean) => {
   }
 };
 
-function handleApprove(comment: IssueComment) {
+async function handleApprove(comment: IssueComment) {
   // 审核逻辑
-  issueCommentApiClient.issueComment.patchIssueComment({
+  await issueCommentApiClient.issueComment.patchIssueComment({
     name: comment.metadata.name,
     jsonPatchInner: [
       {
@@ -74,6 +75,8 @@ function handleApprove(comment: IssueComment) {
       },
     ],
   });
+  Toast.success('审核成功');
+  emit("updateIssueComments");
 }
 
 function handleDeleteComment(comment: IssueComment) {
@@ -165,7 +168,7 @@ function handleDeleteComment(comment: IssueComment) {
     <template #end>
       <VEntityField v-if="!comment?.issueComment.spec.approved">
         <template #description>
-          <VStatusDot state="warning" animate text="审核" />
+          <VStatusDot state="warning" animate text="待审核" />
         </template>
       </VEntityField>
       <VEntityField v-if="comment?.issueComment.metadata.deletionTimestamp">
