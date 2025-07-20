@@ -11,7 +11,7 @@ spec:
     rawBody: |
       [(${receiveOwner})] 你好：
 
-      [(${issueOwner})] 创建了新的issue“[(${issueMessageRawContent})]”， 以下是Issue的具体内容：
+      [[${issueOwner}]] 创建了新的issue“[(${issueMessageRawContent})]”， 以下是Issue的具体内容：
 
       [(${issueHtmlContent})]
     htmlBody: |
