@@ -3,6 +3,7 @@ package com.webjing.issues.service.impl;
 import com.webjing.issues.Constant;
 import com.webjing.issues.entity.IssueStats;
 import com.webjing.issues.extension.IssueSubject;
+import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.exception.NotFoundException;
@@ -32,6 +33,8 @@ import run.halo.app.notification.NotificationReasonEmitter;
 import run.halo.app.notification.UserIdentity;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -56,7 +59,7 @@ public class IssueServiceImpl implements IssueService {
 
     private final ExternalLinkProcessor externalLinkProcessor;
 
-    private final NotificationCenter notificationCenter;
+    private final NotificationSubscriptionHelper notificationSubscriptionHelper;
 
     @Override
     public Mono<ListResult<ListedIssue>> listIssue(IssueQuery query) {
@@ -218,7 +221,9 @@ public class IssueServiceImpl implements IssueService {
                 builder -> {
                     var attributes = IssueClosedReasonData.builder()
                         .issueTitle(issue.getSpec().getTitle())
-                        .issueClosedTime(issue.getSpec().getClosedAt().toString())
+                        .issueClosedTime(issue.getSpec().getClosedAt()
+                            .atZone(ZoneId.of("Asia/Shanghai"))
+                            .format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm")))
                         .closedComment(closedComment)
                         .issuePermalink(contentUrl)
                         .issueOwner(issue.getSpec().getOwner())
@@ -231,32 +236,9 @@ public class IssueServiceImpl implements IssueService {
                         .author(UserIdentity.of(owner))
                         .subject(reasonSubject);
                 });
-            return subscribeClosedIssueReasonForSubject(issue).then(emitReasonMono);
+            return notificationSubscriptionHelper.subscribeClosedIssueReasonForSubject(issue).then(emitReasonMono);
         }).then();
 
-    }
-
-    /**
-     * 关闭 issue 的时候为issue拥有者和issue关注者进行通知
-     * @param issue
-     */
-    public Mono<Void> subscribeClosedIssueReasonForSubject(Issue issue) {
-        // 当issue被关闭的时候，为 issue 拥有者和关注者进行通知
-        String issueOwner = issue.getSpec().getOwner();
-        Set<String> watchers = issue.getSpec().getAssignees();
-        // 为创建者订阅关闭 Issue 通知
-        subscribeClosedIssueNotify(UserIdentity.of(issueOwner));
-        watchers.forEach(participateUser -> subscribeClosedIssueNotify(UserIdentity.of(participateUser)));
-        return Mono.empty();
-    }
-
-    Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
-        var interestReason = new Subscription.InterestReason();
-        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
-        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
-        var subscriber = new Subscription.Subscriber();
-        subscriber.setName(identity.name());
-        return notificationCenter.subscribe(subscriber, interestReason).then();
     }
 
     @Builder

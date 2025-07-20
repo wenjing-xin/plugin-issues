@@ -27,6 +27,8 @@ public enum Constant {
 
     public static final String NEW_ISSUE_NOTIFIED_ANNO = "subscribe-new-issue-notified";
 
+    public static final String NEW_ISSUE_COMMENT_NOTIFIED_ANNO = "subscribe-new-issue-comment-notified";
+
     public static final String CLOSED_ISSUE_NOTIFIED_ANNO = "subscribe-issue-closed-notified";
 
 }

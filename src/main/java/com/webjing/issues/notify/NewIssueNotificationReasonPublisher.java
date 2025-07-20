@@ -16,6 +16,8 @@ import run.halo.app.extension.ExtensionClient;
 import run.halo.app.infra.ExternalLinkProcessor;
 import run.halo.app.notification.NotificationReasonEmitter;
 import run.halo.app.notification.UserIdentity;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -92,8 +94,10 @@ public class NewIssueNotificationReasonPublisher {
                 builder -> {
                     var attributes = IssueCreatedReasonData.builder()
                         .issueTitle(issue.getSpec().getTitle())
-                        .issueStatus(issue.getStatus().getState().name())
-                        .issueCreatedAt(issue.getMetadata().getCreationTimestamp().toString())
+                        .issueStatus(Issue.parseIssueState(issue.getStatus().getState()))
+                        .issueCreatedAt(issue.getMetadata().getCreationTimestamp()
+                            .atZone(ZoneId.of("Asia/Shanghai"))
+                            .format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm")))
                         .issueRawContent(issue.getSpec().getContent().getRaw())
                         .issueHtmlContent(issue.getSpec().getContent().getHtml())
                         .issuePermalink(issue.getStatus().getPermalink())

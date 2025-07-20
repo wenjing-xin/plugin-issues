@@ -4,13 +4,10 @@ import static run.halo.app.extension.ExtensionUtil.addFinalizers;
 import static run.halo.app.extension.index.query.QueryFactory.equal;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.Set;
-import com.webjing.issues.event.IssueClosedEvent;
 import com.webjing.issues.event.IssueCreatedEvent;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
-import com.webjing.issues.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -36,8 +33,6 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
     private static final String FINALIZER = "issue-message-protection";
 
     private final ExtensionClient client;
-
-    private final NotificationCenter notificationCenter;
 
     private final ApplicationEventPublisher eventPublisher;
 

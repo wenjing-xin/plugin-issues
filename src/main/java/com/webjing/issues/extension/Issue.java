@@ -133,4 +133,12 @@ public class Issue extends AbstractExtension {
         POST,
     }
 
+    public static String parseIssueState(IssueState type) {
+        return switch (type) {
+            case AWAIT -> "待处理";
+            case PROGRESS -> "进行中";
+            case CLOSED -> "已关闭";
+        };
+    }
+
 }

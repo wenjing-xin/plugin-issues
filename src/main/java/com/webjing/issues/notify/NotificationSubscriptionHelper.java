@@ -2,14 +2,17 @@ package com.webjing.issues.notify;
 
 import com.webjing.issues.Constant;
 import com.webjing.issues.extension.Issue;
+import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.extension.IssueSubject;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.notification.Subscription;
 import run.halo.app.notification.NotificationCenter;
 import run.halo.app.notification.UserIdentity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -38,36 +41,41 @@ public class NotificationSubscriptionHelper {
     }
 
     /**
+     * Subscribe new issueComment reason for issue.
+     *
+     * @param issue issue
+     */
+    public void subscribeNewCommentReasonForIssue(Issue issue) {
+        var issueOwner = issue.getSpec().getOwner();
+        Set<String> assignees = issue.getSpec().getAssignees();
+        subscribeComment(UserIdentity.of(issueOwner));
+        assignees.forEach(assignee -> subscribeComment(UserIdentity.of(assignee)));
+    }
+
+    /**
+     * Subscribe new issueComment reason for issue.
+     *
+     * @param issue issue
+     */
+    public void subscribeNewReplyCommentReasonForIssueComment(Issue issue, IssueComment issueComment) {
+        List<String> needNotifyUsers = new ArrayList<>(issue.getSpec().getAssignees());
+        // 引用的评论，调用回复通知
+        needNotifyUsers.add(issueComment.getSpec().getOwner());
+        needNotifyUsers.forEach(notifyUser -> subscribeReplyComment(UserIdentity.of(notifyUser)));
+    }
+
+    /**
      * 关闭 issue 的时候为issue拥有者和issue关注者进行通知
      * @param issue
      */
-    public void subscribeClosedIssueReasonForSubject(Issue issue) {
+    public Mono<Void> subscribeClosedIssueReasonForSubject(Issue issue) {
         // 当issue被关闭的时候，为 issue 拥有者和关注者进行通知
         String issueOwner = issue.getSpec().getOwner();
         Set<String> watchers = issue.getSpec().getAssignees();
         // 为创建者订阅关闭 Issue 通知
         subscribeClosedIssueNotify(UserIdentity.of(issueOwner));
         watchers.forEach(participateUser -> subscribeClosedIssueNotify(UserIdentity.of(participateUser)));
-    }
-
-    /**
-     * Subscribe new issueComment reason for issue.
-     *
-     * @param issue issue
-     */
-    public void subscribeNewCommentReasonForIssue(Issue issue) {
-        var subjectOwner = issue.getSpec().getOwner();
-        subscribeComment(UserIdentity.of(subjectOwner));
-    }
-
-    /**
-     * Subscribe new issueComment reason for issue.
-     *
-     * @param issue issue
-     */
-    public void subscribeNewReplyCommentReasonForIssueComment(Issue issue) {
-        var subjectOwner = issue.getSpec().getOwner();
-        subscribeReplyComment(UserIdentity.of(subjectOwner));
+        return Mono.empty();
     }
 
     /**
@@ -85,23 +93,9 @@ public class NotificationSubscriptionHelper {
         notificationCenter.subscribe(subscriber, interestReason).block();
     }
 
-    /**
-     * 关闭issue的时候为相关用户订阅通知
-     * @param identity
-     */
-    void subscribeClosedIssueNotify(UserIdentity identity) {
-        var subscriber = createSubscriber(identity);
-        if (subscriber == null) {
-            return;
-        }
-        var interestReason = new Subscription.InterestReason();
-        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
-        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
-        notificationCenter.subscribe(subscriber, interestReason).block();
-    }
 
     /**
-     * 为issue订评论
+     * 为issues订阅评论
      * @param identity
      */
     void subscribeComment(UserIdentity identity) {
@@ -111,7 +105,7 @@ public class NotificationSubscriptionHelper {
         }
         var interestReason = new Subscription.InterestReason();
         interestReason.setReasonType(Constant.HAS_NEW_ISSUE_COMMENT);
-        interestReason.setExpression("props.issueOwner == '%s'".formatted(identity.name()));
+        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
         notificationCenter.subscribe(subscriber, interestReason).block();
     }
 
@@ -130,6 +124,24 @@ public class NotificationSubscriptionHelper {
         notificationCenter.subscribe(subscriber, interestReason).block();
     }
 
+
+
+    Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
+        var subscriber = createSubscriber(identity);
+        if(subscriber == null){
+            return Mono.empty();
+        }
+        var interestReason = new Subscription.InterestReason();
+        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
+        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
+        return notificationCenter.subscribe(subscriber, interestReason).then();
+    }
+
+    /**
+     * 创建订阅者
+     * @param author
+     * @return
+     */
     @Nullable
     private Subscription.Subscriber createSubscriber(UserIdentity author) {
         if (StringUtils.isBlank(author.name())) {

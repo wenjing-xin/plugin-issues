@@ -220,6 +220,9 @@ public class IssueFinderImpl implements IssueFinder {
                                         itemData.put("selectLabel", option.get("label"));
                                     }
                                 }
+                                if(!itemData.containsKey("selectLabel")){
+                                    itemData.put("selectLabel", "");
+                                }
                             }
                             if (field.getType().equals(IssueTemplate.TemplateFieldTypeEnum.RADIO)) {
                                 if(StringUtils.isNotEmpty(imv.getMetadata().getAnnotations().get(field.getKey()))){

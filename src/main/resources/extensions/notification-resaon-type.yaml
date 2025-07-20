@@ -46,7 +46,7 @@ metadata:
   name: someone-comment-issue
 spec:
   displayName: "有人评论了你的Issue"
-  description: "当有人评论了你的 Issue，issue发布者和Issue依托主体的参与者都将会收到一条通知"
+  description: "当有人评论了你的 Issue，issue发布者和Issue经办人以及关注着都将会收到一条通知"
   properties:
     - name: issueTitle
       type: string
@@ -54,6 +54,9 @@ spec:
     - name: issueStatus
       type: string
       description: "issue 状态"
+    - name: isApproved
+      type: boolean
+      description: "是否审核通过"
     - name: issueCommentCreatedAt
       type: string
       description: "issue评论创建时间"
@@ -63,12 +66,12 @@ spec:
     - name: issueCommentHtmlContent
       type: string
       description: "issue评论的HTML内容"
-    - name: issuePermalink
+    - name: issueCommentPermalink
       type: string
-      description: "issue链接"
-    - name: issueOwner
+      description: "issue评论链接"
+    - name: receiveOwner
       type: string
-      description: "issue拥有者"
+      description: "接收者"
     - name: issueCommentOwner
       type: string
       description: "issue评论用户名"
@@ -79,32 +82,41 @@ metadata:
   name: someone-reply-issue-comment
 spec:
   displayName: "有人回复了你的的 Issue 评论"
-  description: "当有用户回复 issue 评论的时候，发布此issue评论的用户和Issue依托主体的用户会收到通知"
+  description: "当有用户回复 issue 评论的时候，发布此issue评论的用户和Issue的拥有者以及经办人都会收到通知"
   properties:
-    - name: issueTitle
+    - name: notifyTitle
       type: string
-      description: "issue标题"
+      description: "通知标题"
     - name: issueStatus
       type: string
       description: "issue状态"
+    - name: isApproved
+      type: boolean
+      description: "是否审核通过"
     - name: issueReplyCommentCreatedAt
       type: string
       description: "回复评论的创建时间"
+    - name: issueCommentRawContent
+      type: string
+      description: "issue评论的原生内容"
+    - name: issueCommentHTMLContent
+      type: string
+      description: "issue评论的HTML内容"
     - name: issueReplyCommentRawContent
       type: string
       description: "issue回复评论的原生内容"
     - name: issueReplyCommentHTMLContent
       type: string
       description: "issue回复评论的HTML内容"
-    - name: issuePermalink
+    - name: permalink
       type: string
-      description: "issue永久链接"
-    - name: issueCommentOwner
+      description: "issue评论回复的查看链接"
+    - name: receiveOwner
       type: string
-      description: "issue评论的发布用户"
-    - name: issueReplyOwner
+      description: "评论接受者"
+    - name: issueReplyCommentOwner
       type: string
-      description: "issue评论的回复用户"
+      description: "回复创建者"
 ---
 apiVersion: notification.halo.run/v1alpha1
 kind: ReasonType
