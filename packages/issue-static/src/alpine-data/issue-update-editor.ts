@@ -470,32 +470,6 @@ export default (isCommentEdit:boolean, editId:string) => ({
         });
     },
 
-    insertQuoteByPasteIue(content: string) {
-        // @ts-ignore
-        this.insertMarkdownIue((cm, selection) => {
-            const quotedContent = content
-                    .split('\n')
-                    .map(line => `> ${line}`)
-                    .join('\n') + '\n';
-            // 创建粘贴事件
-            const clipboardData = new DataTransfer();
-            clipboardData.setData('text/plain', quotedContent);
-
-            const pasteEvent = new ClipboardEvent('paste', {
-                clipboardData,
-                bubbles: true,
-                cancelable: true
-            });
-
-            // @ts-ignore 让编辑器获得焦点
-            cm.focus();
-
-            // @ts-ignore 触发粘贴事件
-            cm.getInputField().dispatchEvent(pasteEvent);
-
-        });
-    },
-
     // 更新 issue 或者更新 issue 评论
     async updateIssueOrComment(){
         this.updateLoading = true;

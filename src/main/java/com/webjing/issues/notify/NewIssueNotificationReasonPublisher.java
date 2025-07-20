@@ -89,7 +89,6 @@ public class NewIssueNotificationReasonPublisher {
                 .title(issue.getSpec().getTitle())
                 .url(contentUrl)
                 .build();
-            String owner = issue.getSpec().getOwner();
             notificationReasonEmitter.emit(Constant.HAS_NEW_ISSUE_ON_SUBJECT,
                 builder -> {
                     var attributes = IssueCreatedReasonData.builder()
@@ -108,7 +107,7 @@ public class NewIssueNotificationReasonPublisher {
                         .subjectType(subjectType)
                         .build();
                     builder.attributes(ReasonDataConverterUtils.toAttributeMap(attributes))
-                        .author(UserIdentity.of(owner))
+                        .author(UserIdentity.of(issue.getSpec().getOwner()))
                         .subject(reasonSubject);
                 }).block();
 

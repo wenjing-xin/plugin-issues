@@ -369,7 +369,7 @@ export default () => ({
                     .join('\n') + '\n';
             // 创建粘贴事件
             const clipboardData = new DataTransfer();
-            clipboardData.setData('text/plain', quotedContent);
+            clipboardData.setData('text/plain', quotedContent + '\n');
 
             const pasteEvent = new ClipboardEvent('paste', {
                 clipboardData,

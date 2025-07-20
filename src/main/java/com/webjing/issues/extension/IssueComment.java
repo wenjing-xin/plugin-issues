@@ -27,8 +27,6 @@ public class IssueComment extends AbstractExtension {
 
     public static final String KIND = "IssueComment";
 
-    public static final String REQUIRE_SYNC_ON_STARTUP_INDEX_NAME = "requireSyncOnStartup";
-
     @Schema(requiredMode = REQUIRED)
     private IssueCommentSpec spec;
 

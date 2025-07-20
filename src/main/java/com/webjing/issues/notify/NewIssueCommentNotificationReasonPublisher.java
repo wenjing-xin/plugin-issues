@@ -89,11 +89,21 @@ public class NewIssueCommentNotificationReasonPublisher {
         public void publishReasonBy(Issue issue, IssueComment issueComment, String needNotifyUser) {
             Boolean approved = issueComment.getSpec().getApproved();
             String contentUrl;
+            String issueTitle;
             if(approved){
-                contentUrl = externalLinkProcessor.processLink(issue.getStatus().getPermalink());
+                contentUrl = externalLinkProcessor.processLink(issue.getStatus().getPermalink()) + "#" + issueComment.getMetadata().getName();
             }else{
                 contentUrl = externalLinkProcessor.processLink("/console/issueSubject/issues?subjectName=" + issue.getSpec().getSubjectName() + "&approved=false");
             }
+
+            if(issue.getSpec().getAssignees().contains(needNotifyUser)){
+                issueTitle = "你负责经办的Issue【" + issue.getSpec().getTitle() + "】下有新的评论";
+            }else if (issue.getSpec().getOwner().equals(needNotifyUser)){
+                issueTitle = "你创建的Issue【" + issue.getSpec().getTitle() + "】下的有新的评论";
+            }else{
+                issueTitle = "你关注的Issue【" +  issue.getSpec().getTitle() + "】有新的评论";
+            }
+
             var reasonSubject = Reason.Subject.builder()
                 .apiVersion(issueComment.getApiVersion())
                 .kind(issueComment.getKind())
@@ -101,10 +111,10 @@ public class NewIssueCommentNotificationReasonPublisher {
                 .title("Issue【" + issue.getSpec().getTitle() + "】下有了新的评论")
                 .url(contentUrl)
                 .build();
-            notificationReasonEmitter.emit(Constant.HAS_NEW_ISSUE_ON_SUBJECT,
+            notificationReasonEmitter.emit(Constant.HAS_NEW_ISSUE_COMMENT,
                 builder -> {
                     var attributes = IssueCommentCreatedReasonData.builder()
-                        .issueTitle(issue.getSpec().getTitle())
+                        .issueTitle(issueTitle)
                         .issueStatus(Issue.parseIssueState(issue.getStatus().getState()))
                         .issueCommentCreatedAt(issueComment.getMetadata().getCreationTimestamp()
                             .atZone(ZoneId.of("Asia/Shanghai"))
@@ -142,7 +152,7 @@ public class NewIssueCommentNotificationReasonPublisher {
             String contentUrl;
             String notifyTitle;
             if(issueReplyComment.getSpec().getApproved()){
-                contentUrl = externalLinkProcessor.processLink(issue.getStatus().getPermalink());
+                contentUrl = externalLinkProcessor.processLink(issue.getStatus().getPermalink()) + "#" + issueReplyComment.getMetadata().getName();
             }else{
                 contentUrl = externalLinkProcessor.processLink("/console/issueSubject/issues?subjectName=" + issue.getSpec().getSubjectName() + "&approved=false");
             }
@@ -176,6 +186,7 @@ public class NewIssueCommentNotificationReasonPublisher {
                         .issueCommentHTMLContent(originalIssueComment.getSpec().getContent().getHtml())
                         .issueReplyCommentRawContent(issueReplyComment.getSpec().getContent().getRaw())
                         .issueReplyCommentHTMLContent(issueReplyComment.getSpec().getContent().getHtml())
+                        .permalink(contentUrl)
                         .receiveOwner(needNotifyUser)
                         .issueReplyCommentOwner(issueReplyComment.getSpec().getOwner())
                         .build();
