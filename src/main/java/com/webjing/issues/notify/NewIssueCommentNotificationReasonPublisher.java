@@ -119,9 +119,9 @@ public class NewIssueCommentNotificationReasonPublisher {
                         .issueCommentCreatedAt(issueComment.getMetadata().getCreationTimestamp()
                             .atZone(ZoneId.of("Asia/Shanghai"))
                             .format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm")))
-                        .issueCommentRawContent(issue.getSpec().getContent().getRaw())
-                        .issueCommentHtmlContent(issue.getSpec().getContent().getHtml())
-                        .issueCommentPermalink(issue.getStatus().getPermalink())
+                        .issueCommentRawContent(issueComment.getSpec().getContent().getRaw())
+                        .issueCommentHtmlContent(issueComment.getSpec().getContent().getHtml())
+                        .issueCommentPermalink(contentUrl)
                         .receiveOwner(needNotifyUser)
                         .issueCommentOwner(issueComment.getSpec().getOwner())
                         .build();
