@@ -65,6 +65,7 @@ public class IssuesRouter {
                 model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                 model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
                 model.put("issueComments", issueFinder.listAllIssueComments(issueName));
+                model.put("issueCosedComment", getIssueCosedComment());
                 buildCommonVariables(model);
                 return ServerResponse.ok().render(templateName, model);
             });
@@ -120,6 +121,12 @@ public class IssuesRouter {
 
     private Mono<String> getIssuesAvatarSetting(){
         return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getDefaultAvatarMode());
+    }
+
+    private Mono<String> getIssueCosedComment(){
+        return settingConfigGetter.getIssuesBasic()
+            .map(issuesBasic -> issuesBasic.getDefaultClosedComment())
+            .defaultIfEmpty("Issue已解决");
     }
 
     private Mono<UrlContextListResult<IssueVO>> issuePageList(ServerRequest request, String subjectName) {

@@ -27,3 +27,8 @@ export function updateMyIssue(issue: Issue){
     const urlPath = `${apiVersion}/issues/${issue.metadata.name}`;
     return axiosInstance.put(urlPath, issue)
 }
+
+export function closedMyIssue(issueName: string, closedComment: string){
+    const urlPath = `${apiVersion}/issues/-/closed`;
+    return axiosInstance.post(urlPath, {issueName,closedComment})
+}

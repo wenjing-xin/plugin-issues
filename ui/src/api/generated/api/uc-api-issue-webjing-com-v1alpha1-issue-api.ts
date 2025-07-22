@@ -24,6 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { Issue } from '../models';
 // @ts-ignore
+import type { IssueClosedParam } from '../models';
+// @ts-ignore
 import type { IssueContent } from '../models';
 // @ts-ignore
 import type { IssueTemplateRender } from '../models';
@@ -37,17 +39,14 @@ export const UcApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = function (c
     return {
         /**
          * Closed the myself of owner
-         * @param {string} closedComment 
-         * @param {Issue} issue 
+         * @param {IssueClosedParam} issueClosedParam 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        closedMyIssue: async (closedComment: string, issue: Issue, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'closedComment' is not null or undefined
-            assertParamExists('closedMyIssue', 'closedComment', closedComment)
-            // verify required parameter 'issue' is not null or undefined
-            assertParamExists('closedMyIssue', 'issue', issue)
-            const localVarPath = `/apis/uc.api.issue.webjing.com/v1alpha1/issues/closed`;
+        closedMyIssue: async (issueClosedParam: IssueClosedParam, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueClosedParam' is not null or undefined
+            assertParamExists('closedMyIssue', 'issueClosedParam', issueClosedParam)
+            const localVarPath = `/apis/uc.api.issue.webjing.com/v1alpha1/issues/-/closed`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -55,7 +54,7 @@ export const UcApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = function (c
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -67,10 +66,6 @@ export const UcApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = function (c
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
-            if (closedComment !== undefined) {
-                localVarQueryParameter['closedComment'] = closedComment;
-            }
-
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -78,7 +73,7 @@ export const UcApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = function (c
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(issue, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(issueClosedParam, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -171,13 +166,11 @@ export const UcApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = function (c
         },
         /**
          * fetch issue content.
-         * @param {string} issueName 
+         * @param {string} [issueName] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        fetchIssueContent: async (issueName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'issueName' is not null or undefined
-            assertParamExists('fetchIssueContent', 'issueName', issueName)
+        fetchIssueContent: async (issueName?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/apis/uc.api.issue.webjing.com/v1alpha1/issues/content`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -504,13 +497,12 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFp = function(configuration?: C
     return {
         /**
          * Closed the myself of owner
-         * @param {string} closedComment 
-         * @param {Issue} issue 
+         * @param {IssueClosedParam} issueClosedParam 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async closedMyIssue(closedComment: string, issue: Issue, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.closedMyIssue(closedComment, issue, options);
+        async closedMyIssue(issueClosedParam: IssueClosedParam, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.closedMyIssue(issueClosedParam, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UcApiIssueWebjingComV1alpha1IssueApi.closedMyIssue']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -541,11 +533,11 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFp = function(configuration?: C
         },
         /**
          * fetch issue content.
-         * @param {string} issueName 
+         * @param {string} [issueName] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async fetchIssueContent(issueName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueContent>> {
+        async fetchIssueContent(issueName?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueContent>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.fetchIssueContent(issueName, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UcApiIssueWebjingComV1alpha1IssueApi.fetchIssueContent']?.[localVarOperationServerIndex]?.url;
@@ -641,7 +633,7 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFactory = function (configurati
          * @throws {RequiredError}
          */
         closedMyIssue(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiClosedMyIssueRequest, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
-            return localVarFp.closedMyIssue(requestParameters.closedComment, requestParameters.issue, options).then((request) => request(axios, basePath));
+            return localVarFp.closedMyIssue(requestParameters.issueClosedParam, options).then((request) => request(axios, basePath));
         },
         /**
          * Create a My Issue.
@@ -667,7 +659,7 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFactory = function (configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        fetchIssueContent(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContentRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueContent> {
+        fetchIssueContent(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContentRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<IssueContent> {
             return localVarFp.fetchIssueContent(requestParameters.issueName, options).then((request) => request(axios, basePath));
         },
         /**
@@ -726,17 +718,10 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFactory = function (configurati
 export interface UcApiIssueWebjingComV1alpha1IssueApiClosedMyIssueRequest {
     /**
      * 
-     * @type {string}
+     * @type {IssueClosedParam}
      * @memberof UcApiIssueWebjingComV1alpha1IssueApiClosedMyIssue
      */
-    readonly closedComment: string
-
-    /**
-     * 
-     * @type {Issue}
-     * @memberof UcApiIssueWebjingComV1alpha1IssueApiClosedMyIssue
-     */
-    readonly issue: Issue
+    readonly issueClosedParam: IssueClosedParam
 }
 
 /**
@@ -778,7 +763,7 @@ export interface UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContentRequest {
      * @type {string}
      * @memberof UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContent
      */
-    readonly issueName: string
+    readonly issueName?: string
 }
 
 /**
@@ -957,7 +942,7 @@ export class UcApiIssueWebjingComV1alpha1IssueApi extends BaseAPI {
      * @memberof UcApiIssueWebjingComV1alpha1IssueApi
      */
     public closedMyIssue(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiClosedMyIssueRequest, options?: RawAxiosRequestConfig) {
-        return UcApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).closedMyIssue(requestParameters.closedComment, requestParameters.issue, options).then((request) => request(this.axios, this.basePath));
+        return UcApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).closedMyIssue(requestParameters.issueClosedParam, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -989,7 +974,7 @@ export class UcApiIssueWebjingComV1alpha1IssueApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UcApiIssueWebjingComV1alpha1IssueApi
      */
-    public fetchIssueContent(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContentRequest, options?: RawAxiosRequestConfig) {
+    public fetchIssueContent(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiFetchIssueContentRequest = {}, options?: RawAxiosRequestConfig) {
         return UcApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).fetchIssueContent(requestParameters.issueName, options).then((request) => request(this.axios, this.basePath));
     }
 

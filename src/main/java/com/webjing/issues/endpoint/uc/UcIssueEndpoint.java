@@ -16,6 +16,7 @@ import com.webjing.issues.entity.ListedIssue;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import java.time.Instant;
 import java.util.Set;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,8 @@ import run.halo.app.core.extension.endpoint.CustomEndpoint;
 
 import run.halo.app.extension.GroupVersion;
 import run.halo.app.extension.ListResult;
+import run.halo.app.extension.ReactiveExtensionClient;
+
 /**
  * 个人发布 issue 留言的 API
  * @author: webjing
@@ -53,6 +56,8 @@ public class UcIssueEndpoint implements CustomEndpoint {
     private final RoleService roleService;
 
     private final IssueTemplateService issueTemplateService;
+
+    private final ReactiveExtensionClient client;
 
     @Override
     public RouterFunction<ServerResponse> endpoint() {
@@ -73,7 +78,7 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     .parameter(parameterBuilder()
                         .name("issueName")
                         .in(ParameterIn.QUERY)
-                        .required(true)
+                        .required(false)
                         .implementation(String.class)
                     )
                     .response(responseBuilder()
@@ -165,22 +170,16 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementationArray(String.class)
                     ))
-            .PUT("issues/closed", this::closedMyIssue,
+            .POST("issues/-/closed", this::closedMyIssue,
                 builder -> builder.operationId("closedMyIssue")
                     .description("Closed the myself of owner")
                     .tag(tag)
-                    .parameter(parameterBuilder()
-                        .name("closedComment")
-                        .in(ParameterIn.QUERY)
-                        .required(true)
-                        .implementation(String.class)
-                    )
                     .requestBody(requestBodyBuilder()
                         .required(true)
                         .content(contentBuilder()
                             .mediaType(MediaType.APPLICATION_JSON_VALUE)
                             .schema(Builder.schemaBuilder()
-                                .implementation(Issue.class))
+                                .implementation(IssueClosedParam.class))
                         ))
                     .response(responseBuilder().implementation(Issue.class))
             )
@@ -290,25 +289,34 @@ public class UcIssueEndpoint implements CustomEndpoint {
     }
 
     private Mono<ServerResponse> closedMyIssue(ServerRequest request){
-        // 从查询参数获取 closedComment
-        String closedComment = request.queryParam("closedComment")
-            .orElseThrow(() -> new IllegalArgumentException("closedComment parameter is required"));
-        // 从请求体获取 Issue 对象
-        return request.bodyToMono(Issue.class)
-            .flatMap(issue -> roleService.getCurrentUser()
-                .map(curUser ->  {
-                    if(curUser.getName().equals(issue.getSpec().getOwner())){
-                        return issueService.closeIssue(issue, closedComment, curUser.getName());
-                    }else{
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can close it"));
-                    }
-                }))
+        // 从请求体获取 IssueClosedParam 对象
+        return request.bodyToMono(IssueClosedParam.class)
+            .flatMap(issueClosedParam -> {
+                if (StringUtils.isBlank(issueClosedParam.getClosedComment())) {
+                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "未填写关闭原因"));
+                }
+                String issueName = issueClosedParam.getIssueName();
+                return client.fetch(Issue.class, issueName)
+                    .flatMap(issue -> roleService.getCurrentUser()
+                        .flatMap(curUser -> {
+                            if (curUser.getName().equals(issue.getSpec().getOwner())) {
+                                return issueService.closeIssue(issue, issueClosedParam.getClosedComment(), curUser.getName());
+                            } else {
+                                return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can close it"));
+                            }
+                        }));
+            })
             .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
     }
-
     @Override
     public GroupVersion groupVersion() {
         return GroupVersion.parseAPIVersion("uc.api.issue.webjing.com/v1alpha1");
+    }
+
+    @Data
+    static class  IssueClosedParam{
+        private String closedComment;
+        private String issueName;
     }
 
 }

@@ -17,10 +17,10 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                         <p class="issue-detail-state piw-bg-indigo-600 piw-text-white">等待中</p>
                     </th:block>
                     <th:block th:case="'PROGRESS'">
-                        <p class="issue-detail-state piw-accent-green-700 piw-text-white">处理中</p>
+                        <p class="issue-detail-state piw-bg-green-700 piw-text-white">处理中</p>
                     </th:block>
                     <th:block th:case="'CLOSED'">
-                        <p class="issue-detail-state piw-accent-slate-400 piw-text-white">已关闭</p>
+                        <p class="issue-detail-state piw-bg-slate-400 piw-text-white">已关闭</p>
                     </th:block>
                 </th:block>
             </div>
@@ -33,7 +33,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
             </th:block>
         </div>
         <div class="piw-w-full piw-flex lg:piw-flex-nowrap lg:piw-gap-x-4 piw-flex-wrap"
-             th:attr="x-data=|{issueId:'${issueVO.metadata.name}', quoteCommentId: '', curCommentPos: ''}|"
+             th:attr="x-data=|{issueId:'${issueVO.metadata.name}', quoteCommentId: '', curCommentPos: '', closedComment: '${issueCosedComment}', issueClosedModal: false}|"
              x-init="curCommentPos = window.location.href.replace(window.location.origin+window.location.pathname, '').replace('#', '')">
             <div class="lg:piw-w-[68%] piw-w-full" x-data="issueEditor">
                 <!--  初始化issue编辑器  -->
@@ -242,9 +242,16 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     <div class="piw-w-full piw-my-3 lg:piw-pl-10 piw-flex piw-items-center piw-gap-x-3" sec:authorize="isAuthenticated()" x-data="messageBox">
                         <button class="piw-w-24 piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-h-8 piw-text-sm piw-tracking-wider"
                                 @click="main.publishIssueComment(issueId, rawContent, preview, quoteCommentId)" >评论</button>
-                        <div class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
-                             @click="showMessage('success', '操作成功', 3000)">关闭 Issue</div>
+                        <button class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
+                                th:disabled="${not #strings.equals(currentUser.name, issueVO.contributorVo.name)}"
+                                th:if="${not #strings.equals(issueVO.status.state + '', 'CLOSED')}"
+                                @click="issueClosedModal = true;">关闭 Issue</button>
+                        <button class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
+                                th:if="${#strings.equals(issueVO.status.state + '', 'CLOSED')}"
+                                th:disabled="${not #strings.equals(currentUser.name, issueVO.contributorVo.name)}"
+                                @click="showMessage('success', '操作成功', 3000)">重新打开</button>
                     </div>
+                    <th:block th:replace="~{fragments/issue-close-comment}" />
                 </div>
             </div>
             <!--  右侧信息栏 -->

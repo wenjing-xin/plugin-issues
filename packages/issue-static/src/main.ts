@@ -12,7 +12,7 @@ import issueEditor from "./alpine-data/issue-editor";
 import issueUpdateEditor from "./alpine-data/issue-update-editor";
 import issueSubmit from "./alpine-data/issue-submit";
 import {IssueComment, IssueCommentContent, IssueContent} from "./types";
-import { createIssueComment, fetchIssueContent, fetchIssueCommentContent } from "./api";
+import {createIssueComment, fetchIssueContent, fetchIssueCommentContent, closedMyIssue} from "./api";
 
 window.Alpine = Alpine;
 Alpine.data("dropdown", dropdown);
@@ -513,4 +513,18 @@ export function getSpecialParam(key:string):string|number|boolean{
         return patchRes[0].split("=")[1];
     }
     return "";
+}
+
+// 关闭 Issue操作
+export async function closeIssue(issueName:string, closedComment:string){
+    if(!closedComment){
+        return messageUtils.showMessage("warning", "请填写关闭理由", 1500)
+    }
+    const closeRes = await closedMyIssue(issueName, closedComment);
+    if(closeRes.status == 200){
+        messageUtils.showMessage("success", "关闭成功", 1500);
+        window.location.reload();
+    }else{
+        messageUtils.showMessage("error", "关闭失败", 1500);
+    }
 }

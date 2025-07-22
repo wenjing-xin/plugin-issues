@@ -2,6 +2,7 @@ export * from './add-operation';
 export * from './contributor-vo';
 export * from './copy-operation';
 export * from './issue';
+export * from './issue-closed-param';
 export * from './issue-comment';
 export * from './issue-comment-content';
 export * from './issue-comment-list';

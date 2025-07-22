@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:48353",
+    "url" : "http://localhost:52969",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -2035,23 +2035,15 @@
         "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
       }
     },
-    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/closed" : {
-      "put" : {
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/-/closed" : {
+      "post" : {
         "description" : "Closed the myself of owner",
         "operationId" : "closedMyIssue",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "closedComment",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/Issue"
+                "$ref" : "#/components/schemas/IssueClosedParam"
               }
             }
           },
@@ -2079,7 +2071,6 @@
         "parameters" : [ {
           "in" : "query",
           "name" : "issueName",
-          "required" : true,
           "schema" : {
             "type" : "string"
           }
@@ -2548,6 +2539,17 @@
           },
           "status" : {
             "$ref" : "#/components/schemas/IssueStatus"
+          }
+        }
+      },
+      "IssueClosedParam" : {
+        "type" : "object",
+        "properties" : {
+          "closedComment" : {
+            "type" : "string"
+          },
+          "issueName" : {
+            "type" : "string"
           }
         }
       },
