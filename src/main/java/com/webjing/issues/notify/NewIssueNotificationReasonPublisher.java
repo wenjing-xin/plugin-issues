@@ -51,12 +51,11 @@ public class NewIssueNotificationReasonPublisher {
         //只针对没有通知的issue进行通知
         if (Objects.equals(newIssueNotified,"false")) {
             client.fetch(IssueSubject.class, issue.getSpec().getSubjectName()).map(issueSubject -> {
+                List<String> participateUsers = new ArrayList<>(issueSubject.getSpec().getParticipateUsers());
+                participateUsers.add(issueSubject.getSpec().getOwner());
                 String issueSubjectTypeName = IssueSubject.parseSubjectType(issueSubject.getSpec()
                     .getSubjectType());
-                // 为主题创建者和参与者订阅通知
-                newIssueOnSubjectReasonPublisher.publishReasonBy(issue,
-                    issueSubject.getSpec().getOwner(), issueSubject.getSpec().getDisplayName(), issueSubjectTypeName);
-                issueSubject.getSpec().getParticipateUsers().forEach(
+                participateUsers.forEach(
                     participateUser -> newIssueOnSubjectReasonPublisher.publishReasonBy(issue,
                         participateUser, issueSubject.getSpec().getDisplayName(), issueSubjectTypeName));
                 return Mono.empty();

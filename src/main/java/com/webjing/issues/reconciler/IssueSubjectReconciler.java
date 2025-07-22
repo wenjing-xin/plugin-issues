@@ -41,8 +41,8 @@ public class IssueSubjectReconciler  implements Reconciler<Reconciler.Request> {
             if (addFinalizers(issueSubject.getMetadata(), Set.of(FINALIZER))) {
                 // 为相应的参与用户订阅issue
                 notificationSubscriptionHelper.subscribeNewIssueReasonForSubject(issueSubject);
-                client.update(issueSubject);
             }
+            client.update(issueSubject);
         });
         return Result.doNotRetry();
     }
