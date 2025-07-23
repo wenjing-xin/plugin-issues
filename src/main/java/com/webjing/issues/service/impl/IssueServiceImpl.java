@@ -2,6 +2,7 @@ package com.webjing.issues.service.impl;
 
 import com.webjing.issues.Constant;
 import com.webjing.issues.entity.IssueStats;
+import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import com.webjing.issues.service.RoleService;
@@ -25,8 +26,10 @@ import run.halo.app.core.extension.Counter;
 import run.halo.app.core.extension.User;
 import run.halo.app.core.extension.notification.Reason;
 import run.halo.app.core.extension.notification.Subscription;
+import run.halo.app.extension.ListOptions;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
+import run.halo.app.extension.index.query.QueryFactory;
 import run.halo.app.infra.ExternalLinkProcessor;
 import run.halo.app.notification.NotificationCenter;
 import run.halo.app.notification.NotificationReasonEmitter;
@@ -118,7 +121,13 @@ public class IssueServiceImpl implements IssueService {
 
     @Override
     public Mono<Issue> deleteBy(Issue issue) {
-        return client.delete(issue);
+        return client.listAll(IssueComment.class, ListOptions.builder()
+                    .fieldQuery(QueryFactory.equal("spec.issueName", issue.getMetadata().getName())).build(),
+                Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
+            .collectList()
+            .flatMapMany(Flux::fromIterable)
+            .flatMap(comment -> client.delete(comment))
+            .then(client.delete(issue));
     }
 
     private Mono<ListedIssue> toListedIssue(Issue issue) {
@@ -141,16 +150,46 @@ public class IssueServiceImpl implements IssueService {
 
     private Mono<IssueStats> fetchIssueStats(Issue issue) {
         Assert.notNull(issue, "The issue must not be null.");
-        String name = issue.getMetadata().getName();
-        return client.fetch(Counter.class, MeterUtils.nameOf(Issue.class, name))
+        String issueName = issue.getMetadata().getName();
+
+        // 保留原有 Counter 查询，用于 upvote 和 downvote
+        Mono<IssueStats> counterStatsMono = client.fetch(Counter.class, MeterUtils.nameOf(Issue.class, issueName))
             .map(counter -> IssueStats.builder()
                 .upvote(counter.getUpvote())
                 .downvote(counter.getDownvote())
-                .totalIssueComment(counter.getTotalComment())
-                .approvedIssueComment(counter.getApprovedComment())
                 .build())
-            .defaultIfEmpty(IssueStats.empty());
+            .defaultIfEmpty(IssueStats.builder().upvote(0).downvote(0).build());
+
+        // 新增 IssueComment 查询，用于统计评论
+        Mono<IssueStats> commentStatsMono = client.listAll(IssueComment.class, ListOptions.builder()
+                    .fieldQuery(QueryFactory.equal("spec.issueName", issueName)).build(),
+                Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
+            .collectList()
+            .map(comments -> {
+                int totalComment = comments.size();
+                long approvedComment = comments.stream()
+                    .filter(comment -> Boolean.FALSE.equals(comment.getSpec().getApproved()))
+                    .count();
+                return IssueStats.builder()
+                    .totalIssueComment(totalComment)
+                    .approvedIssueComment((int) approvedComment)
+                    .build();
+            });
+
+        // 合并两个结果
+        return Mono.zip(counterStatsMono, commentStatsMono)
+            .map(tuple -> {
+                IssueStats counterStats = tuple.getT1();
+                IssueStats commentStats = tuple.getT2();
+                return IssueStats.builder()
+                    .upvote(counterStats.getUpvote())
+                    .downvote(counterStats.getDownvote())
+                    .totalIssueComment(commentStats.getTotalIssueComment())
+                    .approvedIssueComment(commentStats.getApprovedIssueComment())
+                    .build();
+            });
     }
+
 
     @Override
     public Mono<Issue> closeIssue(Issue issue, String closedComment, String closedOwner) {

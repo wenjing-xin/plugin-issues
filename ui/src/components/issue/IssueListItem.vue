@@ -19,18 +19,15 @@ import {
   VLoading,
   VEmpty,
 } from "@halo-dev/components";
-import BiThreeDots from "~icons/bi/three-dots";
 import { computed, inject, type Ref, ref } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
 import IssueCommentItem from "@/components/issue/IssueCommentItem.vue";
 
 import type {
   Issue,
-  ListedIssue,
-  ListedIssueComment,
-  IssueComment,
+  ListedIssue
 } from "@/api/generated";
-import { issueApiClient, consoleIssueApiClient, issueCommentApiClient } from "@/api";
+import {issueApiClient, consoleIssueApiClient, issueCommentApiClient} from "@/api";
 import { submitForm } from "@formkit/core";
 import { useIssueCommentListFetch } from "@/composables/use-consoleIssue";
 
@@ -69,13 +66,13 @@ const { issueComments, refetch, isLoading } = useIssueCommentListFetch(
 const handleDelete = async (issue: ListedIssue) => {
   Dialog.warning({
     title: "删除issue",
-    description: "该操作会将issue删除，该操作不可恢复。",
+    description: "该操作会将issue和下边的所有评论都删除，该操作不可恢复。",
     confirmType: "danger",
     confirmText: "确定",
     cancelText: "取消",
     onConfirm: async () => {
       try {
-        await issueApiClient.issue.deleteIssue({
+        await consoleIssueApiClient.issue.deleteIssue({
           name: issue.issue.metadata.name,
         });
         Toast.success("删除成功");
@@ -227,6 +224,14 @@ function getStatusDotState(status: string) {
               <span class="text-xs text-gray-500"
                 >评论数：{{ issue.issueStats.totalIssueComment }}</span
               >
+              <span class="text-xs text-gray-500" 
+                    v-if="issue.issueStats.approvedIssueComment && issue.issueStats.approvedIssueComment > 0"
+                    @click="showComments = true"
+              >
+                 <VStatusDot
+                   v-bind="{ state: 'warning', text: '待审核评论：' + issue.issueStats?.approvedIssueComment, animate: true }"
+                 />
+              </span>
               <span
                 v-if="showComments"
                 class="hover:cursor-pointer"

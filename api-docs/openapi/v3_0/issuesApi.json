@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:64414",
+    "url" : "http://localhost:43505",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -230,6 +230,31 @@
       }
     },
     "/apis/console.api.issue.webjing.com/v1alpha1/issues/{name}" : {
+      "delete" : {
+        "description" : "Delete a Issue.",
+        "operationId" : "DeleteIssue",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      },
       "get" : {
         "description" : "Get a issue message by name.",
         "operationId" : "GetIssue",

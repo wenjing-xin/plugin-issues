@@ -68,10 +68,10 @@ export default (subjectName: string, templateName: string) => ({
         createIssue(this.issueForm).then((res) => {
             if (res.status == 200) {
                 messageUtils.showMessage("success", '成功创建Issue', 2000);
-                window.location.href = `${window.location.origin}/subject/${subjectName}/issues`;
             } else {
                 messageUtils.showMessage("error", res.statusText, 2000);
             }
+            window.location.href = `${window.location.origin}/subject/${subjectName}/issues`;
         }).catch(error => {
             messageUtils.showMessage("error", error.message, 2000);
         }).finally(() => {

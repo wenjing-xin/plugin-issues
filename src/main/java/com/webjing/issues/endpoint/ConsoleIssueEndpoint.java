@@ -147,6 +147,18 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(Issue.class))
             )
+            .DELETE("issues/{name}", this::deleteIssue,
+                builder -> builder.operationId("DeleteIssue")
+                    .description("Delete a Issue.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("name")
+                        .in(ParameterIn.PATH)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder().implementation(Issue.class))
+            )
             .build();
     }
 
@@ -208,6 +220,20 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
         return client.get(Issue.class, issueName)
             .flatMap(issue -> roleService.getCurrentUser().flatMap(curUser -> issueService.reopenIssue(issue, curUser.getName())))
             .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
+    }
+
+    private Mono<ServerResponse> deleteIssue(ServerRequest request) {
+        var name = request.pathVariable("name");
+        return client.get(Issue.class, name)
+            .flatMap(issue -> roleService.getCurrentUser()
+                .flatMap(curUser -> {
+                    if (curUser.getName().equals(issue.getSpec().getOwner())) {
+                        return issueService.deleteBy(issue);
+                    } else {
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can delete it"));
+                    }
+                }))
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
 
     @Override

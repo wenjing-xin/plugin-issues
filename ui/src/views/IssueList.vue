@@ -26,6 +26,7 @@ import { useIssueListFetch } from "@/composables/use-consoleIssue";
 import IssueEditModal from "@/components/issue/IssueEditModal.vue";
 import type { Issue, IssueLabelOptions, IssueSubject, ListedIssue } from "@/api/generated";
 import {
+  consoleIssueApiClient,
   consoleIssueLabelApiClient,
   issueApiClient,
   issueTemplateApiClient,
@@ -205,7 +206,7 @@ const handleDeleteInBatch = async () => {
     onConfirm: async () => {
       try {
         const promises = selectedIssueMessageNames.value.map((name: string) => {
-          return issueApiClient.issue.deleteIssue({
+          return consoleIssueApiClient.issue.deleteIssue({
             name: name,
           });
         });
