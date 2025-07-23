@@ -126,14 +126,8 @@ function handleDeleteComment(comment: IssueComment) {
                 </span>
               </div>
               <span class="text-sm text-gray-900 whitespace-nowrap">
-                回复
+                回复：
               </span>
-              <VTag v-bind="{theme:'primary'}" v-tooltip="comment.issueComment.spec.userAgent">
-                {{ os }} {{ browser }}
-              </VTag>
-              <VTag v-bind="{theme:'secondary'}" v-tooltip="'IP地址'" v-if="comment.issueComment.spec.ipAddress">
-                {{ comment.issueComment.spec.ipAddress }}
-              </VTag>
             </div>
             <div class="space-y-1 text-sm text-gray-900">
               <a
@@ -152,15 +146,14 @@ function handleDeleteComment(comment: IssueComment) {
                 v-html="comment?.issueComment.spec.content.html"
               ></div>
             </div>
-            <!--            <HasPermission :permissions="['system:comments:manage']">-->
-            <div class="flex items-center gap-3 text-xs">
-              <span
-                class="select-none cursor-pointer text-gray-700 hover:text-gray-900"
-              >
-                回复
-              </span>
+            <div class="inline-flex items-center gap-1.5">
+              <VTag v-bind="{theme:'primary'}" v-tooltip="comment.issueComment.spec.userAgent">
+                {{ os }} {{ browser }}
+              </VTag>
+              <VTag v-bind="{theme:'secondary'}" v-tooltip="'IP地址'" v-if="comment.issueComment.spec.ipAddress">
+                {{ comment.issueComment.spec.ipAddress }}
+              </VTag>
             </div>
-            <!--            </HasPermission>-->
           </div>
         </template>
       </VEntityField>
@@ -189,12 +182,15 @@ function handleDeleteComment(comment: IssueComment) {
         @click="handleApprove(comment.issueComment)"
         >审核</VDropdownItem
       >
+      <VDropdownItem v-permission="['plugin:issues:comment:manage']">
+        回复
+      </VDropdownItem>
+      <VDropdownDivider />
       <VDropdownItem
         v-permission="['plugin:issues:comment:manage']"
         @click="handleDeleteComment(comment.issueComment)"
         >删除</VDropdownItem
       >
-      <VDropdownDivider />
     </template>
   </VEntity>
 </template>
