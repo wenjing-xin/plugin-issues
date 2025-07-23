@@ -12,28 +12,34 @@
         </button>
         <div x-show="activeTab === 'editor'" class="piw-w-full piw-h-full piw-border-b piw-flex piw-items-center piw-justify-end
                 piw-rounded-tr-md piw-gap-x-2 piw-px-3 piw-transition-all piw-duration-500">
-
-            <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100 editor-heading-list" x-data="dropdown" @mouseenter="main.showTooltip('插入标题', $event);open();main.triggerLazyAnimation('.editor-heading-list ')"
+            <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100"
+                 x-data="dropdown" @mouseenter="main.showTooltip('插入标题', $event);open();"
                  @mouseleave="main.hideTooltip(); close();">
                 <span class="piw-icon-[ci--heading] piw-text-lg"></span>
-                <div x-show="show" class="piw-w-12 piw-absolute piw-top-7 -piw-right-2 piw-z-10 piw-bg-white piw-border piw-border-slate-200
-                piw-rounded-md piw-flex piw-flex-col piw-items-center piw-p-1 piw-divide-y piw-divide-slate-200">
-                    <div class="editor-heading t-lazy-item" @click="heading(1);close();">
+                <div x-show="show"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="transform opacity-0 scale-95"
+                     x-transition:enter-end="transform opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-100"
+                     x-transition:leave-start="transform opacity-100 scale-100"
+                     x-transition:leave-end="transform opacity-0 scale-95"
+                     class="piw-w-12 piw-absolute piw-top-7 -piw-right-2 piw-z-10 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md piw-flex piw-flex-col piw-items-center piw-p-1 piw-divide-y piw-divide-slate-200">
+                    <div class="editor-heading" @click="heading(1);close();">
                         <span class="piw-text-sm">H1</span>
                     </div>
-                    <div class="editor-heading t-lazy-item" @click="heading(2);close();">
+                    <div class="editor-heading" @click="heading(2);close();">
                         <span class="piw-text-sm">H2</span>
                     </div>
-                    <div class="editor-heading t-lazy-item" @click="heading(3);close();">
+                    <div class="editor-heading" @click="heading(3);close();">
                         <span class="piw-text-sm">H3</span>
                     </div>
-                    <div class="editor-heading t-lazy-item" @click="heading(4);close();">
+                    <div class="editor-heading" @click="heading(4);close();">
                         <span class="piw-text-sm">H4</span>
                     </div>
-                    <div class="editor-heading t-lazy-item" @click="heading(5);close();">
+                    <div class="editor-heading" @click="heading(5);close();">
                         <span class="piw-text-sm">H5</span>
                     </div>
-                    <div class="editor-heading t-lazy-item" @click="heading(6);close();">
+                    <div class="editor-heading" @click="heading(6);close();">
                         <span class="piw-text-sm">H6</span>
                     </div>
                 </div>

@@ -249,7 +249,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                         <button class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
                                 th:if="${#strings.equals(issueVO.status.state + '', 'CLOSED')}"
                                 th:disabled="${not #strings.equals(currentUser.name, issueVO.contributorVo.name)}"
-                                @click="showMessage('success', '操作成功', 3000)">重新打开</button>
+                                @click="main.reopenIssue(issueId)">重新打开</button>
                     </div>
                     <th:block th:replace="~{fragments/issue-close-comment}" />
                 </div>

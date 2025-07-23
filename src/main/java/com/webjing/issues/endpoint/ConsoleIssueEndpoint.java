@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springdoc.core.fn.builders.schema.Builder;
 import org.springdoc.webflux.core.fn.SpringdocRouteBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -26,10 +27,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.endpoint.CustomEndpoint;
 import run.halo.app.extension.GroupVersion;
 import run.halo.app.extension.ListResult;
+import run.halo.app.extension.ReactiveExtensionClient;
 
 /**
  * 控制台的 issue API
@@ -48,6 +51,8 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
     private final RoleService roleService;
 
     private final SettingConfigGetter settingConfigGetter;
+
+    private final ReactiveExtensionClient client;
 
     @Override
     public RouterFunction<ServerResponse> endpoint() {
@@ -129,6 +134,19 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                         ))
                     .response(responseBuilder().implementation(Issue.class))
                     )
+            .PUT("issues/reopen/{issueName}", this::reopenIssue,
+                builder -> builder.operationId("ReopenIssue")
+                    .description("Reopen a My Issue.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("issueName")
+                        .in(ParameterIn.PATH)
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder()
+                        .implementation(Issue.class))
+            )
             .build();
     }
 
@@ -183,6 +201,13 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                         ServerResponse.ok().bodyValue(updatedIssue)
                     )
             );
+    }
+
+    private Mono<ServerResponse> reopenIssue(ServerRequest request) {
+        String issueName = request.pathVariable("issueName");
+        return client.get(Issue.class, issueName)
+            .flatMap(issue -> roleService.getCurrentUser().flatMap(curUser -> issueService.reopenIssue(issue, curUser.getName())))
+            .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
     }
 
     @Override

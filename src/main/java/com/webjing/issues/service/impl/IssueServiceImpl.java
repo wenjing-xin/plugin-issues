@@ -193,6 +193,21 @@ public class IssueServiceImpl implements IssueService {
         return client.fetch(Issue.class, issueName).map(issue -> issue.getSpec().getContent());
     }
 
+    @Override
+    public Mono<Issue> reopenIssue(Issue issue, String reopenOwner) {
+        Issue.StateTransition stateTransition = new Issue.StateTransition();
+        Issue.IssueState oldState = issue.getStatus().getState();
+        stateTransition.setFromState(oldState);
+        stateTransition.setToState(Issue.IssueState.PROGRESS);
+        stateTransition.setTime(Instant.now());
+        stateTransition.setOperator(reopenOwner);
+        stateTransition.setComment("重新打开Issue");
+        issue.getStatus().getTransitions().add(stateTransition);
+        // 设置状态为关闭
+        issue.getStatus().setState(Issue.IssueState.PROGRESS);
+        return client.update(issue);
+    }
+
     /**
      * 关闭issue的时候发送通知
      * @param issue

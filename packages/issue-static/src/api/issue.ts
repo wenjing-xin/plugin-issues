@@ -32,3 +32,8 @@ export function closedMyIssue(issueName: string, closedComment: string){
     const urlPath = `${apiVersion}/issues/-/closed`;
     return axiosInstance.post(urlPath, {issueName,closedComment})
 }
+
+export function reopenMyIssue(issueName: string){
+    const urlPath = `${apiVersion}/issues/reopen/${issueName}`;
+    return axiosInstance.put(urlPath)
+}

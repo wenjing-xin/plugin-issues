@@ -183,6 +183,19 @@ public class UcIssueEndpoint implements CustomEndpoint {
                         ))
                     .response(responseBuilder().implementation(Issue.class))
             )
+            .PUT("issues/reopen/{issueName}", this::reopenIssue,
+                builder -> builder.operationId("ReopenIssue")
+                    .description("Reopen a My Issue.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("issueName")
+                        .in(ParameterIn.PATH)
+                        .required(true)
+                        .implementation(String.class)
+                )
+                .response(responseBuilder()
+                    .implementation(Issue.class))
+            )
             .build();
     }
 
@@ -308,6 +321,21 @@ public class UcIssueEndpoint implements CustomEndpoint {
             })
             .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
     }
+
+    private Mono<ServerResponse> reopenIssue(ServerRequest request) {
+        String issueName = request.pathVariable("issueName");
+        return client.get(Issue.class, issueName)
+            .flatMap(issue -> roleService.getCurrentUser()
+                .flatMap(curUser -> {
+                    if (curUser.getName().equals(issue.getSpec().getOwner())) {
+                        return issueService.reopenIssue(issue, curUser.getName());
+                    } else {
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can reopen it"));
+                    }
+                }))
+            .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
+    }
+
     @Override
     public GroupVersion groupVersion() {
         return GroupVersion.parseAPIVersion("uc.api.issue.webjing.com/v1alpha1");

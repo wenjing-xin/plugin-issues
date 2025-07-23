@@ -439,6 +439,47 @@ export const UcApiIssueWebjingComV1alpha1IssueApiAxiosParamCreator = function (c
             };
         },
         /**
+         * Reopen a My Issue.
+         * @param {string} issueName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        reopenIssue1: async (issueName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueName' is not null or undefined
+            assertParamExists('reopenIssue1', 'issueName', issueName)
+            const localVarPath = `/apis/uc.api.issue.webjing.com/v1alpha1/issues/reopen/{issueName}`
+                .replace(`{${"issueName"}}`, encodeURIComponent(String(issueName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Update a My Issue.
          * @param {string} name 
          * @param {Issue} issue 
@@ -604,6 +645,18 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFp = function(configuration?: C
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Reopen a My Issue.
+         * @param {string} issueName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async reopenIssue1(issueName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Issue>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.reopenIssue1(issueName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UcApiIssueWebjingComV1alpha1IssueApi.reopenIssue1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Update a My Issue.
          * @param {string} name 
          * @param {Issue} issue 
@@ -697,6 +750,15 @@ export const UcApiIssueWebjingComV1alpha1IssueApiFactory = function (configurati
          */
         listMyLabels(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiListMyLabelsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<Array<string>> {
             return localVarFp.listMyLabels(requestParameters.name, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Reopen a My Issue.
+         * @param {UcApiIssueWebjingComV1alpha1IssueApiReopenIssue1Request} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        reopenIssue1(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiReopenIssue1Request, options?: RawAxiosRequestConfig): AxiosPromise<Issue> {
+            return localVarFp.reopenIssue1(requestParameters.issueName, options).then((request) => request(axios, basePath));
         },
         /**
          * Update a My Issue.
@@ -907,6 +969,20 @@ export interface UcApiIssueWebjingComV1alpha1IssueApiListMyLabelsRequest {
 }
 
 /**
+ * Request parameters for reopenIssue1 operation in UcApiIssueWebjingComV1alpha1IssueApi.
+ * @export
+ * @interface UcApiIssueWebjingComV1alpha1IssueApiReopenIssue1Request
+ */
+export interface UcApiIssueWebjingComV1alpha1IssueApiReopenIssue1Request {
+    /**
+     * 
+     * @type {string}
+     * @memberof UcApiIssueWebjingComV1alpha1IssueApiReopenIssue1
+     */
+    readonly issueName: string
+}
+
+/**
  * Request parameters for updateMyIssue operation in UcApiIssueWebjingComV1alpha1IssueApi.
  * @export
  * @interface UcApiIssueWebjingComV1alpha1IssueApiUpdateMyIssueRequest
@@ -1020,6 +1096,17 @@ export class UcApiIssueWebjingComV1alpha1IssueApi extends BaseAPI {
      */
     public listMyLabels(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiListMyLabelsRequest = {}, options?: RawAxiosRequestConfig) {
         return UcApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).listMyLabels(requestParameters.name, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Reopen a My Issue.
+     * @param {UcApiIssueWebjingComV1alpha1IssueApiReopenIssue1Request} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UcApiIssueWebjingComV1alpha1IssueApi
+     */
+    public reopenIssue1(requestParameters: UcApiIssueWebjingComV1alpha1IssueApiReopenIssue1Request, options?: RawAxiosRequestConfig) {
+        return UcApiIssueWebjingComV1alpha1IssueApiFp(this.configuration).reopenIssue1(requestParameters.issueName, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

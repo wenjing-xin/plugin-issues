@@ -13,7 +13,8 @@
         <div x-show="activeTabIue === 'editor'" class="piw-w-full piw-h-full piw-border-b piw-flex piw-items-center piw-justify-end
                 piw-rounded-tr-md piw-gap-x-2 piw-px-3 piw-transition-all piw-duration-500">
 
-            <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100 editor-heading-list" x-data="dropdown" @mouseenter="main.showTooltip('插入标题', $event);open();main.triggerLazyAnimation('.editor-heading-list ')"
+            <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100 editor-heading-list-iue" x-data="dropdown"
+                 @mouseenter="main.showTooltip('插入标题', $event);open();main.triggerLazyAnimation('.editor-heading-list-iue ')"
                  @mouseleave="main.hideTooltip(); close();">
                 <span class="piw-icon-[ci--heading] piw-text-lg"></span>
                 <div x-show="show" class="piw-w-12 piw-absolute piw-top-7 -piw-right-2 piw-z-10 piw-bg-white piw-border piw-border-slate-200

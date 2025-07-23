@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:52969",
+    "url" : "http://localhost:64414",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -187,6 +187,33 @@
           },
           "required" : true
         },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/issues/reopen/{issueName}" : {
+      "put" : {
+        "description" : "Reopen a My Issue.",
+        "operationId" : "ReopenIssue",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "issueName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : {
           "default" : {
             "content" : {
@@ -2081,6 +2108,33 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/IssueContent"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/reopen/{issueName}" : {
+      "put" : {
+        "description" : "Reopen a My Issue.",
+        "operationId" : "ReopenIssue_1",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "issueName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
                 }
               }
             },

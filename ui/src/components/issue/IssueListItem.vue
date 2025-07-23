@@ -133,6 +133,13 @@ const onSubmitClose = async () => {
     closedVisibleModal.value = false;
   }
 };
+
+const reopenCurIssue = async (issueName:string)=> {
+  await consoleIssueApiClient.issue.reopenIssue({issueName: issueName});
+  await queryClient.invalidateQueries({ queryKey: ["issues"] });
+  Toast.success("操作成功");
+}
+
 function handleRouteToUserDetail() {}
 
 function getStatusDotState(status: string) {
@@ -312,6 +319,12 @@ function getStatusDotState(status: string) {
           @click="closedVisibleModal = true"
         >
           关闭
+        </VDropdownItem>
+        <VDropdownItem
+          v-if="issue.issue.status?.state == 'CLOSED'"
+          @click="reopenCurIssue(issue.issue.metadata.name)"
+        >
+          重新打开
         </VDropdownItem>
         <VDropdownDivider />
         <VDropdownItem type="danger" @click="handleDelete(issue)">
