@@ -25,7 +25,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                 </th:block>
             </div>
             <a th:if="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" th:href="${'/subject/' + issueSubjectInfo.name + '/issues/new'}"
-               class="piw-outline-none piw-inline-block piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8">New issue</a>
+               class="piw-outline-none piw-inline-block piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8"
+                >New issue</a>
             <button th:unless="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8" @click="issueTemplateModal = true">New issue</button>
             <!-- 模版选择   -->
             <th:block th:if="${ not #lists.isEmpty(issueSubjectInfo.issueTemplates)}">
@@ -68,12 +69,14 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                             <span class="piw-text-sm">复制链接</span>
                                         </div>
                                         <hr class="piw-w-full piw-bg-slate-200" />
-                                        <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"
-                                             @click="insertQuoteByPaste(issueRawContent);"
-                                             x-init="const issueContent = await main.getIssueContent(issueName);issueRawContent = issueContent.raw;">
-                                            <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
-                                            <span class="piw-text-sm">引用回复</span>
-                                        </div>
+                                        <th:block sec:authorize="isAuthenticated()">
+                                            <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"
+                                                 @click="insertQuoteByPaste(issueRawContent);"
+                                                 x-init="const issueContent = await main.getIssueContent(issueName);issueRawContent = issueContent.raw;">
+                                                <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
+                                                <span class="piw-text-sm">引用回复</span>
+                                            </div>
+                                        </th:block>
                                         <th:block th:if="${#strings.equals(currentUser.name, issueVO.contributorVo.name)}">
                                             <hr class="piw-w-full piw-bg-slate-200" />
                                             <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"
@@ -187,13 +190,15 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                                     <span class="piw-text-sm">复制链接</span>
                                                 </div>
                                                 <hr class="piw-w-full piw-bg-slate-200" />
-                                                <div class="issue-item-operation t-lazy-item"
-                                                     @click="quoteCommentId= commentId;insertQuoteByPaste(issueCommentRawContent)"
-                                                     x-data="{issueCommentRawContent: ''}"
-                                                     x-init="const issueCommentContent = await main.getIssueCommentContent(issueCommentName);issueCommentRawContent = issueCommentContent.raw;">
-                                                    <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
-                                                    <span class="piw-text-sm">引用回复</span>
-                                                </div>
+                                                <th:block sec:authorize="isAuthenticated()">
+                                                    <div class="issue-item-operation t-lazy-item"
+                                                         @click="quoteCommentId= commentId;insertQuoteByPaste(issueCommentRawContent)"
+                                                         x-data="{issueCommentRawContent: ''}"
+                                                         x-init="const issueCommentContent = await main.getIssueCommentContent(issueCommentName);issueCommentRawContent = issueCommentContent.raw;">
+                                                        <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
+                                                        <span class="piw-text-sm">引用回复</span>
+                                                    </div>
+                                                </th:block>
                                                 <th:block sec:authorize="isAuthenticated()" th:if="${#strings.equals(currentUser.name, issueComment.contributorVo.name)}">
                                                     <hr class="piw-w-full piw-bg-slate-200" />
                                                     <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"

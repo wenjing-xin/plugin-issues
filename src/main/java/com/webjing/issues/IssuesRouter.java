@@ -2,13 +2,14 @@ package com.webjing.issues;
 
 import com.webjing.issues.finder.IssueFinder;
 import com.webjing.issues.finder.IssueSubjectFinder;
+import com.webjing.issues.service.RoleService;
 import com.webjing.issues.service.SettingConfigGetter;
 import com.webjing.issues.vo.IssueVO;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -18,6 +19,7 @@ import run.halo.app.theme.TemplateNameResolver;
 import run.halo.app.theme.router.PageUrlUtils;
 import run.halo.app.theme.router.UrlContextListResult;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +47,8 @@ public class IssuesRouter {
     private final TemplateNameResolver templateNameResolver;
 
     private final PluginContext pluginContext;
+
+    private final RoleService roleService;
 
     @Bean
     RouterFunction<ServerResponse> issueRouterFunction() {
@@ -85,20 +89,26 @@ public class IssuesRouter {
 
     private Mono<ServerResponse> newIssueRouter(ServerRequest request){
         final var subjectName = request.pathVariable("subjectName");
-        String templateVal = request.queryParam(Constant.NEW_ISSUE_TEMPLATE_PARAM)
-            .filter(StringUtils::isNotBlank)
-            .orElse(null);
-        return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"newIssue")
-            .flatMap(templateName -> {
-                Map<String, Object> model = new HashMap<>(3);
-                model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
-                model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
-                if(StringUtils.isNotBlank(templateVal)){
-                    // 获取模板元数据信息渲染
+        return roleService.getCurrentUser()
+            .flatMap(curUser -> {
+                if("anonymousUser".equals(curUser.getName())){
+                    String loginUrl = "/login?redirect_uri=" + request.uri();
+                    return ServerResponse.status(HttpStatus.FOUND)
+                        .location(URI.create(loginUrl))
+                        .build();
+                }else {
+                    return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),
+                            "newIssue")
+                        .flatMap(templateName -> {
+                            Map<String, Object> model = new HashMap<>(3);
+                            model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
+                            model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
+                            buildCommonVariables(model);
+                            return ServerResponse.ok().render(templateName, model);
+                        });
                 }
-                buildCommonVariables(model);
-                return ServerResponse.ok().render(templateName, model);
-            });
+            }
+        );
     }
 
     private Mono<ServerResponse> handlerIssuePageFunction(ServerRequest request) {

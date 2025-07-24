@@ -151,7 +151,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
 
 
     private Mono<IssueComment> getMyIssueCommentDetail(String issueCommentName) {
-        return getCurrentUser()
+        return roleService.getCurrentUser()
             .flatMap(user -> issueCommentService.getByUsername(issueCommentName, user.getName())
                 .switchIfEmpty(
                     Mono.error(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -161,7 +161,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
     }
 
     private Mono<ServerResponse> createMyIssueComment(ServerRequest request) {
-        return getCurrentUser()
+        return roleService.getCurrentUser()
             .flatMap(user -> request.bodyToMono(IssueComment.class)
                 .flatMap(issueComment -> {
                     issueComment.getSpec().setApproved(false);
@@ -187,7 +187,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
     }
 
     private Mono<ServerResponse> updateMyIssueComment(ServerRequest request) {
-        return getCurrentUser()
+        return roleService.getCurrentUser()
             .flatMap(user -> request.bodyToMono(IssueComment.class)
                 .flatMap(issueComment -> {
                     var roles = AuthorityUtils.authoritiesToRoles(user.getAuthorities());
@@ -210,7 +210,7 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
     }
 
     private Mono<ServerResponse> listMyIssueComment(ServerRequest request) {
-        return getCurrentUser()
+        return roleService.getCurrentUser()
             .map(user -> new IssueCommentQuery(request.exchange(), user.getName()))
             .flatMap(issueCommentService::listIssueComment)
             .flatMap(listedMoments -> ServerResponse.ok().bodyValue(listedMoments));
@@ -220,11 +220,6 @@ public class UcIssueCommentEndpoint implements CustomEndpoint {
         var commentName = request.pathVariable("commentName");
         return getMyIssueCommentDetail(commentName)
             .flatMap(issueComment -> ServerResponse.ok().bodyValue(issueComment));
-    }
-
-    private Mono<Authentication> getCurrentUser() {
-        return ReactiveSecurityContextHolder.getContext()
-            .map(SecurityContext::getAuthentication);
     }
 
     @Override

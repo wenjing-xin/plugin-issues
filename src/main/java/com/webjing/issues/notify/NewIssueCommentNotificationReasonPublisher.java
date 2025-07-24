@@ -58,8 +58,8 @@ public class NewIssueCommentNotificationReasonPublisher {
 
                 if(StringUtils.isNotBlank(issueComment.getSpec().getQuoteCommentUid())){
                     // 引用的评论，调用回复通知
-                    needNotifyUsers.add(issueComment.getSpec().getOwner());
                     IssueComment originalIssueComment = client.fetch(IssueComment.class, issueComment.getSpec().getQuoteCommentUid()).get();
+                    needNotifyUsers.add(originalIssueComment.getSpec().getOwner());
                     needNotifyUsers.forEach(
                         participateUser -> newIssueReplyCommentOnIssueReasonPublisher.publishReasonBy(issue, originalIssueComment, issueComment,
                             participateUser));
