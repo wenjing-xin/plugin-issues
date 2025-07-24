@@ -48,11 +48,10 @@ public class IssueCommentReconciler  implements Reconciler<Reconciler.Request> {
             }
 
             if (addFinalizers(issueComment.getMetadata(), Set.of(FINALIZER))) {
-                if(StringUtils.isNotBlank(issueComment.getSpec().getQuoteCommentUid())){
-                    Issue issue = client.fetch(Issue.class, issueComment.getSpec().getIssueName()).get();
-                    notificationSubscriptionHelper.subscribeNewReplyCommentReasonForIssueComment(issue, issueComment);
-                    client.update(issueComment);
-                }
+                // 为所有的评论订阅新的回复评论
+                Issue issue = client.fetch(Issue.class, issueComment.getSpec().getIssueName()).get();
+                notificationSubscriptionHelper.subscribeNewReplyCommentReasonForIssueComment(issue, issueComment);
+                client.update(issueComment);
                 eventPublisher.publishEvent(new IssueCommentCreatedEvent(this, issueComment.getMetadata().getName()));
             }
             // add approved marks to the old data by default.
