@@ -116,6 +116,7 @@ public class NewIssueCommentNotificationReasonPublisher {
                     var attributes = IssueCommentCreatedReasonData.builder()
                         .issueTitle(issueTitle)
                         .issueStatus(Issue.parseIssueState(issue.getStatus().getState()))
+                        .isApproved(issueComment.getSpec().getApproved())
                         .issueCommentCreatedAt(issueComment.getMetadata().getCreationTimestamp()
                             .atZone(ZoneId.of("Asia/Shanghai"))
                             .format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm")))
