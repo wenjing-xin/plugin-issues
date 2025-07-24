@@ -19,13 +19,13 @@ import {
   VLoading,
   VEmpty,
 } from "@halo-dev/components";
-import { computed, inject, type Ref, ref } from "vue";
+import {computed, inject, provide, type Ref, ref} from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
 import IssueCommentItem from "@/components/issue/IssueCommentItem.vue";
 
 import type {
   Issue,
-  ListedIssue
+  ListedIssue, ListedIssueComment
 } from "@/api/generated";
 import {issueApiClient, consoleIssueApiClient, issueCommentApiClient} from "@/api";
 import { submitForm } from "@formkit/core";
@@ -62,6 +62,8 @@ const { issueComments, refetch, isLoading } = useIssueCommentListFetch(
   props.issue.issue.metadata.name,
   showComments,
 );
+const hoveredReply = ref<ListedIssueComment>();
+provide<Ref<ListedIssueComment | undefined>>("hoveredIssueComment", hoveredReply);
 
 const handleDelete = async (issue: ListedIssue) => {
   Dialog.warning({

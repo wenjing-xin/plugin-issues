@@ -12,10 +12,12 @@ import {
   VStatusDot
 } from "@halo-dev/components";
 import { computed, inject, type Ref } from "vue";
+
 import type { IssueComment, ListedIssueComment } from "@/api/generated";
 import { useUserAgent } from "@/composables/use-user-agent";
 import { issueCommentApiClient } from "@/api";
 import { formatDatetime, relativeTimeTo } from "@/utils/date";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const props = defineProps<{
   comment: ListedIssueComment;
@@ -24,13 +26,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   (event: "updateIssueComments"): void;
 }>();
-
+const queryClient = useQueryClient();
 const { os, browser } = useUserAgent(props.comment.issueComment.spec.userAgent);
 
-// Show hovered reply
-const hoveredIssueComment = inject<Ref<ListedIssueComment | undefined>>(
-  "hoveredIssueComment",
-);
 // Show hovered reply
 const hoveredReply = inject<Ref<ListedIssueComment | undefined>>(
   "hoveredIssueComment",
@@ -77,6 +75,7 @@ async function handleApprove(comment: IssueComment) {
   });
   Toast.success('审核成功');
   emit("updateIssueComments");
+  await queryClient.invalidateQueries({ queryKey: ["issues"] });
 }
 
 function handleDeleteComment(comment: IssueComment) {
@@ -105,7 +104,7 @@ function handleDeleteComment(comment: IssueComment) {
   <VEntity
     v-bind="$attrs"
     class="border-l border-dashed !border-gray-200"
-    :class="{ 'animate-breath': isHoveredReply }"
+    :class="{ 'animate-bounce': isHoveredReply }"
   >
     <template #start>
       <VEntityField width="100%">
@@ -194,3 +193,4 @@ function handleDeleteComment(comment: IssueComment) {
     </template>
   </VEntity>
 </template>
+
