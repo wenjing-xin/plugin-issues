@@ -51,9 +51,6 @@ spec:
     - name: issueTitle
       type: string
       description: "issue 标题"
-    - name: issueStatus
-      type: string
-      description: "issue 状态"
     - name: isApproved
       type: boolean
       description: "是否审核通过"
@@ -87,9 +84,6 @@ spec:
     - name: notifyTitle
       type: string
       description: "通知标题"
-    - name: issueStatus
-      type: string
-      description: "issue状态"
     - name: isApproved
       type: boolean
       description: "是否审核通过"

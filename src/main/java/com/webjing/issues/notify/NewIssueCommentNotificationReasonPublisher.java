@@ -59,17 +59,21 @@ public class NewIssueCommentNotificationReasonPublisher {
                 if(StringUtils.isNotBlank(issueComment.getSpec().getQuoteCommentUid())){
                     // 引用的评论，调用回复通知
                     IssueComment originalIssueComment = client.fetch(IssueComment.class, issueComment.getSpec().getQuoteCommentUid()).get();
-                    needNotifyUsers.add(originalIssueComment.getSpec().getOwner());
+                    if(!issueComment.getSpec().getOwner().equals(originalIssueComment.getSpec().getOwner())){
+                        // 引用评论的创建者不是评论者，需要通知引用评论的创建者
+                        needNotifyUsers.add(originalIssueComment.getSpec().getOwner());
+                    }
                     needNotifyUsers.forEach(
                         participateUser -> newIssueReplyCommentOnIssueReasonPublisher.publishReasonBy(issue, originalIssueComment, issueComment,
                             participateUser));
                 }else{
-                    needNotifyUsers.add(issue.getSpec().getOwner());
+                    if(!issue.getSpec().getOwner().equals(issueComment.getSpec().getOwner())){
+                        needNotifyUsers.add(issue.getSpec().getOwner()); // 创建者在自己的issue下评论不会发送通知
+                    }
                     needNotifyUsers.forEach(
                         participateUser -> newIssueCommentOnIssueReasonPublisher.publishReasonBy(issue, issueComment,
                             participateUser));
                 }
-
                 return Mono.empty();
             });
             //添加已经通知的标识
@@ -97,11 +101,11 @@ public class NewIssueCommentNotificationReasonPublisher {
             }
 
             if(issue.getSpec().getAssignees().contains(needNotifyUser)){
-                issueTitle = "你负责经办的Issue【" + issue.getSpec().getTitle() + "】下有新的评论";
+                issueTitle = "你负责经办的Issue【" + issue.getSpec().getTitle() + "（" + Issue.parseIssueState(issue.getStatus().getState()) + "）】下有新的评论";
             }else if (issue.getSpec().getOwner().equals(needNotifyUser)){
-                issueTitle = "你创建的Issue【" + issue.getSpec().getTitle() + "】下的有新的评论";
+                issueTitle = "你创建的Issue【" + issue.getSpec().getTitle() + "（" + Issue.parseIssueState(issue.getStatus().getState()) + "）】下的有新的评论";
             }else{
-                issueTitle = "你关注的Issue【" +  issue.getSpec().getTitle() + "】有新的评论";
+                issueTitle = "你关注的Issue【" +  issue.getSpec().getTitle() + "（" + Issue.parseIssueState(issue.getStatus().getState()) + "）】有新的评论";
             }
 
             var reasonSubject = Reason.Subject.builder()
@@ -115,7 +119,6 @@ public class NewIssueCommentNotificationReasonPublisher {
                 builder -> {
                     var attributes = IssueCommentCreatedReasonData.builder()
                         .issueTitle(issueTitle)
-                        .issueStatus(Issue.parseIssueState(issue.getStatus().getState()))
                         .isApproved(issueComment.getSpec().getApproved())
                         .issueCommentCreatedAt(issueComment.getMetadata().getCreationTimestamp()
                             .atZone(ZoneId.of("Asia/Shanghai"))
@@ -134,7 +137,7 @@ public class NewIssueCommentNotificationReasonPublisher {
         }
 
         @Builder
-        record IssueCommentCreatedReasonData(String issueTitle, String issueStatus, boolean isApproved, String issueCommentCreatedAt,
+        record IssueCommentCreatedReasonData(String issueTitle, boolean isApproved, String issueCommentCreatedAt,
                                       String issueCommentRawContent, String issueCommentHtmlContent, String issueCommentPermalink,
                                       String receiveOwner, String issueCommentOwner) {
         }
@@ -159,11 +162,11 @@ public class NewIssueCommentNotificationReasonPublisher {
             }
 
             if(needNotifyUser.equals(originalIssueComment.getSpec().getOwner())){
-                notifyTitle =  "你在Issue【" + issue.getSpec().getTitle() + "】下创建的评论中有新的回复";
+                notifyTitle =  "你在Issue【" + issue.getSpec().getTitle() + "（" + Issue.parseIssueState(issue.getStatus().getState()) + "）】下创建的评论中有新的回复";
             }else if(issue.getSpec().getAssignees().contains(needNotifyUser)){
-                notifyTitle = "你负责经办的Issue【" + issue.getSpec().getTitle() + "】下的评论有新的回复";
+                notifyTitle = "你负责经办的Issue【" + issue.getSpec().getTitle() + "（" + Issue.parseIssueState(issue.getStatus().getState()) + "）】下的评论有新的回复";
             }else if (issue.getSpec().getOwner().equals(needNotifyUser)){
-                notifyTitle = "你创建的Issue【" + issue.getSpec().getTitle() + "】下的评论有新的回复";
+                notifyTitle = "你创建的Issue【" + issue.getSpec().getTitle() + "（" + Issue.parseIssueState(issue.getStatus().getState()) + "）】下的评论有新的回复";
             }else{
                 notifyTitle = "你有新的回复";
             }
@@ -178,7 +181,6 @@ public class NewIssueCommentNotificationReasonPublisher {
                 builder -> {
                     var attributes = IssueReplyCommentCreatedReasonData.builder()
                         .notifyTitle(notifyTitle)
-                        .issueStatus(Issue.parseIssueState(issue.getStatus().getState()))
                         .isApproved(issueReplyComment.getSpec().getApproved())
                         .issueReplyCommentCreatedAt(issueReplyComment.getMetadata().getCreationTimestamp()
                             .atZone(ZoneId.of("Asia/Shanghai"))
@@ -199,7 +201,7 @@ public class NewIssueCommentNotificationReasonPublisher {
         }
 
         @Builder
-        record IssueReplyCommentCreatedReasonData(String notifyTitle, String issueStatus, boolean isApproved, String issueReplyCommentCreatedAt,
+        record IssueReplyCommentCreatedReasonData(String notifyTitle, boolean isApproved, String issueReplyCommentCreatedAt,
                                              String issueCommentRawContent, String issueCommentHTMLContent, String issueReplyCommentRawContent,
                                              String issueReplyCommentHTMLContent, String permalink, String receiveOwner, String issueReplyCommentOwner) {
         }
