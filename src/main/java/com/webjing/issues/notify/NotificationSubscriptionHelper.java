@@ -98,7 +98,7 @@ public class NotificationSubscriptionHelper {
      * 为issues订阅评论
      * @param identity
      */
-    void subscribeComment(UserIdentity identity) {
+     void subscribeComment(UserIdentity identity) {
         var subscriber = createSubscriber(identity);
         if (subscriber == null) {
             return;
@@ -107,6 +107,20 @@ public class NotificationSubscriptionHelper {
         interestReason.setReasonType(Constant.HAS_NEW_ISSUE_COMMENT);
         interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
         notificationCenter.subscribe(subscriber, interestReason).block();
+    }
+    /**
+     * 响应式堆里边订阅评论
+     * @param identity
+     */
+    public Mono<Void> reactiveSubscribeComment(UserIdentity identity) {
+        var subscriber = createSubscriber(identity);
+        if(subscriber == null){
+            return Mono.empty();
+        }
+        var interestReason = new Subscription.InterestReason();
+        interestReason.setReasonType(Constant.HAS_NEW_ISSUE_COMMENT);
+        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
+        return notificationCenter.subscribe(subscriber, interestReason).then();
     }
 
     /**
@@ -123,8 +137,6 @@ public class NotificationSubscriptionHelper {
         interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
         notificationCenter.subscribe(subscriber, interestReason).block();
     }
-
-
 
     Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
         var subscriber = createSubscriber(identity);

@@ -1,10 +1,33 @@
 <th:block th:fragment="issueRight(issueVO)">
     <div class="piw-space-y-2 piw-py-3">
         <p class="piw-text-sm piw-tracking-wider">经办人</p>
-        <div class="piw-flex piw-flex-wrap piw-items-center" th:if="${ not #lists.isEmpty(issueVO.spec.assignees)}" >
+        <div class="piw-flex piw-flex-wrap piw-items-center piw-gap-2" th:if="${ not #lists.isEmpty(issueVO.spec.assignees)}" >
             <th:block th:each="assign:${issueVO.spec.assignees}">
-                <th:block th:with="assignUser = ${contributorFinder.getContributor(assign)}">
-                    <img th:src="${assignUser.avatar}" th:alt="${assignUser.name}" th:title="${assignUser.name}" />
+                <th:block th:with="assignUser = ${contributorFinder.getContributor(assign)}, avatar = ${assignUser.avatar}">
+                    <th:block th:if="${ not #strings.isEmpty(avatar) }">
+                        <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200" th:src="${avatar}" draggable="false"
+                             th:alt="${name}"
+                             th:attr="x-data=|{assignUsername: '${assignUser.name}'}|"
+                             @mouseenter="main.showTooltip(assignUsername, $event)"
+                             @mouseleave="main.hideTooltip()"/>
+                    </th:block>
+                    <th:block th:if="${ #strings.isEmpty(avatar) }">
+                        <th:block th:if="${ #strings.equals(issueAvatarMode, 'default') }">
+                            <div class="piw-size-9 piw-rounded-full piw-flex piw-items-center piw-justify-center piw-bg-neutral-100 piw-border piw-border-slate-200"
+                                 th:attr="x-data=|{assignUsername: '${assignUser.name}'}|"
+                                 @mouseenter="main.showTooltip(assignUsername, $event)"
+                                 @mouseleave="main.hideTooltip()">
+                                <span class="piw-font-normal piw-text-3xl piw-text-neutral-800" th:text="${#strings.substring(assignUser.name, 0, 1)}"></span>
+                            </div>
+                        </th:block>
+                        <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
+                            <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200" src="https://weavatar.com/avatar/plugin-issues?d=wavatar"
+                                 draggable="false" th:alt="${assignUser.name}"
+                                 th:attr="x-data=|{assignUsername: '${assignUser.name}'}|"
+                                 @mouseenter="main.showTooltip(assignUsername, $event)"
+                                 @mouseleave="main.hideTooltip()"/>
+                        </th:block>
+                    </th:block>
                 </th:block>
             </th:block>
         </div>
@@ -28,7 +51,7 @@
     <div class="piw-space-y-2 piw-py-3">
         <div class="piw-flex piw-justify-between piw-items-center">
             <p class="piw-text-xs piw-tracking-wider piw-font-bold">通知</p>
-            <p class="piw-text-xs piw-tracking-wider piw-font-bold">自定义</p>
+<!--            <p class="piw-text-xs piw-tracking-wider piw-font-bold">自定义</p>-->
         </div>
         <div class="piw-flex piw-py-2 piw-items-center piw-gap-x-2 piw-justify-center piw-w-full piw-rounded-md piw-bg-slate-100/80 piw-border piw-border-slate-200
                                 hover:piw-cursor-pointer hover:piw-bg-slate-200/80">

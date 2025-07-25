@@ -34,4 +34,6 @@ public interface IssueService {
     Mono<Issue.IssueContent> getIssueContent(String issueName);
 
     Mono<Issue> reopenIssue(Issue issue, String reopenOwner);
+
+    Mono<Issue> consoleUpdateIssue(Issue issue);
 }

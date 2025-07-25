@@ -333,6 +333,13 @@ function getStatusDotState(status: string) {
         >
           重新打开
         </VDropdownItem>
+        <VDropdownItem
+          v-if="issue.issue.status?.state == 'AWAIT'"
+          v-tooltip="'设置当前Issue状态为处理中'"
+          @click="reopenCurIssue(issue.issue.metadata.name)"
+        >
+          Issue处理中
+        </VDropdownItem>
         <VDropdownDivider />
         <VDropdownItem type="danger" @click="handleDelete(issue)">
           删除

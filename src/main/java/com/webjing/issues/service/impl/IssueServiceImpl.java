@@ -38,6 +38,7 @@ import run.halo.app.notification.UserIdentity;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -245,6 +246,33 @@ public class IssueServiceImpl implements IssueService {
         // 设置状态为关闭
         issue.getStatus().setState(Issue.IssueState.PROGRESS);
         return client.update(issue);
+    }
+
+    /**
+     * console端更新issue
+     * @param issue
+     * @return
+     */
+    @Override
+    public Mono<Issue> consoleUpdateIssue(Issue issue){
+        return client.fetch(Issue.class, issue.getMetadata().getName())
+            .doOnNext(oldIssue -> {
+                // 比对下Issue的经办人
+                Set<String> oldAssignees = oldIssue.getSpec().getAssignees();
+                Set<String> newAssignees = issue.getSpec().getAssignees();
+                // 找出新增的assignees
+                if (newAssignees != null && newAssignees.size() > 0) {
+                    Set<String> addedAssignees = new HashSet<>(newAssignees);
+                    if (oldAssignees != null && oldAssignees.size() > 0) {
+                        addedAssignees.removeAll(oldAssignees);
+                    }
+                    for (String addedAssignee : addedAssignees) {
+                        // 在这里处理新增的assignee
+                        notificationSubscriptionHelper.reactiveSubscribeComment(UserIdentity.of(addedAssignee));
+                    }
+                }
+            })
+            .flatMap(oldIssue -> client.update(issue));
     }
 
     /**

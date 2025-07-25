@@ -140,8 +140,7 @@ const onSubmit = async () => {
   formState.value = cloneDeep(initIssue);
 };
 const handleUpdate = async () => {
-  const res = await issueApiClient.issue.updateIssue({
-    name: formState.value.metadata.name,
+  const res = await consoleIssueApiClient.issue.updateIssue({
     issue: formState.value,
   });
   if (res.status == 200) {
@@ -227,6 +226,27 @@ const handleReset = () => {
             validation="required"
             label="Issue模版"
             :options="issueTemplateFilterOptions"
+          />
+          <FormKit
+            v-model="formState.spec.assignees"
+            name="assignees"
+            label="设置经办人"
+            type="select"
+            multiple
+            clearable
+            searchable
+            action="/apis/api.console.halo.run/v1alpha1/users?fieldSelector=name!=anonymousUser&fieldSelector=name!=ghost"
+            :request-option="{
+              method: 'get',
+              pageField: 'page',
+              sizeField: 'size',
+              totalField: 'total',
+              itemsField: 'items',
+              labelField: 'user.spec.displayName',
+              valueField: 'user.metadata.name',
+              fieldSelectorKey: 'metadata.name',
+            }"
+            help="Issue创建者和经办人将会收到和此条Issue相关的所有通知"
           />
         </FormKit>
         <div class="space-y-2 my-2 py-2">

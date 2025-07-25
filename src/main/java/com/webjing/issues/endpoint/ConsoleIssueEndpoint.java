@@ -115,6 +115,20 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(Issue.class))
             )
+            .PUT("issues", this::updateIssue,
+                builder -> builder.operationId("UpdateIssue")
+                    .description("update a Issue.")
+                    .tag(tag)
+                    .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .content(contentBuilder()
+                            .mediaType(MediaType.APPLICATION_JSON_VALUE)
+                            .schema(Builder.schemaBuilder()
+                                .implementation(Issue.class))
+                        ))
+                    .response(responseBuilder()
+                        .implementation(Issue.class))
+            )
             .PUT("issues/closed", this::closedIssue,
                 builder -> builder.operationId("ClosedIssue")
                     .description("Closed the Issue")
@@ -178,6 +192,12 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                 return issue;
             })
             .flatMap(issueService::create)
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
+    }
+
+    private Mono<ServerResponse> updateIssue(ServerRequest serverRequest){
+        return serverRequest.bodyToMono(Issue.class)
+            .flatMap(issueService::consoleUpdateIssue)
             .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
 
