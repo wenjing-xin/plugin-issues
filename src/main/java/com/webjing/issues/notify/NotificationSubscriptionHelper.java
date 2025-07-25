@@ -93,6 +93,20 @@ public class NotificationSubscriptionHelper {
         notificationCenter.subscribe(subscriber, interestReason).block();
     }
 
+    /**
+     * 为issue依托主体订阅新issue(响应式堆中调用)
+     * @param identity
+     */
+    public Mono<Void> reactiveSubscribeNewIssue(UserIdentity identity) {
+        var subscriber = createSubscriber(identity);
+        if (subscriber == null) {
+            return Mono.empty();
+        }
+        var interestReason = new Subscription.InterestReason();
+        interestReason.setReasonType(Constant.HAS_NEW_ISSUE_ON_SUBJECT);
+        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
+        return notificationCenter.subscribe(subscriber, interestReason).then();
+    }
 
     /**
      * 为issues订阅评论

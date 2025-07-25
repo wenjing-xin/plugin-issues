@@ -4,6 +4,7 @@ import com.webjing.issues.entity.IssueSubjectStats;
 import com.webjing.issues.entity.ListedIssueSubject;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueSubject;
+import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import com.webjing.issues.query.IssueSubjectQuery;
 import com.webjing.issues.service.IssueSubjectService;
 import com.webjing.issues.service.RoleService;
@@ -20,6 +21,8 @@ import run.halo.app.extension.ListOptions;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
 import run.halo.app.extension.index.query.QueryFactory;
+import run.halo.app.notification.UserIdentity;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +41,8 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
     private final ReactiveExtensionClient client;
 
     private final RoleService roleService;
+
+    private final NotificationSubscriptionHelper notificationSubscriptionHelper;
 
     @Override
     public Mono<IssueSubject> create(IssueSubject issueSubject) {
@@ -145,6 +150,27 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
             .defaultIfEmpty(IssueSubjectStats.empty());
     }
 
+    @Override
+    public Mono<IssueSubject> updateIssueSubject(IssueSubject issueSubject) {
+        return client.fetch(IssueSubject.class, issueSubject.getMetadata().getName())
+            .doOnNext(oldIssueSubject -> {
+                // 比对下Issue主体的的参与者
+                Set<String> oldParticipateUsers = new HashSet<>(oldIssueSubject.getSpec().getParticipateUsers());
+                Set<String> newParticipateUsers = new HashSet<>(issueSubject.getSpec().getParticipateUsers());
+                // 找出新增的参与人
+                if (newParticipateUsers != null && newParticipateUsers.size() > 0) {
+                    Set<String> addedParticipateUsers = new HashSet<>(newParticipateUsers);
+                    if (oldParticipateUsers != null && oldParticipateUsers.size() > 0) {
+                        addedParticipateUsers.removeAll(oldParticipateUsers);
+                    }
+                    for (String addedAssignee : addedParticipateUsers) {
+                        // 在这里处理新增的assignee
+                        notificationSubscriptionHelper.reactiveSubscribeNewIssue(UserIdentity.of(addedAssignee));
+                    }
+                }
+            })
+            .flatMap(oldIssue -> client.update(issueSubject));
+    }
 
 
 }

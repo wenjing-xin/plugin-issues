@@ -20,4 +20,5 @@ public interface IssueSubjectService {
 
     Mono<IssueSubjectStats> fetchIssueSubjectStats(String issueSubjectName);
 
+    Mono<IssueSubject> updateIssueSubject(IssueSubject issueSubject);
 }

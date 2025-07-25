@@ -1,9 +1,15 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
-import {computed, nextTick, onMounted, ref, toRaw, watch, watchEffect} from "vue";
-import type {
-  IssueSubject, IssueTemplateOptions,
-} from "@/api/generated";
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  toRaw,
+  watch,
+  watchEffect,
+} from "vue";
+import type { IssueSubject, IssueTemplateOptions } from "@/api/generated";
 import { subjectTypeOptions } from "@/dictionary";
 import cloneDeep from "lodash.clonedeep";
 import {
@@ -47,7 +53,7 @@ const initIssueSubject: IssueSubject = {
     name: "",
   },
   spec: {
-    subjectIcon: '',
+    subjectIcon: "",
     displayName: "",
     content: {
       rawContent: "",
@@ -74,9 +80,7 @@ watchEffect(() => {
   }
 });
 
-onMounted(() => {
-  
-});
+onMounted(() => {});
 
 const isUpdateMode = computed(
   () => !!formState.value.metadata.creationTimestamp,
@@ -127,10 +131,10 @@ const onSubmit = async () => {
   formState.value = cloneDeep(initIssueSubject);
 };
 const handleUpdate = async () => {
-  const res = await issueSubjectApiClient.issueSubject.updateIssueSubject({
-    name: formState.value.metadata.name,
-    issueSubject: formState.value,
-  });
+  const res =
+    await consoleIssueSubjectApiClient.issueSubject.updateIssueSubject({
+      issueSubject: formState.value,
+    });
   if (res.status == 200) {
     Toast.success("更新成功!");
   }
@@ -152,15 +156,19 @@ const handleReset = () => {
 
 // 监听 subjectType 变化，debounce 避免频繁请求
 watch(
-  () => formState.value.spec.subjectType, 
+  () => formState.value.spec.subjectType,
   (newVal: string) => {
-    consoleIssueTemplateApiClient.issueTemplate.listIssueTemplateOptions(
-      {subjectType: newVal, subjectName: props.issueSubject?.metadata.name})
-      .then(({ data}) => {
+    consoleIssueTemplateApiClient.issueTemplate
+      .listIssueTemplateOptions({
+        subjectType: newVal,
+        subjectName: props.issueSubject?.metadata.name,
+      })
+      .then(({ data }) => {
         // @ts-ignore
-        issueTemplateFilterOptions.value = data?.issueTemplateOptions as Array<IssueTemplateOptions>;
-    });
-  }
+        issueTemplateFilterOptions.value =
+          data?.issueTemplateOptions as Array<IssueTemplateOptions>;
+      });
+  },
 );
 
 const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {};

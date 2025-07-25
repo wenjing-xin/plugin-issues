@@ -156,6 +156,49 @@ export const ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiAxiosParamCr
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * update issue subject.
+         * @param {IssueSubject} issueSubject 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateIssueSubject: async (issueSubject: IssueSubject, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'issueSubject' is not null or undefined
+            assertParamExists('updateIssueSubject', 'issueSubject', issueSubject)
+            const localVarPath = `/apis/console.api.issueSubject.webjing.com/v1alpha1/issuesubjects`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(issueSubject, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -198,6 +241,18 @@ export const ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFp = functio
             const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi.listIssueSubjects']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * update issue subject.
+         * @param {IssueSubject} issueSubject 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateIssueSubject(issueSubject: IssueSubject, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueSubject>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateIssueSubject(issueSubject, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi.updateIssueSubject']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -225,6 +280,15 @@ export const ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFactory = fu
          */
         listIssueSubjects(requestParameters: ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssueSubjectsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<ListedIssueSubjectList> {
             return localVarFp.listIssueSubjects(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.subjectType, requestParameters.subjectVisible, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * update issue subject.
+         * @param {ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiUpdateIssueSubjectRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateIssueSubject(requestParameters: ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiUpdateIssueSubjectRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueSubject> {
+            return localVarFp.updateIssueSubject(requestParameters.issueSubject, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -314,6 +378,20 @@ export interface ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssu
 }
 
 /**
+ * Request parameters for updateIssueSubject operation in ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi.
+ * @export
+ * @interface ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiUpdateIssueSubjectRequest
+ */
+export interface ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiUpdateIssueSubjectRequest {
+    /**
+     * 
+     * @type {IssueSubject}
+     * @memberof ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiUpdateIssueSubject
+     */
+    readonly issueSubject: IssueSubject
+}
+
+/**
  * ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi - object-oriented interface
  * @export
  * @class ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi
@@ -340,6 +418,17 @@ export class ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi extends Bas
      */
     public listIssueSubjects(requestParameters: ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiListIssueSubjectsRequest = {}, options?: RawAxiosRequestConfig) {
         return ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFp(this.configuration).listIssueSubjects(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.keyword, requestParameters.owner, requestParameters.subjectType, requestParameters.subjectVisible, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * update issue subject.
+     * @param {ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiUpdateIssueSubjectRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApi
+     */
+    public updateIssueSubject(requestParameters: ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiUpdateIssueSubjectRequest, options?: RawAxiosRequestConfig) {
+        return ConsoleApiIssueSubjectWebjingComV1alpha1IssueSubjectApiFp(this.configuration).updateIssueSubject(requestParameters.issueSubject, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

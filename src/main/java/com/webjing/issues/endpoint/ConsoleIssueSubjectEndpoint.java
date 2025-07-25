@@ -63,6 +63,19 @@ public class ConsoleIssueSubjectEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(IssueSubject.class))
             )
+            .PUT("issuesubjects", this::updateIssueSubject, builder ->
+                builder.operationId("UpdateIssueSubject")
+                    .description("update issue subject.")
+                    .tag(tag)
+                    .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .content(contentBuilder()
+                            .mediaType(MediaType.APPLICATION_JSON_VALUE)
+                            .schema(Builder.schemaBuilder().implementation(IssueSubject.class))
+                        ))
+                    .response(responseBuilder()
+                        .implementation(IssueSubject.class))
+            )
             .build();
     }
 
@@ -80,7 +93,18 @@ public class ConsoleIssueSubjectEndpoint implements CustomEndpoint {
     private Mono<ServerResponse> createIssueSubject(ServerRequest request) {
         return request.bodyToMono(IssueSubject.class)
             .flatMap(issueSubjectService::create)
-            .flatMap(issueTemplate -> ServerResponse.ok().bodyValue(issueTemplate));
+            .flatMap(issueSubject -> ServerResponse.ok().bodyValue(issueSubject));
+    }
+
+    /**
+     * 更新 issue 依托主体
+     * @param request
+     * @return
+     */
+    private Mono<ServerResponse> updateIssueSubject(ServerRequest request) {
+        return request.bodyToMono(IssueSubject.class)
+            .flatMap(issueSubjectService::updateIssueSubject)
+            .flatMap(issueSubject -> ServerResponse.ok().bodyValue(issueSubject));
     }
 
     @Override
