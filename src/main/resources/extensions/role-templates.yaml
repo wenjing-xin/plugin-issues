@@ -37,6 +37,9 @@ rules:
   - apiGroups: ["console.api.issue.webjing.com"]
     resources: ["issues", "labels"]
     verbs: ["create", "patch", "update", "delete", "deletecollection"]
+  - apiGroups: [ "uc.api.issue.webjing.com" ]
+    resources: [ "issuetemplates" ]
+    verbs: [ "get", "list" ]
 ---
 apiVersion: v1alpha1
 kind: Role

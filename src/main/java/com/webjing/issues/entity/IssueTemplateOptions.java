@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 public class IssueTemplateOptions {
 
-
     private List<IssueTemplateItem> issueTemplateOptions;
 
     @Data

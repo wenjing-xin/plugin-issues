@@ -1,12 +1,26 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
-import { computed, nextTick, onMounted, ref, toRaw, watchEffect } from "vue";
-import type { Issue, IssueLabelOptions, IssueTemplate } from "@/api/generated";
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  toRaw,
+  watch,
+  watchEffect,
+} from "vue";
+import type {
+  Issue,
+  IssueLabelOptions,
+  IssueTemplate,
+  TemplateField,
+} from "@/api/generated";
 import cloneDeep from "lodash.clonedeep";
 import {
-  consoleIssueApiClient, consoleIssueLabelApiClient,
-  issueApiClient,
-  issueTemplateApiClient
+  consoleIssueApiClient,
+  consoleIssueLabelApiClient,
+  issueTemplateApiClient,
+  ucIssueApiClient,
 } from "@/api";
 import { submitForm } from "@formkit/core";
 import { useRouteQuery } from "@vueuse/router";
@@ -35,6 +49,9 @@ const issueTemplateFilterOptions = ref<
   Array<{ label: string | undefined; value: string }>
 >([]);
 
+const isUpdateMode = computed(
+  () => !!formState.value.metadata.creationTimestamp,
+);
 const initIssue: Issue = {
   kind: "Issue",
   apiVersion: "issue.webjing.com/v1alpha1",
@@ -47,7 +64,7 @@ const initIssue: Issue = {
     content: {
       raw: "",
       html: "",
-      medium: []
+      medium: [],
     },
     releaseTime: new Date().toISOString(),
     owner: "",
@@ -57,7 +74,7 @@ const initIssue: Issue = {
     approved: true,
     approvedTime: "",
     subjectName: currentIssueSubjectName.value,
-    top: false
+    top: false,
   },
   status: {
     observedVersion: 0,
@@ -74,7 +91,51 @@ watchEffect(() => {
     modalTitle.value = "编辑issue";
   }
 });
-
+const issueTemplateRenderData = ref<Array<TemplateField>>();
+// 监听模板变化
+watch(
+  () => formState.value.spec.issueTemplate,
+  (newVal, oldVal) => {
+    // 处理模板清除的情况
+    if (!newVal) {
+      issueTemplateRenderData.value = [];
+      return;
+    }
+    if (newVal && oldVal != newVal) {
+      ucIssueApiClient.issue
+        .fetchIssueTemplateData({
+          templateName: newVal,
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            issueTemplateRenderData.value = res.data.components;
+            // 添加模版字段
+            if (!isUpdateMode.value) {
+              // 新增的时候增加此属性
+              res.data.annotationFields?.forEach((filed) => {
+                if (formState.value.metadata.annotations) {
+                  // 只有当字段不存在时才初始化为空字符串
+                  if (!(filed in formState.value.metadata.annotations)) {
+                    formState.value.metadata.annotations[filed] = "";
+                  }
+                } else {
+                  // 如果annotations不存在，创建它
+                  formState.value.metadata.annotations = {
+                    [filed]: "",
+                  };
+                }
+              });
+            }
+          } else {
+            issueTemplateRenderData.value = [];
+          }
+        });
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 onMounted(() => {
   handlerIssueTemplateOptions();
   handlerLabelOptions();
@@ -91,9 +152,6 @@ const handlerLabelOptions = () => {
     });
 };
 
-const isUpdateMode = computed(
-  () => !!formState.value.metadata.creationTimestamp,
-);
 const isEditorEmpty = ref<boolean>(true);
 
 const onVisibleChange = (visible: boolean) => {
@@ -119,10 +177,13 @@ const onSubmit = async () => {
     if (customFormInvalid || specFormInvalid) {
       return;
     }
-    formState.value.metadata.annotations = {
+    // 确保正确合并annotations
+    const mergedAnnotations = {
+      ...formState.value.metadata.annotations,
       ...annotations,
       ...customAnnotations,
     };
+    formState.value.metadata.annotations = mergedAnnotations;
 
     if (isUpdateMode.value) {
       await handleUpdate();
@@ -151,7 +212,7 @@ const handleUpdate = async () => {
 //处理issue template的筛选过滤条件
 const handlerIssueTemplateOptions = () => {
   issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
-    data.items.forEach((it:IssueTemplate) => {
+    data.items.forEach((it: IssueTemplate) => {
       const itemOption = { label: it.spec?.name, value: it.metadata.name };
       issueTemplateFilterOptions.value.push(itemOption);
     });
@@ -259,6 +320,122 @@ const handleReset = () => {
             tabindex="-1"
           />
         </div>
+      </div>
+    </div>
+    <div v-if="formState.spec.issueTemplate" class="py-5">
+      <div class="border-t border-gray-200"></div>
+    </div>
+    <!--  动态渲染的模版  -->
+    <div
+      v-if="formState.spec.issueTemplate"
+      class="md:grid md:grid-cols-4 md:gap-6"
+    >
+      <div class="px-3 md:col-span-1">
+        <div class="sticky top-0">
+          <span class="text-base text-gray-900 font-medium"> Issue模版 </span>
+        </div>
+      </div>
+      <div
+        class="divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y"
+      >
+        <template
+          v-for="itemComponent in issueTemplateRenderData"
+          :key="itemComponent.key"
+        >
+          <FormKit
+            v-if="
+              itemComponent.type === 'TEXT' && formState.metadata.annotations
+            "
+            v-model="formState.metadata.annotations[itemComponent.key]"
+            type="text"
+            :label="itemComponent.title"
+            :placeholder="itemComponent.placeholder"
+            :help="itemComponent.helpText"
+            :validation="
+              itemComponent.requiredMode === 'REQUIRED' ? 'required' : ''
+            "
+            :min="itemComponent.minLength"
+            :max="itemComponent.maxLength"
+          />
+          <FormKit
+            v-else-if="
+              itemComponent.type === 'SELECT' &&
+              formState.metadata.annotations &&
+              itemComponent.fieldOptions
+            "
+            v-model="formState.metadata.annotations[itemComponent.key]"
+            type="select"
+            :label="itemComponent.title"
+            :options="
+              itemComponent?.fieldOptions.map((o) => ({
+                label: o.label,
+                value: o.generateVal,
+              }))
+            "
+            clearable
+          />
+          <FormKit
+            v-else-if="
+              itemComponent.type === 'RADIO' &&
+              formState.metadata.annotations &&
+              itemComponent.fieldOptions
+            "
+            v-model="formState.metadata.annotations[itemComponent.key]"
+            type="radio"
+            :label="itemComponent.title"
+            :options="
+              itemComponent?.fieldOptions.map((o) => ({
+                label: o.label,
+                value: o.generateVal,
+              }))
+            "
+          />
+          <FormKit
+            v-else-if=" itemComponent.type === 'TEXT_AREA' &&
+              formState.metadata.annotations &&
+              itemComponent.fieldOptions"
+            v-model="formState.metadata.annotations[itemComponent.key]"
+            outer-class="w-[91%] mx-auto"
+            :disabled="true"
+            :label="itemComponent.title"
+            name="content"
+            :validation="itemComponent.requiredMode"
+            :rows="itemComponent.rows"
+            type="textarea"
+            :placeholder="itemComponent.placeholder"
+            :help="itemComponent.helpText"
+          ></FormKit>
+          <FormKit
+            v-else-if="
+              itemComponent.type === 'PASSWORD' &&
+              formState.metadata.annotations &&
+              itemComponent.fieldOptions"
+            v-model="formState.metadata.annotations[itemComponent.key]"
+            outer-class="w-[91%] mx-auto"
+            :disabled="true"
+            :label="itemComponent.title"
+            name="content"
+            :validation="itemComponent.requiredMode"
+            type="password"
+            :placeholder="itemComponent.placeholder"
+            :help="itemComponent.helpText"
+          />
+          <FormKit
+            v-else-if="
+              itemComponent.type === 'EMAIL' &&
+              formState.metadata.annotations &&
+              itemComponent.fieldOptions"
+            v-model="formState.metadata.annotations[itemComponent.key]"
+            outer-class="w-[91%] mx-auto"
+            :disabled="true"
+            :label="itemComponent.title"
+            name="content"
+            :validation="itemComponent.requiredMode"
+            type="email"
+            :placeholder="itemComponent.placeholder"
+            :help="itemComponent.helpText"
+          />
+        </template>
       </div>
     </div>
     <div class="py-5">

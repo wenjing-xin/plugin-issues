@@ -165,8 +165,7 @@ watch(
       })
       .then(({ data }) => {
         // @ts-ignore
-        issueTemplateFilterOptions.value =
-          data?.issueTemplateOptions as Array<IssueTemplateOptions>;
+        issueTemplateFilterOptions.value = data?.issueTemplateOptions as Array<IssueTemplateOptions>;
       });
   },
 );
