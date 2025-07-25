@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '依托主体', content = ~{::content}, version = ${pluginVersion}, head = null )}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '依托主体', content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
+<th:block th:fragment="head">
+    <th:block th:if="${ #strings.equals(contentStyle,'github') }">
+        <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
+    </th:block>
+</th:block>
 <th:block th:fragment="content" th:with="subjectType = ${issueSubjectVO.spec.subjectType + ''}">
     <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectVO.spec.subjectType}, title = ${issueSubjectVO.spec.displayName},
     name = ${issueSubjectVO.metadata.name}, totalIssue = ${issueSubjectVO.issueSubjectStats.awaitIssue + issueSubjectVO.issueSubjectStats.progressIssue},
@@ -106,11 +111,36 @@
             </div>
         </div>
 
-
-        <article class="piw-bg-white">
-            <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
-                 th:utext="${issueSubjectVO.spec.content.htmlContent}">
-            </div>
+        <!-- issue主体内容 -->
+        <article class="piw-bg-white piw-mb-6 !piw-max-w-none piw-break-words"
+                 th:classappend="${ #strings.equals(contentStyle, 'github') ? 'markdown-body' : 'tailwind-typography'}" >
+            <th:block th:switch="${issueSubjectVO.spec.subjectType + ''}">
+                <th:block th:case="'POST'" th:with="postVO = ${postFinder.getByName(issueSubjectVO.spec.content.uid)}">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${postVO.content.content}">
+                    </div>
+                </th:block>
+                <th:block th:case="'PROJECT'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+                <th:block th:case="'PRODUCT'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+                <th:block th:case="'TOPIC'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+                <th:block th:case="'LEAVE_MESSAGE'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+            </th:block>
         </article>
     </main>
 </th:block>

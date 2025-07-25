@@ -7,11 +7,16 @@ spec:
     - group: issuesBasic
       label: 基本设置
       formSchema:
-        - $formkit: text
-          name: title
-          label: 标题
-          value: 9
-          help: "Issue页面显示标题，用于浏览器标题或者页面标题显示"
+        - $formkit: select
+          name: contentStyle
+          label: 内容样式
+          value: "tailwind"
+          help: "用于渲染issue主体内容样式"
+          options:
+            - label: GitHub 风格
+              value: github
+            - label: Tailwind CSS Typography
+              value: tailwind
         - $formkit: number
           name: pageSize
           label: 分页大小

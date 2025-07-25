@@ -64,7 +64,6 @@ public class IssuesRouter {
         return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"issue")
             .flatMap(templateName -> {
                 Map<String, Object> model = new HashMap<>(7);
-                model.put("title",  getIssuesTitle());
                 model.put("issueVO", issueFinder.get(issueName));
                 model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                 model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
@@ -80,7 +79,6 @@ public class IssuesRouter {
         return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"subject")
             .flatMap(templateName -> {
                 Map<String, Object> model = new HashMap<>(3);
-                model.put("title",  getIssuesTitle());
                 model.put("issueSubjectVO", issueSubjectFinder.get(subjectName));
                 buildCommonVariables(model);
                 return ServerResponse.ok().render(templateName, model);
@@ -116,17 +114,12 @@ public class IssuesRouter {
         return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"issues")
             .flatMap(templateName -> {
                 Map<String, Object> model = new HashMap<>(4);
-                model.put("title",  getIssuesTitle());
                 model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                 model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
                 model.put("issueItems", issuePageList(request, subjectName));
                 buildCommonVariables(model);
                 return ServerResponse.ok().render(templateName, model);
             });
-    }
-
-    private Mono<String> getIssuesTitle(){
-        return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getTitle());
     }
 
     private Mono<String> getIssuesAvatarSetting(){
@@ -168,6 +161,10 @@ public class IssuesRouter {
         String version = pluginContext.getVersion();
         model.put("pluginVersion", version);
         model.put("issueAvatarMode", this.getIssuesAvatarSetting());
+        model.put("contentStyle", this.getContentStyle());
     }
 
+    private Mono<String> getContentStyle(){
+        return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getContentStyle());
+    }
 }

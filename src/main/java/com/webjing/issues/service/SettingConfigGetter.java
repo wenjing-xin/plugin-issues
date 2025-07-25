@@ -12,7 +12,7 @@ public interface SettingConfigGetter {
 
         public static final String GROUP = "issuesBasic";
 
-        private String title;
+        private String contentStyle;
 
         private int pageSize;
 
