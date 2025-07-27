@@ -16,7 +16,7 @@ import {
   VEntityContainer,
 } from "@halo-dev/components";
 import { useRouteQuery } from "@vueuse/router";
-import { computed, provide, type Ref, ref, onMounted, watch } from "vue";
+import { computed, provide, type Ref, ref, onMounted, watch, nextTick } from "vue";
 import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
 import { useIssueLabels } from "@/composables/use-issueLabels";
@@ -63,13 +63,12 @@ const handlerIssueSubjectOptions = () => {
     });
   });
 };
-const updateIssueLabel = ref<IssueLabel>();
+const selectedIssueLabel = ref<IssueLabel>();
 const checkedAll = ref(false);
 const selectedIssueLabelNames = ref<string[]>([]);
 provide<Ref<string[]>>("selectedIssueLabelNames", selectedIssueLabelNames);
 
 const editingModal = ref(false);
-const selectedIssueLabel = ref<IssueLabel>();
 
 const page = ref(1);
 const size = ref(20);
@@ -107,13 +106,12 @@ const onEditingModalClose = async () => {
   await refetch();
 };
 const checkSelection = (listedIssueLabel: ListedIssueLabel) => {
-  return (
-    listedIssueLabel.issueLabel.metadata.name ===
-      selectedIssueLabel.value?.metadata.name ||
-    selectedIssueLabelNames.value.includes(
+  if (listedIssueLabel.issueLabel.metadata.name) {
+    return selectedIssueLabelNames.value.includes(
       listedIssueLabel.issueLabel.metadata.name,
-    )
-  );
+    );
+  }
+  return false;
 };
 
 watch(
@@ -149,11 +147,13 @@ const handleDeleteInBatch = async () => {
 };
 
 const handlerUpdateIssueLabel = (issueLabel: IssueLabel) => {
-  updateIssueLabel.value = issueLabel;
+  nextTick(()=> {
+    selectedIssueLabel.value = issueLabel;
+  })
   editingModal.value = true;
 };
 const emitUpdateIssueLabel = () => {
-  updateIssueLabel.value = undefined;
+  selectedIssueLabel.value = undefined;
   refetch();
 };
 
@@ -164,7 +164,7 @@ onMounted(() => {
 
 <template>
   <IssueLabelEditModal
-    :issue-label="updateIssueLabel"
+    :issue-label="selectedIssueLabel"
     :visible="editingModal"
     @save="refetch()"
     @update="emitUpdateIssueLabel"

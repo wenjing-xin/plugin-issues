@@ -18,7 +18,7 @@ import {
 import UserFilterDropdown from "@/components/common/UserFilterDropdown.vue";
 import { toISODayEndOfTime } from "@/utils/date";
 import { useRouteQuery } from "@vueuse/router";
-import { computed, provide, type Ref, ref, onMounted } from "vue";
+import { computed, provide, type Ref, ref, onMounted, nextTick } from "vue";
 import DatePicker from "vue-datepicker-next";
 import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
@@ -65,7 +65,6 @@ function handleClearFilters() {
   selectedTemplate.value = undefined;
 }
 
-const updateIssueMessage = ref<Issue>();
 const checkedAll = ref(false);
 const selectedIssueMessageNames = ref<string[]>([]);
 provide<Ref<string[]>>("selectedIssueMessageNames", selectedIssueMessageNames);
@@ -224,12 +223,14 @@ const handleDeleteInBatch = async () => {
 
 //更新issue
 const handlerUpdateIssue = (issue: Issue) => {
-  updateIssueMessage.value = issue;
+  nextTick(() => {
+    selectedIssueMessage.value = issue;
+  });
   editingModal.value = true;
 };
 // 更新issue
 const handlerUpdateIssueMessage = () => {
-  updateIssueMessage.value = undefined;
+  selectedIssueMessage.value = undefined;
   refetch();
 };
 onMounted(() => {
@@ -241,7 +242,7 @@ onMounted(() => {
 <template>
   <IssueEditModal
     :visible="editingModal"
-    :issue-message="updateIssueMessage"
+    :issue-message="selectedIssueMessage"
     @save="refetch()"
     @update="handlerUpdateIssueMessage"
     @close="onEditingModalClose"

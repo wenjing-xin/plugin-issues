@@ -80,6 +80,7 @@ const onVisibleChange = (visible: boolean) => {
   emit("update:visible", visible);
   if (!visible) {
     emit("close", false);
+    handleReset();
   }
 };
 

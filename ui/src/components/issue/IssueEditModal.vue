@@ -129,6 +129,9 @@ watch(
 );
 onMounted(() => {
   handlerIssueTemplateOptions();
+  if(!isUpdateMode.value && issueTemplateFilterOptions.value.length){
+    formState.value.spec.issueTemplate = issueTemplateFilterOptions.value[0].value;
+  }
   handlerLabelOptions();
 });
 
@@ -150,10 +153,6 @@ const onVisibleChange = (visible: boolean) => {
   if (!visible) {
     emit("close", false);
     handleReset();
-  }else{
-    if(!isUpdateMode.value && issueTemplateFilterOptions.value.length){
-      formState.value.spec.issueTemplate = issueTemplateFilterOptions.value[0].value;
-    }
   }
 };
 
@@ -462,7 +461,7 @@ const handleReset = () => {
         >
           提交
         </VButton>
-        <VButton @click="onVisibleChange(false)"> 取消 </VButton>
+        <VButton @click=" onVisibleChange(false);"> 取消 </VButton>
       </VSpace>
     </template>
   </VModal>
