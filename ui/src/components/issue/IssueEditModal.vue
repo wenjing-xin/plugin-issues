@@ -175,6 +175,7 @@ const onVisibleChange = (visible: boolean) => {
   emit("update:visible", visible);
   if (!visible) {
     emit("close", false);
+    issueTemplateRenderData.value = []
     handleReset();
   }
 };
@@ -300,6 +301,7 @@ const handleReset = () => {
             :validation="
               issueTemplateFilterOptions.length > 0 ? 'required' : ''
             "
+            :disabled="isUpdateMode"
             label="Issue模版"
             :options="issueTemplateFilterOptions"
             @change="handlerTemplateChange"
