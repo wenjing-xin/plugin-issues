@@ -4,10 +4,12 @@ import static run.halo.app.extension.ExtensionUtil.addFinalizers;
 import static run.halo.app.extension.index.query.QueryFactory.equal;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import com.webjing.issues.event.IssueCreatedEvent;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
+import com.webjing.issues.search.DocumentConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ import run.halo.app.extension.controller.ControllerBuilder;
 import run.halo.app.extension.controller.Reconciler;
 import run.halo.app.extension.router.selector.FieldSelector;
 import run.halo.app.notification.NotificationCenter;
+import run.halo.app.search.event.HaloDocumentAddRequestEvent;
+import run.halo.app.search.event.HaloDocumentDeleteRequestEvent;
 
 /**
  * 功能描述
@@ -38,11 +42,17 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
 
     private final NotificationSubscriptionHelper notificationSubscriptionHelper;
 
+    private final DocumentConverter converter;
+
     @Override
     public Result reconcile(Request request) {
         client.fetch(Issue.class, request.name()).ifPresent(issue -> {
             if (ExtensionUtil.isDeleted(issue)) {
                 if (ExtensionUtil.removeFinalizers(issue.getMetadata(), Set.of(FINALIZER))) {
+                    eventPublisher.publishEvent(
+                        new HaloDocumentDeleteRequestEvent(this,
+                            List.of(converter.haloDocId(issue)))
+                    );
                     client.update(issue);
                 }
                 return;
@@ -53,6 +63,8 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
                 client.update(issue);
                 eventPublisher.publishEvent(new IssueCreatedEvent(this, issue.getMetadata().getName()));
             }
+            var haloDoc = converter.convert(issue).blockOptional().orElseThrow();
+            eventPublisher.publishEvent(new HaloDocumentAddRequestEvent(this, List.of(haloDoc)));
 
             var status = issue.getStatus();
             if (status == null) {
@@ -83,12 +95,6 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
         return builder
             .extension(issue)
             .workerCount(5)
-            .onAddMatcher(DefaultExtensionMatcher.builder(client, issue.groupVersionKind())
-                .fieldSelector(
-                    FieldSelector.of(equal(Issue.REQUIRE_SYNC_ON_STARTUP_INDEX_NAME, "true"))
-                )
-                .build()
-            )
             .build();
     }
 }
