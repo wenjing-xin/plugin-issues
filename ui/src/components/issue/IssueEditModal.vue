@@ -32,12 +32,12 @@ const props = withDefaults(
   defineProps<{
     visible: boolean;
     issueMessage?: Issue | undefined;
-    defaultTemplate: string
+    defaultTemplate: string;
   }>(),
   {
     visible: false,
     issueMessage: undefined,
-    defaultTemplate: ''
+    defaultTemplate: "",
   },
 );
 const emit = defineEmits<{
@@ -61,6 +61,7 @@ const initIssue: Issue = {
   metadata: {
     generateName: "issue-",
     name: "",
+    annotations: {},
   },
   spec: {
     title: "",
@@ -78,7 +79,7 @@ const initIssue: Issue = {
     approvedTime: "",
     subjectName: currentIssueSubjectName.value,
     top: false,
-    issueTemplate: ''
+    issueTemplate: "",
   },
   status: {
     observedVersion: 0,
@@ -93,48 +94,64 @@ watchEffect(() => {
   if (props.issueMessage) {
     formState.value = cloneDeep(props.issueMessage);
     modalTitle.value = "编辑issue";
+  } else {
+    formState.value.spec.issueTemplate = props.defaultTemplate;
   }
 });
-watch(() => formState.value.spec.issueTemplate,
-  (newVal, oldVal)=> {
-    if(newVal && newVal !== oldVal){
+watch(
+  () => formState.value.spec.issueTemplate,
+  async (newVal, oldVal) => {
+    if (newVal && newVal !== oldVal) {
+      await nextTick();
       handlerRenderTemplate(newVal);
     }
-  }, 
+  },
   {
-    immediate: true
-  }
-)
+    immediate: true,
+  },
+);
 const issueTemplateRenderData = ref<Array<TemplateField>>();
-const handlerTemplateChange =  (selectedOption: any)=> {
-  nextTick(()=> {
-    if(selectedOption.length){
-      handlerRenderTemplate(selectedOption[0].value)
-    }else{
+const handlerTemplateChange = (selectedOption: any) => {
+  nextTick(() => {
+    if (selectedOption.length) {
+      handlerRenderTemplate(selectedOption[0].value);
+    } else {
       issueTemplateRenderData.value = [];
     }
   });
-}
-const handlerRenderTemplate = (templateName:string)=> {
-  ucIssueApiClient.issue.fetchIssueTemplateData({
-      templateName: templateName,
-    })
+};
+
+const handlerRenderTemplate = (templateName: string) => {
+  ucIssueApiClient.issue
+    .fetchIssueTemplateData({ templateName })
     .then((res) => {
       if (res.status == 200) {
-        issueTemplateRenderData.value = res.data.components;
-        // 添加模版字段
+        // 新增模式下，先初始化 customAnnotations
         if (!isUpdateMode.value) {
-          res.data.annotationFields?.forEach((filed) => {
-            if (annotationsFormRef.value.customAnnotations) {
-              annotationsFormRef.value.customAnnotations[filed] = "";
+          nextTick(() => {
+            if (annotationsFormRef.value) {
+              if (!annotationsFormRef.value.customAnnotations) {
+                annotationsFormRef.value.customAnnotations = {};
+              }
+              (res.data.annotationFields || []).forEach((field) => {
+                annotationsFormRef.value.customAnnotations[field] = "";
+              });
+              // 先初始化 customAnnotations，再赋值，保证渲染时 v-model 一定有对象
+              issueTemplateRenderData.value = res.data.components;
+            } else {
+              // 如果还没挂载，延迟再试
+              setTimeout(() => handlerRenderTemplate(templateName), 50);
             }
           });
+        } else {
+          // 编辑模式直接赋值
+          issueTemplateRenderData.value = res.data.components;
         }
       } else {
         issueTemplateRenderData.value = [];
       }
     });
-}
+};
 
 onMounted(() => {
   handlerIssueTemplateOptions();
@@ -284,8 +301,8 @@ const handleReset = () => {
               issueTemplateFilterOptions.length > 0 ? 'required' : ''
             "
             label="Issue模版"
-            @change="handlerTemplateChange"
             :options="issueTemplateFilterOptions"
+            @change="handlerTemplateChange"
           />
           <FormKit
             v-model="formState.spec.assignees"
@@ -343,7 +360,8 @@ const handleReset = () => {
         >
           <FormKit
             v-if="
-              itemComponent.type === 'TEXT' && formState.metadata.annotations
+              itemComponent.type === 'TEXT' &&
+              annotationsFormRef?.customAnnotations
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             type="text"
@@ -359,7 +377,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'SELECT' &&
-              formState.metadata.annotations &&
+              annotationsFormRef?.customAnnotations &&
               itemComponent.fieldOptions
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
@@ -376,7 +394,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'RADIO' &&
-              formState.metadata.annotations &&
+              annotationsFormRef?.customAnnotations &&
               itemComponent.fieldOptions
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
@@ -392,7 +410,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'TEXT_AREA' &&
-              formState.metadata.annotations &&
+              annotationsFormRef?.customAnnotations &&
               itemComponent.fieldOptions
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
@@ -408,7 +426,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'PASSWORD' &&
-              formState.metadata.annotations &&
+              annotationsFormRef?.customAnnotations &&
               itemComponent.fieldOptions
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
@@ -423,7 +441,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'EMAIL' &&
-              formState.metadata.annotations &&
+              annotationsFormRef?.customAnnotations &&
               itemComponent.fieldOptions
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
