@@ -243,6 +243,7 @@ onMounted(() => {
   <IssueEditModal
     :visible="editingModal"
     :issue-message="selectedIssueMessage"
+    :defaultTemplate="issueTemplateFilterOptions.length ? issueTemplateFilterOptions[0].value : ''"
     @save="refetch()"
     @update="handlerUpdateIssueMessage"
     @close="onEditingModalClose"

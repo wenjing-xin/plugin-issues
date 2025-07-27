@@ -11,6 +11,7 @@ import {
 } from "vue";
 import type {
   Issue,
+  IssueLabelItem,
   IssueLabelOptions,
   IssueTemplate,
   TemplateField,
@@ -31,10 +32,12 @@ const props = withDefaults(
   defineProps<{
     visible: boolean;
     issueMessage?: Issue | undefined;
+    defaultTemplate: string
   }>(),
   {
     visible: false,
     issueMessage: undefined,
+    defaultTemplate: ''
   },
 );
 const emit = defineEmits<{
@@ -75,6 +78,7 @@ const initIssue: Issue = {
     approvedTime: "",
     subjectName: currentIssueSubjectName.value,
     top: false,
+    issueTemplate: ''
   },
   status: {
     observedVersion: 0,
@@ -91,58 +95,60 @@ watchEffect(() => {
     modalTitle.value = "编辑issue";
   }
 });
-const issueTemplateRenderData = ref<Array<TemplateField>>();
-// 监听模板变化
-watch(
-  () => formState.value.spec.issueTemplate,
-  (newVal, oldVal) => {
-    // 处理模板清除的情况
-    if (!newVal) {
-      issueTemplateRenderData.value = [];
-      return;
+watch(() => formState.value.spec.issueTemplate,
+  (newVal, oldVal)=> {
+    if(newVal && newVal !== oldVal){
+      handlerRenderTemplate(newVal);
     }
-    if (newVal && oldVal != newVal) {
-      ucIssueApiClient.issue
-        .fetchIssueTemplateData({
-          templateName: newVal,
-        })
-        .then((res) => {
-          if (res.status == 200) {
-            issueTemplateRenderData.value = res.data.components;
-            // 添加模版字段
-            if (!isUpdateMode.value) {
-              res.data.annotationFields?.forEach((filed) => {
-                if(annotationsFormRef.value.customAnnotations){
-                  annotationsFormRef.value.customAnnotations[filed] = '';
-                }
-              });
-            }
-          } else {
-            issueTemplateRenderData.value = [];
-          }
-        });
-    }
-  },
+  }, 
   {
-    immediate: true,
-  },
-);
+    immediate: true
+  }
+)
+const issueTemplateRenderData = ref<Array<TemplateField>>();
+const handlerTemplateChange =  (selectedOption: any)=> {
+  nextTick(()=> {
+    if(selectedOption.length){
+      handlerRenderTemplate(selectedOption[0].value)
+    }else{
+      issueTemplateRenderData.value = [];
+    }
+  });
+}
+const handlerRenderTemplate = (templateName:string)=> {
+  ucIssueApiClient.issue.fetchIssueTemplateData({
+      templateName: templateName,
+    })
+    .then((res) => {
+      if (res.status == 200) {
+        issueTemplateRenderData.value = res.data.components;
+        // 添加模版字段
+        if (!isUpdateMode.value) {
+          res.data.annotationFields?.forEach((filed) => {
+            if (annotationsFormRef.value.customAnnotations) {
+              annotationsFormRef.value.customAnnotations[filed] = "";
+            }
+          });
+        }
+      } else {
+        issueTemplateRenderData.value = [];
+      }
+    });
+}
+
 onMounted(() => {
   handlerIssueTemplateOptions();
-  if(!isUpdateMode.value && issueTemplateFilterOptions.value.length){
-    formState.value.spec.issueTemplate = issueTemplateFilterOptions.value[0].value;
-  }
   handlerLabelOptions();
 });
 
-const labelOptions = ref<Array<{ label: string; value: string }>>([]);
+const labelOptions = ref<Array<IssueLabelItem>>([]);
 const handlerLabelOptions = () => {
   consoleIssueLabelApiClient.issueLabel
     .listSubjectIssueLabels({ subjectName: currentIssueSubjectName.value })
     .then(({ data }) => {
       const labelOptionsData = data as IssueLabelOptions;
-      // @ts-ignore
-      labelOptions.value = labelOptionsData.issueLabelOptions;
+      labelOptions.value =
+        labelOptionsData.issueLabelOptions as Array<IssueLabelItem>;
     });
 };
 
@@ -174,9 +180,8 @@ const onSubmit = async () => {
     }
     formState.value.metadata.annotations = {
       ...annotations,
-      ...customAnnotations
+      ...customAnnotations,
     };
-    console.log(annotations, customAnnotations, formState.value.metadata.annotations);
     if (isUpdateMode.value) {
       await handleUpdate();
       emit("update", formState.value);
@@ -275,9 +280,11 @@ const handleReset = () => {
             v-model="formState.spec.issueTemplate"
             type="select"
             name="issueTemplate"
-            clearable
-            :validation="issueTemplateFilterOptions.length > 0 ? 'required' : ''"
+            :validation="
+              issueTemplateFilterOptions.length > 0 ? 'required' : ''
+            "
             label="Issue模版"
+            @change="handlerTemplateChange"
             :options="issueTemplateFilterOptions"
           />
           <FormKit
@@ -383,12 +390,13 @@ const handleReset = () => {
             "
           />
           <FormKit
-            v-else-if=" itemComponent.type === 'TEXT_AREA' &&
+            v-else-if="
+              itemComponent.type === 'TEXT_AREA' &&
               formState.metadata.annotations &&
-              itemComponent.fieldOptions"
+              itemComponent.fieldOptions
+            "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
-            :disabled="true"
             :label="itemComponent.title"
             name="content"
             :validation="itemComponent.requiredMode"
@@ -401,10 +409,10 @@ const handleReset = () => {
             v-else-if="
               itemComponent.type === 'PASSWORD' &&
               formState.metadata.annotations &&
-              itemComponent.fieldOptions"
+              itemComponent.fieldOptions
+            "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
-            :disabled="true"
             :label="itemComponent.title"
             name="content"
             :validation="itemComponent.requiredMode"
@@ -416,10 +424,10 @@ const handleReset = () => {
             v-else-if="
               itemComponent.type === 'EMAIL' &&
               formState.metadata.annotations &&
-              itemComponent.fieldOptions"
+              itemComponent.fieldOptions
+            "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
-            :disabled="true"
             :label="itemComponent.title"
             name="content"
             :validation="itemComponent.requiredMode"
@@ -461,7 +469,7 @@ const handleReset = () => {
         >
           提交
         </VButton>
-        <VButton @click=" onVisibleChange(false);"> 取消 </VButton>
+        <VButton @click="onVisibleChange(false)"> 取消 </VButton>
       </VSpace>
     </template>
   </VModal>
