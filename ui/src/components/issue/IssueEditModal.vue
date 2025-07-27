@@ -90,14 +90,22 @@ const initIssue: Issue = {
 
 const formState = ref<Issue>(cloneDeep(initIssue));
 
-watchEffect(() => {
-  if (props.issueMessage) {
-    formState.value = cloneDeep(props.issueMessage);
-    modalTitle.value = "编辑issue";
-  } else {
-    formState.value.spec.issueTemplate = props.defaultTemplate;
-  }
-});
+watch(
+  () => props.visible,
+  (visible) => {
+    if (visible) {
+      if (props.issueMessage) {
+        formState.value = cloneDeep(props.issueMessage);
+        modalTitle.value = "编辑issue";
+      } else {
+        formState.value = cloneDeep(initIssue);
+        formState.value.spec.issueTemplate = props.defaultTemplate;
+        modalTitle.value = "新增issue";
+      }
+    }
+  },
+  { immediate: true }
+);
 watch(
   () => formState.value.spec.issueTemplate,
   async (newVal, oldVal) => {
