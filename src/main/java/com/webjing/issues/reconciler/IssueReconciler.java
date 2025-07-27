@@ -1,7 +1,6 @@
 package com.webjing.issues.reconciler;
 
 import static run.halo.app.extension.ExtensionUtil.addFinalizers;
-import static run.halo.app.extension.index.query.QueryFactory.equal;
 
 import java.time.Instant;
 import java.util.List;
@@ -9,18 +8,15 @@ import java.util.Set;
 import com.webjing.issues.event.IssueCreatedEvent;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
-import com.webjing.issues.search.DocumentConverter;
+import com.webjing.issues.search.IssueDocumentConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import run.halo.app.extension.DefaultExtensionMatcher;
 import run.halo.app.extension.ExtensionClient;
 import run.halo.app.extension.ExtensionUtil;
 import run.halo.app.extension.controller.Controller;
 import run.halo.app.extension.controller.ControllerBuilder;
 import run.halo.app.extension.controller.Reconciler;
-import run.halo.app.extension.router.selector.FieldSelector;
-import run.halo.app.notification.NotificationCenter;
 import run.halo.app.search.event.HaloDocumentAddRequestEvent;
 import run.halo.app.search.event.HaloDocumentDeleteRequestEvent;
 
@@ -42,7 +38,7 @@ public class IssueReconciler implements Reconciler<Reconciler.Request> {
 
     private final NotificationSubscriptionHelper notificationSubscriptionHelper;
 
-    private final DocumentConverter converter;
+    private final IssueDocumentConverter converter;
 
     @Override
     public Result reconcile(Request request) {

@@ -24,7 +24,7 @@ import java.util.Optional;
  */
 @Component
 @RequiredArgsConstructor
-public class DocumentConverter implements Converter<Issue, Mono<HaloDocument>> {
+public class IssueDocumentConverter implements Converter<Issue, Mono<HaloDocument>> {
 
     private final ReactiveExtensionClient client;
 

@@ -28,7 +28,7 @@ public class IssueHaloDocumentsProvider implements HaloDocumentsProvider {
 
     private final ReactiveExtensionClient client;
 
-    private final DocumentConverter converter;
+    private final IssueDocumentConverter converter;
 
     @Override
     public Flux<HaloDocument> fetchAll() {
