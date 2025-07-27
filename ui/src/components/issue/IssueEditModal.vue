@@ -111,18 +111,9 @@ watch(
             issueTemplateRenderData.value = res.data.components;
             // 添加模版字段
             if (!isUpdateMode.value) {
-              // 新增的时候增加此属性
               res.data.annotationFields?.forEach((filed) => {
-                if (formState.value.metadata.annotations) {
-                  // 只有当字段不存在时才初始化为空字符串
-                  if (!(filed in formState.value.metadata.annotations)) {
-                    formState.value.metadata.annotations[filed] = "";
-                  }
-                } else {
-                  // 如果annotations不存在，创建它
-                  formState.value.metadata.annotations = {
-                    [filed]: "",
-                  };
+                if(annotationsFormRef.value.customAnnotations){
+                  annotationsFormRef.value.customAnnotations[filed] = '';
                 }
               });
             }
@@ -158,6 +149,11 @@ const onVisibleChange = (visible: boolean) => {
   emit("update:visible", visible);
   if (!visible) {
     emit("close", false);
+    handleReset();
+  }else{
+    if(!isUpdateMode.value && issueTemplateFilterOptions.value.length){
+      formState.value.spec.issueTemplate = issueTemplateFilterOptions.value[0].value;
+    }
   }
 };
 
@@ -177,14 +173,11 @@ const onSubmit = async () => {
     if (customFormInvalid || specFormInvalid) {
       return;
     }
-    // 确保正确合并annotations
-    const mergedAnnotations = {
-      ...formState.value.metadata.annotations,
+    formState.value.metadata.annotations = {
       ...annotations,
-      ...customAnnotations,
+      ...customAnnotations
     };
-    formState.value.metadata.annotations = mergedAnnotations;
-
+    console.log(annotations, customAnnotations, formState.value.metadata.annotations);
     if (isUpdateMode.value) {
       await handleUpdate();
       emit("update", formState.value);
@@ -284,7 +277,7 @@ const handleReset = () => {
             type="select"
             name="issueTemplate"
             clearable
-            validation="required"
+            :validation="issueTemplateFilterOptions.length > 0 ? 'required' : ''"
             label="Issue模版"
             :options="issueTemplateFilterOptions"
           />
@@ -346,7 +339,7 @@ const handleReset = () => {
             v-if="
               itemComponent.type === 'TEXT' && formState.metadata.annotations
             "
-            v-model="formState.metadata.annotations[itemComponent.key]"
+            v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             type="text"
             :label="itemComponent.title"
             :placeholder="itemComponent.placeholder"
@@ -363,7 +356,7 @@ const handleReset = () => {
               formState.metadata.annotations &&
               itemComponent.fieldOptions
             "
-            v-model="formState.metadata.annotations[itemComponent.key]"
+            v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             type="select"
             :label="itemComponent.title"
             :options="
@@ -380,7 +373,7 @@ const handleReset = () => {
               formState.metadata.annotations &&
               itemComponent.fieldOptions
             "
-            v-model="formState.metadata.annotations[itemComponent.key]"
+            v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             type="radio"
             :label="itemComponent.title"
             :options="
@@ -394,7 +387,7 @@ const handleReset = () => {
             v-else-if=" itemComponent.type === 'TEXT_AREA' &&
               formState.metadata.annotations &&
               itemComponent.fieldOptions"
-            v-model="formState.metadata.annotations[itemComponent.key]"
+            v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
             :disabled="true"
             :label="itemComponent.title"
@@ -410,7 +403,7 @@ const handleReset = () => {
               itemComponent.type === 'PASSWORD' &&
               formState.metadata.annotations &&
               itemComponent.fieldOptions"
-            v-model="formState.metadata.annotations[itemComponent.key]"
+            v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
             :disabled="true"
             :label="itemComponent.title"
@@ -425,7 +418,7 @@ const handleReset = () => {
               itemComponent.type === 'EMAIL' &&
               formState.metadata.annotations &&
               itemComponent.fieldOptions"
-            v-model="formState.metadata.annotations[itemComponent.key]"
+            v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
             :disabled="true"
             :label="itemComponent.title"
