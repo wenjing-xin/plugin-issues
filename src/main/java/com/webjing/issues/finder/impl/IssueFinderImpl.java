@@ -262,7 +262,20 @@ public class IssueFinderImpl implements IssueFinder {
                 .doOnNext(imv::setStats)
                 .thenReturn(imv)
             )
-            .flatMap(imv -> setOwner(issueComment.getSpec().getOwner(), imv));
+            .flatMap(imv -> setOwner(issueComment.getSpec().getOwner(), imv))
+            .flatMap(imv -> {
+                // 如果 quoteCommentUid 不为空，则获取被回复的评论及其用户信息
+                if (StringUtils.isNotBlank(issueComment.getSpec().getQuoteCommentUid())) {
+                    return client.fetch(IssueComment.class, issueComment.getSpec().getQuoteCommentUid())
+                        .flatMap(quoteIssueComment ->
+                            client.fetch(User.class, quoteIssueComment.getSpec().getOwner())
+                                .map(ContributorVO::from)
+                                .doOnNext(imv::setReplyToOwner)
+                        )
+                        .thenReturn(imv);
+                }
+                return Mono.just(imv);
+            });
     }
 
     private Mono<Stats> fetchIssueCommentStats(IssueComment issueComment) {

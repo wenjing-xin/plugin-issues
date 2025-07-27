@@ -267,7 +267,6 @@ public class IssueServiceImpl implements IssueService {
                         addedAssignees.removeAll(oldAssignees);
                     }
                     for (String addedAssignee : addedAssignees) {
-                        // 在这里处理新增的assignee
                         notificationSubscriptionHelper.reactiveSubscribeComment(UserIdentity.of(addedAssignee));
                     }
                 }

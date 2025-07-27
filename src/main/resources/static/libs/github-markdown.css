@@ -447,14 +447,7 @@
 
 .markdown-body p {
   margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.markdown-body blockquote {
-  margin: 0;
-  padding: 0 1em;
-  color: var(--color-fg-muted);
-  border-left: 0.25em solid var(--color-border-default);
+  margin-bottom: 4px;
 }
 
 .markdown-body ul,
@@ -577,7 +570,6 @@
 }
 
 .markdown-body p,
-.markdown-body blockquote,
 .markdown-body ul,
 .markdown-body ol,
 .markdown-body dl,
@@ -586,14 +578,6 @@
 .markdown-body details {
   margin-top: 0;
   margin-bottom: 16px;
-}
-
-.markdown-body blockquote > :first-child {
-  margin-top: 0;
-}
-
-.markdown-body blockquote > :last-child {
-  margin-bottom: 0;
 }
 
 .markdown-body h1 .octicon-link,
@@ -721,6 +705,29 @@
   font-size: 1em;
   font-style: italic;
   font-weight: var(--base-text-weight-semibold, 600);
+}
+
+.markdown-body blockquote {
+    margin: 1.2em 0;
+    padding-top: 1em;
+    padding-left: 1.2em;
+    padding-right: 1.2em;
+    padding-bottom: 0.3em;
+    background: #f9f9f9;
+    border-left: 4px solid #7a9cbf;
+    color: #555;
+    font-style: italic;
+    position: relative;
+}
+
+.markdown-body blockquote::before {
+    content: "“";
+    font-family: Georgia, serif;
+    font-size: 4em;
+    position: absolute;
+    left: 10px;
+    top: 4px;
+    color: #7a9cbf;
 }
 
 .markdown-body dl dd {

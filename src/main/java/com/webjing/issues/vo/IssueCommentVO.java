@@ -27,6 +27,8 @@ public class IssueCommentVO {
 
     private ContributorVO contributorVo;
 
+    private ContributorVO replyToOwner;
+
     private Stats stats;
 
     public static IssueCommentVO from(IssueComment issueComment) {

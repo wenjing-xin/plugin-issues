@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = ${issueVO.spec.title},
-content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
+content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
 <th:block th:fragment="head">
-    <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
+    <th:block th:if="${ #strings.equals(contentStyle,'github') }">
+        <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
+    </th:block>
 </th:block>
 <th:block th:fragment="content" th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}">
     <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
@@ -38,7 +40,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
              x-init="curCommentPos = window.location.href.replace(window.location.origin+window.location.pathname, '').replace('#', '')">
             <div class="lg:piw-w-[68%] piw-w-full" x-data="issueEditor">
                 <!--  初始化issue编辑器  -->
-                <div class="piw-w-full" th:attr="x-data=|{issueLink: '${issueVO.status.permalink}', issueName: '${issueVO.metadata.name}'}|">
+                <div class="piw-w-full" th:attr="x-data=|{issueLink: '${issueVO.status.permalink}', issueName: '${issueVO.metadata.name}', hoverReplyCommentId: ''}|">
                     <!--  原有的issue信息  -->
                     <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full">
                         <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block">
@@ -138,7 +140,9 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                         </div>
                                     </th:block>
                                 </div>
-                                <div x-show="!editIssue" class="markdown-body piw-text-sm piw-my-3" th:utext="${issueVO.spec.content.html}"></div>
+                                <div x-show="!editIssue" class="piw-text-sm piw-my-3 !piw-max-w-none piw-break-words"
+                                     th:classappend="${ #strings.equals(contentStyle, 'github') ? 'markdown-body' : 'tailwind-typography'}"
+                                     th:utext="${issueVO.spec.content.html}"></div>
                                 <div class="piw-w-full piw-p-1 piw-space-y-3" x-show="editIssue" x-data="issueUpdateEditor(false, issueId)"
                                 x-effect="if(editIssue){await fetchEditData();}">
                                     <th:block th:replace="~{fragments/IssueUpdateEditor}" />
@@ -158,21 +162,30 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     </div>
                     <!-- issue 评论数据  -->
                     <th:block th:if="${ not #lists.isEmpty(issueComments)}" th:each="issueComment : ${issueComments}">
-                        <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}', issueCommentName: '${issueComment.metadata.name}', showEdit:false}|" :id="commentId">
+                        <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}', issueCommentName: '${issueComment.metadata.name}', showEdit:false, replyCommentId: '${issueComment.spec.quoteCommentUid}'}|"
+                             :id="commentId">
                             <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block lg:piw-pt-4">
                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
                             </div>
                             <div class="piw-w-full">
                                 <div class="piw-h-4 piw-w-0.5 piw-bg-slate-300/80 piw-ml-6"></div>
-                                <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200"
-                                     :class="{'!piw-border-indigo-500 !piw-border-2': curCommentPos != '' && curCommentPos === commentId}">
+                                <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200 piw-transition-all piw-duration-500"
+                                     :class="{'!piw-border-indigo-500 !piw-border-2': curCommentPos != '' && curCommentPos === commentId, 'piw-animate-bounce': hoverReplyCommentId === commentId }">
                                     <div x-show="!showEdit" class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
                                         <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2" x-data="dateUtils">
                                             <div class="lg:piw-hidden">
                                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
                                             </div>
                                             <span class="piw-text-sm" th:text="${issueComment.contributorVo.name}"></span>
-                                            <span class="piw-text-sm piw-text-neutral-500"></span>
+                                            <th:block th:if="${not #strings.isEmpty(issueComment.replyToOwner)}">
+                                                <p class="piw-inline-flex piw-items-center piw-gap-x-2 piw-text-sm">
+                                                    <span class="piw-text-neutral-500">回复</span>
+                                                    <span class="piw-text-indigo-500 hover:piw-text-indigo-600 piw-font-medium piw-transition-all piw-duration-500 piw-cursor-pointer"
+                                                          th:text="${issueComment.replyToOwner.name}"
+                                                    @mouseenter="hoverReplyCommentId = replyCommentId;"
+                                                    @mouseleave="hoverReplyCommentId = ''"></span>
+                                                </p>
+                                            </th:block>
                                             <p class="piw-inline-flex piw-items-center piw-gap-x-1" th:attr="x-data=|{createTime: '${issueComment.metadata.creationTimestamp}'}|">
                                                 <span class="piw-text-sm">创建于</span>
                                                 <span class="piw-text-sm" x-text="relativeTimeTo(createTime)"></span>
@@ -211,8 +224,9 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="piw-w-full piw-p-3" x-show="!showEdit">
-                                        <div class="markdown-body !piw-text-sm" th:utext="${issueComment.spec.content.html}"></div>
+                                    <div class="piw-w-full piw-p-3 !piw-max-w-none piw-break-words" x-show="!showEdit"
+                                         th:classappend="${ #strings.equals(contentStyle, 'github') ? 'markdown-body' : 'tailwind-typography'}">
+                                        <div class="piw-text-sm" th:utext="${issueComment.spec.content.html}"></div>
                                     </div>
                                     <div class="piw-w-full piw-p-2 piw-space-y-3" x-show="showEdit" x-data="issueUpdateEditor(true, commentId)"
                                          x-effect="if(showEdit){await fetchEditData();}">
