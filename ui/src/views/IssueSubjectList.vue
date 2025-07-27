@@ -21,7 +21,6 @@ import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
 import { useIssueSubjectListFetch } from "@/composables/use-consoleIssue";
 import type {
-  Issue,
   IssueSubject,
   IssueSubjectSpecSubjectTypeEnum,
   IssueSubjectSpecSubjectVisibleEnum,
@@ -56,7 +55,6 @@ const handleClearFilters = () => {
   selectedSubjectVisible.value = undefined;
 };
 
-const updateIssueSubject = ref<IssueSubject>();
 const checkedAll = ref(false);
 const selectedIssueSubjectNames = ref<string[]>([]);
 provide<Ref<string[]>>("selectedIssueSubjectNames", selectedIssueSubjectNames);
@@ -66,7 +64,7 @@ const issueTemplateFilterOptions = ref<
 >([]);
 
 const editingModal = ref(false);
-const selectedIssueSubject = ref<Issue>();
+const selectedIssueSubject = ref<IssueSubject>();
 
 const page = ref(1);
 const size = ref(20);
@@ -115,13 +113,12 @@ const onEditingModalClose = async () => {
   await refetch();
 };
 const checkSelection = (listedIssueSubject: ListedIssueSubject) => {
-  return (
-    listedIssueSubject.issueSubject.metadata.name ===
-      selectedIssueSubject.value?.metadata.name ||
-    selectedIssueSubjectNames.value.includes(
+  if (listedIssueSubject.issueSubject.metadata.name) {
+    return selectedIssueSubjectNames.value.includes(
       listedIssueSubject.issueSubject.metadata.name,
-    )
-  );
+    );
+  }
+  return false;
 };
 
 watch(
@@ -157,11 +154,11 @@ const handleDeleteInBatch = async () => {
 };
 
 const handlerUpdateIssueSubject = (issueSubject: ListedIssueSubject) => {
-  updateIssueSubject.value = issueSubject.issueSubject;
+  selectedIssueSubject.value = issueSubject.issueSubject;
   editingModal.value = true;
 };
 const emitUpdateIssueSubject = () => {
-  updateIssueSubject.value = undefined;
+  selectedIssueSubject.value = undefined;
   refetch();
 };
 
@@ -172,7 +169,7 @@ onMounted(() => {
 
 <template>
   <IssueSubjectEditModal
-    :issue-subject="updateIssueSubject"
+    :issue-subject="selectedIssueSubject"
     :visible="editingModal"
     @save="refetch()"
     @update="emitUpdateIssueSubject"
