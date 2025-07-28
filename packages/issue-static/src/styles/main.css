@@ -86,7 +86,7 @@ ul {
 }
 
 .issue-wrapper-stats{
-    @apply piw-inline-block piw-inline-flex piw-items-center piw-p-1.5 piw-gap-x-3
+    @apply piw-inline-block piw-inline-flex piw-items-center piw-p-1.5 piw-gap-x-1.5
 }
 .issue-wrapper-stats-num {
     @apply piw-p-1 piw-min-w-8 piw-rounded-xl piw-text-xs piw-bg-slate-300/55 piw-text-center

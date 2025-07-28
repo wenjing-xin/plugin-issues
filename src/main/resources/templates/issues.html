@@ -27,16 +27,19 @@ content = ~{::content}, version = ${pluginVersion}, head = null)}">
 
         <div class="piw-rounded-md piw-bg-slate-100 piw-border piw-border-slate-200" x-show="!searchResShow">
             <div class="piw-w-full piw-px-3 piw-py-1.5 piw-inline-flex piw-justify-between piw-items-center piw-gap-x-3 piw-border-b piw-border-neutral-200">
-                <div class="piw-inline-flex piw-gap-x-3">
-                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues'}">
+                <div class="piw-inline-flex piw-gap-x-3" x-data="{curIssueState: main.getSpecialParam('issueState')}">
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues'}"
+                    :class="{'piw-rounded-full piw-border piw-border-slate-300/80 piw-px-3': curIssueState == ''}">
                         <span class="piw-text-sm piw-font-bold">处理中</span>
                         <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.progressIssue}"></span>
                     </a>
-                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=AWAIT'}">
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=AWAIT'}"
+                       :class="{'piw-rounded-full piw-border piw-border-slate-300/80 piw-px-3': curIssueState == 'AWAIT'}">
                         <span class="piw-text-sm piw-font-bold">等待中</span>
                         <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.awaitIssue}"></span>
                     </a>
-                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=CLOSED'}">
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=CLOSED'}"
+                       :class="{'piw-rounded-full piw-border piw-border-slate-300/80 piw-px-3': curIssueState == 'CLOSED'}">
                         <span class="piw-text-sm piw-font-bold">已关闭</span>
                         <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.closedIssue}"></span>
                     </a>
