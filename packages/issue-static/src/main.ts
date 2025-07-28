@@ -12,7 +12,14 @@ import issueEditor from "./alpine-data/issue-editor";
 import issueUpdateEditor from "./alpine-data/issue-update-editor";
 import issueSubmit from "./alpine-data/issue-submit";
 import {IssueComment, IssueCommentContent, IssueContent} from "./types";
-import {createIssueComment, fetchIssueContent, fetchIssueCommentContent, closedMyIssue, reopenMyIssue} from "./api";
+import {
+    createIssueComment,
+    fetchIssueContent,
+    fetchIssueCommentContent,
+    closedMyIssue,
+    reopenMyIssue,
+    searchIssue
+} from "./api";
 
 window.Alpine = Alpine;
 Alpine.data("dropdown", dropdown);
@@ -537,4 +544,14 @@ export async function reopenIssue(issueName:string){
     }else{
         messageUtils.showMessage("error", "操作失败", 1500);
     }
+}
+
+export async function searchIssueByKeyword(keyword:string){
+    const result = await searchIssue(keyword);
+    if(result.status == 200){
+        return result.data;
+    }else {
+        return []
+    }
+    console.log(result.data)
 }

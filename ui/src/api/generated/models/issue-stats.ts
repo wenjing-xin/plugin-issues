@@ -31,6 +31,12 @@ export interface IssueStats {
      * @type {number}
      * @memberof IssueStats
      */
+    'awaitApproveIssueComment'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof IssueStats
+     */
     'downvote'?: number;
     /**
      * 

@@ -169,11 +169,15 @@ public class IssueServiceImpl implements IssueService {
             .map(comments -> {
                 int totalComment = comments.size();
                 long approvedComment = comments.stream()
+                    .filter(comment -> Boolean.TRUE.equals(comment.getSpec().getApproved()))
+                    .count();
+                long awaitApprovedComment = comments.stream()
                     .filter(comment -> Boolean.FALSE.equals(comment.getSpec().getApproved()))
                     .count();
                 return IssueStats.builder()
                     .totalIssueComment(totalComment)
                     .approvedIssueComment((int) approvedComment)
+                    .awaitApproveIssueComment((int) awaitApprovedComment)
                     .build();
             });
 
@@ -183,10 +187,12 @@ public class IssueServiceImpl implements IssueService {
                 IssueStats counterStats = tuple.getT1();
                 IssueStats commentStats = tuple.getT2();
                 return IssueStats.builder()
+                    .visit(counterStats.getVisit())
                     .upvote(counterStats.getUpvote())
                     .downvote(counterStats.getDownvote())
                     .totalIssueComment(commentStats.getTotalIssueComment())
                     .approvedIssueComment(commentStats.getApprovedIssueComment())
+                    .awaitApproveIssueComment(commentStats.getAwaitApproveIssueComment())
                     .build();
             });
     }

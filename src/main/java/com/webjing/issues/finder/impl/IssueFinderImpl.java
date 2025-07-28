@@ -30,6 +30,7 @@ import run.halo.app.core.extension.Counter;
 import run.halo.app.core.extension.User;
 import run.halo.app.extension.*;
 import run.halo.app.extension.index.query.Query;
+import run.halo.app.extension.index.query.QueryFactory;
 import run.halo.app.extension.router.selector.FieldSelector;
 import run.halo.app.theme.finders.Finder;
 import java.nio.charset.StandardCharsets;
@@ -296,17 +297,52 @@ public class IssueFinderImpl implements IssueFinder {
             .thenReturn(issueCommentVO);
     }
 
-    private Mono<IssueStats> fetchIssueStats(IssueVO issueMessageVo) {
-        String name = issueMessageVo.getMetadata().getName();
-        return client.fetch(Counter.class, MeterUtils.nameOf(Issue.class, name))
+    private Mono<IssueStats> fetchIssueStats(IssueVO issueVo) {
+        String issueName = issueVo.getMetadata().getName();
+
+        // 保留原有 Counter 查询，用于 upvote 和 downvote
+        Mono<IssueStats> counterStatsMono = client.fetch(Counter.class, MeterUtils.nameOf(Issue.class, issueName))
             .map(counter -> IssueStats.builder()
                 .visit(counter.getVisit())
                 .upvote(counter.getUpvote())
                 .downvote(counter.getDownvote())
-                .totalIssueComment(counter.getTotalComment())
-                .approvedIssueComment(counter.getApprovedComment())
                 .build())
-            .defaultIfEmpty(IssueStats.empty());
+            .defaultIfEmpty(IssueStats.builder().upvote(0).downvote(0).build());
+
+        // 新增 IssueComment 查询，用于统计评论
+        Mono<IssueStats> commentStatsMono = client.listAll(IssueComment.class, ListOptions.builder()
+                    .fieldQuery(QueryFactory.equal("spec.issueName", issueName)).build(),
+                Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
+            .collectList()
+            .map(comments -> {
+                int totalComment = comments.size();
+                long approvedComment = comments.stream()
+                    .filter(comment -> Boolean.TRUE.equals(comment.getSpec().getApproved()))
+                    .count();
+                long awaitApprovedComment = comments.stream()
+                    .filter(comment -> Boolean.FALSE.equals(comment.getSpec().getApproved()))
+                    .count();
+                return IssueStats.builder()
+                    .totalIssueComment(totalComment)
+                    .approvedIssueComment((int) approvedComment)
+                    .awaitApproveIssueComment((int) awaitApprovedComment)
+                    .build();
+            });
+
+        // 合并两个结果
+        return Mono.zip(counterStatsMono, commentStatsMono)
+            .map(tuple -> {
+                IssueStats counterStats = tuple.getT1();
+                IssueStats commentStats = tuple.getT2();
+                return IssueStats.builder()
+                    .visit(counterStats.getVisit())
+                    .upvote(counterStats.getUpvote())
+                    .downvote(counterStats.getDownvote())
+                    .totalIssueComment(commentStats.getTotalIssueComment())
+                    .approvedIssueComment(commentStats.getApprovedIssueComment())
+                    .awaitApproveIssueComment(commentStats.getAwaitApproveIssueComment())
+                    .build();
+            });
     }
 
     int pageNullSafe(Integer page) {

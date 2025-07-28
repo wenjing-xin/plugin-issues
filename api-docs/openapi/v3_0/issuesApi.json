@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:31284",
+    "url" : "http://localhost:61808",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -3173,6 +3173,10 @@
         "type" : "object",
         "properties" : {
           "approvedIssueComment" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "awaitApproveIssueComment" : {
             "type" : "integer",
             "format" : "int32"
           },

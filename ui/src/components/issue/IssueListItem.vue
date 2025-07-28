@@ -224,14 +224,14 @@ function getStatusDotState(status: string) {
                 点赞：{{ issue.issueStats.upvote }}
               </span>
               <span class="text-xs text-gray-500"
-                >评论数：{{ issue.issueStats.totalIssueComment }}</span
+                >总评论数：{{ issue.issueStats.totalIssueComment }}</span
               >
               <span class="text-xs text-gray-500" 
-                    v-if="issue.issueStats.approvedIssueComment && issue.issueStats.approvedIssueComment > 0"
+                    v-if="issue.issueStats.awaitApproveIssueComment && issue.issueStats.awaitApproveIssueComment > 0"
                     @click="showComments = true"
               >
                  <VStatusDot
-                   v-bind="{ state: 'warning', text: '待审核评论：' + issue.issueStats?.approvedIssueComment, animate: true }"
+                   v-bind="{ state: 'warning', text: '待审核评论：' + issue.issueStats?.awaitApproveIssueComment, animate: true }"
                  />
               </span>
               <span

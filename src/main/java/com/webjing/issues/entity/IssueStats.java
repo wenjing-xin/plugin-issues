@@ -23,6 +23,8 @@ public class IssueStats {
 
     private Integer approvedIssueComment;
 
+    private Integer awaitApproveIssueComment;
+
     public static IssueStats empty() {
         return IssueStats.builder()
             .visit(0)
@@ -30,6 +32,7 @@ public class IssueStats {
             .downvote(0)
             .totalIssueComment(0)
             .approvedIssueComment(0)
+            .awaitApproveIssueComment(0)
             .build();
     }
 
