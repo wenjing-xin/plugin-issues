@@ -70,9 +70,13 @@ public class IssueFinderImpl implements IssueFinder {
     }
 
     @Override
-    public Mono<ListResult<IssueVO>> list(Integer page, Integer size, String subjectName) {
+    public Mono<ListResult<IssueVO>> list(Integer page, Integer size, String subjectName, String issueState) {
+        var query = all();
+        if (StringUtils.isNoneBlank(issueState)) {
+            query = and(query, equal("status.state", issueState));
+        }
         var pageRequest = PageRequestImpl.of(pageNullSafe(page), sizeNullSafe(size), defaultSort());
-        return pageIssues(null, pageRequest, subjectName);
+        return pageIssues(FieldSelector.of(query), pageRequest, subjectName);
     }
 
     @Override

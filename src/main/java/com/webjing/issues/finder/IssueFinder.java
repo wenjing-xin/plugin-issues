@@ -28,7 +28,7 @@ public interface IssueFinder {
      * @param size page size.
      * @return a mono of list result.
      */
-    Mono<ListResult<IssueVO>> list(Integer page, Integer size, String subjectName);
+    Mono<ListResult<IssueVO>> list(Integer page, Integer size, String subjectName, String issueState);
 
     /**
      * List issues by label.

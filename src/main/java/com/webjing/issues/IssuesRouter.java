@@ -135,10 +135,11 @@ public class IssuesRouter {
     private Mono<UrlContextListResult<IssueVO>> issuePageList(ServerRequest request, String subjectName) {
         String path = request.path();
         int pageNum = pageNumInPathVariable(request);
+        String issueState = request.queryParam("issueState").orElse("PROGRESS");
         return settingConfigGetter.getIssuesBasic()
             .map(SettingConfigGetter.IssuesBasic::getPageSize)
             .defaultIfEmpty(10)
-            .flatMap(pageSize -> issueFinder.list(pageNum, pageSize, subjectName)
+            .flatMap(pageSize -> issueFinder.list(pageNum, pageSize, subjectName, issueState)
                 .map(list -> new UrlContextListResult.Builder<IssueVO>()
                     .listResult(list)
                     .nextUrl(PageUrlUtils.nextPageUrl(path, totalPage(list)))
