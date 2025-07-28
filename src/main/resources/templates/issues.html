@@ -28,15 +28,15 @@ content = ~{::content}, version = ${pluginVersion}, head = null)}">
         <div class="piw-rounded-md piw-bg-slate-100 piw-border piw-border-slate-200" x-show="!searchResShow">
             <div class="piw-w-full piw-px-3 piw-py-1.5 piw-inline-flex piw-justify-between piw-items-center piw-gap-x-3 piw-border-b piw-border-neutral-200">
                 <div class="piw-inline-flex piw-gap-x-3">
-                    <a class="issue-wrapper-stats" th:href="${'#'}">
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues'}">
                         <span class="piw-text-sm piw-font-bold">处理中</span>
                         <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.progressIssue}"></span>
                     </a>
-                    <a class="issue-wrapper-stats" th:href="${'#'}">
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=AWAIT'}">
                         <span class="piw-text-sm piw-font-bold">等待中</span>
                         <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.awaitIssue}"></span>
                     </a>
-                    <a class="issue-wrapper-stats" th:href="${'#'}">
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=CLOSED'}">
                         <span class="piw-text-sm piw-font-bold">已关闭</span>
                         <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.closedIssue}"></span>
                     </a>
