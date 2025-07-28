@@ -208,7 +208,7 @@ onMounted(() => {
                 </div>
                 <div class="w-full flex flex-1 sm:w-auto">
                   <VSpace v-if="selectedIssueSubjectNames.length > 0">
-                    <VButton type="danger" @click="handleDeleteInBatch">
+                    <VButton type="danger" @click="handleDeleteInBatch" v-permission="['plugin:issues:manage']">
                       删除
                     </VButton>
                   </VSpace>

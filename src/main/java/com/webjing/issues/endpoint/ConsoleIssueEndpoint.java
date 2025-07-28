@@ -245,14 +245,7 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
     private Mono<ServerResponse> deleteIssue(ServerRequest request) {
         var name = request.pathVariable("name");
         return client.get(Issue.class, name)
-            .flatMap(issue -> roleService.getCurrentUser()
-                .flatMap(curUser -> {
-                    if (curUser.getName().equals(issue.getSpec().getOwner())) {
-                        return issueService.deleteBy(issue);
-                    } else {
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can delete it"));
-                    }
-                }))
+            .flatMap(issue -> issueService.deleteBy(issue))
             .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
 

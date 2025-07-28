@@ -31,6 +31,7 @@ public class Issue extends AbstractExtension {
     @Schema(requiredMode = REQUIRED)
     private IssueSpec spec;
 
+    @Schema(requiredMode = REQUIRED)
     private IssueStatus status;
 
     @Data
@@ -73,6 +74,7 @@ public class Issue extends AbstractExtension {
     @Data
     public static class IssueStatus {
 
+        @Schema(description = "当前状态", requiredMode = REQUIRED)
         private IssueState state =  IssueState.AWAIT;
 
         private String permalink;

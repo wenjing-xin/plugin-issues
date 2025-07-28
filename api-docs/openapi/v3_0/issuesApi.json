@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:61808",
+    "url" : "http://localhost:56276",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -2655,7 +2655,7 @@
         }
       },
       "Issue" : {
-        "required" : [ "apiVersion", "kind", "metadata", "spec" ],
+        "required" : [ "apiVersion", "kind", "metadata", "spec", "status" ],
         "type" : "object",
         "properties" : {
           "apiVersion" : {

@@ -80,69 +80,6 @@ public class IssuesPlugin extends BasePlugin {
             );
         });
 
-        schemeManager.register(Issue.class, indexSpecs -> {
-            indexSpecs.add(new IndexSpec()
-                .setName("spec.title")
-                .setIndexFunc(simpleAttribute(Issue.class,
-                    issue -> issue.getSpec().getTitle())
-                )
-            );
-            indexSpecs.add(new IndexSpec()
-                .setName("spec.owner")
-                .setIndexFunc(simpleAttribute(Issue.class,
-                    issue -> issue.getSpec().getOwner())
-                )
-            );
-            indexSpecs.add(new IndexSpec()
-                .setName("spec.labels")
-                .setIndexFunc(multiValueAttribute(Issue.class, issue -> {
-                    var labels = issue.getSpec().getLabels();
-                    return labels == null ? Set.of() : labels;
-                }))
-            );
-            indexSpecs.add(new IndexSpec()
-                .setName("spec.releaseTime")
-                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
-                    var releaseTime = issue.getSpec().getReleaseTime();
-                    return releaseTime == null ? null : releaseTime.toString();
-                }))
-            );
-            indexSpecs.add(new IndexSpec()
-                .setName("spec.approved")
-                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
-                    var approved = issue.getSpec().getApproved();
-                    return approved == null ? null : approved.toString();
-                }))
-            );
-            indexSpecs.add(new IndexSpec()
-                .setName(Issue.REQUIRE_SYNC_ON_STARTUP_INDEX_NAME)
-                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
-                    var observedVersion = Optional.ofNullable(issue.getStatus())
-                        .map(Issue.IssueStatus::getObservedVersion)
-                        .orElse(-1L);
-                    if (observedVersion < issue.getMetadata().getVersion()) {
-                        return BooleanUtils.TRUE;
-                    }
-                    // don't care about the false case
-                    return null;
-                }))
-            );
-            indexSpecs.add(new IndexSpec()
-                .setName("spec.issueTemplate")
-                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
-                    var issueTemplate = issue.getSpec().getIssueTemplate();
-                    return issueTemplate == null ? null : issueTemplate.toString();
-                }))
-            );
-            indexSpecs.add(new IndexSpec()
-                .setName("spec.subjectName")
-                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
-                    var subjectName = issue.getSpec().getSubjectName();
-                    return subjectName == null ? null : subjectName.toString();
-                }))
-            );
-        });
-
         schemeManager.register(IssueLabel.class, indexSpecs -> {
             indexSpecs.add(new IndexSpec()
                 .setName("spec.labelName")
@@ -242,14 +179,89 @@ public class IssuesPlugin extends BasePlugin {
                 )
             );
         });
+        schemeManager.register(Issue.class, indexSpecs -> {
+            indexSpecs.add(new IndexSpec()
+                .setName("status.state")
+                .setIndexFunc(simpleAttribute(Issue.class,
+                    issue ->  {
+                        if(issue.getStatus() == null){
+                            return null;
+                        }else{
+                            return  issue.getStatus().getState() != null ? issue.getStatus().getState().name() : null;
+                        }
+                    })
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.title")
+                .setIndexFunc(simpleAttribute(Issue.class,
+                    issue -> issue.getSpec().getTitle())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.owner")
+                .setIndexFunc(simpleAttribute(Issue.class,
+                    issue -> issue.getSpec().getOwner())
+                )
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.labels")
+                .setIndexFunc(multiValueAttribute(Issue.class, issue -> {
+                    var labels = issue.getSpec().getLabels();
+                    return labels == null ? Set.of() : labels;
+                }))
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.releaseTime")
+                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
+                    var releaseTime = issue.getSpec().getReleaseTime();
+                    return releaseTime == null ? null : releaseTime.toString();
+                }))
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.approved")
+                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
+                    var approved = issue.getSpec().getApproved();
+                    return approved == null ? null : approved.toString();
+                }))
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName(Issue.REQUIRE_SYNC_ON_STARTUP_INDEX_NAME)
+                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
+                    var observedVersion = Optional.ofNullable(issue.getStatus())
+                        .map(Issue.IssueStatus::getObservedVersion)
+                        .orElse(-1L);
+                    if (observedVersion < issue.getMetadata().getVersion()) {
+                        return BooleanUtils.TRUE;
+                    }
+                    // don't care about the false case
+                    return null;
+                }))
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.issueTemplate")
+                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
+                    var issueTemplate = issue.getSpec().getIssueTemplate();
+                    return issueTemplate == null ? null : issueTemplate.toString();
+                }))
+            );
+            indexSpecs.add(new IndexSpec()
+                .setName("spec.subjectName")
+                .setIndexFunc(simpleAttribute(Issue.class, issue -> {
+                    var subjectName = issue.getSpec().getSubjectName();
+                    return subjectName == null ? null : subjectName.toString();
+                }))
+            );
+        });
+
     }
 
     @Override
     public void stop() {
         schemeManager.unregister(schemeManager.get(IssueSubject.class));
-        schemeManager.unregister(schemeManager.get(Issue.class));
+        schemeManager.unregister(schemeManager.get(IssueLabel.class));
         schemeManager.unregister(schemeManager.get(IssueComment.class));
         schemeManager.unregister(schemeManager.get(IssueTemplate.class));
-        schemeManager.unregister(schemeManager.get(IssueLabel.class));
+        schemeManager.unregister(schemeManager.get(Issue.class));
     }
 }

@@ -58,6 +58,6 @@ export interface Issue {
      * @type {IssueStatus}
      * @memberof Issue
      */
-    'status'?: IssueStatus;
+    'status': IssueStatus;
 }
 

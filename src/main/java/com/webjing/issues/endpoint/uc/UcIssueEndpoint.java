@@ -223,11 +223,21 @@ public class UcIssueEndpoint implements CustomEndpoint {
         return  getMyIssueDetail(name)
             .flatMap(issue -> roleService.getCurrentUser()
                 .flatMap(curUser -> {
-                    if (curUser.getName().equals(issue.getSpec().getOwner())) {
-                        return issueService.deleteBy(issue);
-                    } else {
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can delete it"));
-                    }
+                    var roles = AuthorityUtils.authoritiesToRoles(curUser.getAuthorities());
+                    return roleService.joint(roles,
+                            Set.of(AuthorityUtils.ISSUE_MESSAGE_MANAGEMENT_ROLE_NAME,
+                                AuthorityUtils.SUPER_ROLE_NAME))
+                        .flatMap(result -> {
+                            if (result) {
+                                return issueService.deleteBy(issue);
+                            }else{
+                                if (curUser.getName().equals(issue.getSpec().getOwner())) {
+                                    return issueService.deleteBy(issue);
+                                } else {
+                                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can delete it"));
+                                }
+                            }
+                        });
                 }))
             .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
     }
