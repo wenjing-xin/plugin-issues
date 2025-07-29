@@ -81,9 +81,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                         </th:block>
                                         <th:block th:if="${#strings.equals(currentUser.name, issueVO.contributorVo.name)}">
                                             <hr class="piw-w-full piw-bg-slate-200" />
-                                            <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"
-                                                 @click="editIssue=true;close();"
-                                                 x-init="const issueContent = await main.getIssueContent(issueName);issueRawContent = issueContent.raw;">
+                                            <div class="issue-item-operation t-lazy-item"
+                                                 @click="editIssue=true;close();">
                                                 <span class="piw-icon-[iconamoon--edit-light] piw-text-lg"></span>
                                                 <span class="piw-text-sm">编辑</span>
                                             </div>
@@ -144,7 +143,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                      th:classappend="${ #strings.equals(contentStyle, 'github') ? 'markdown-body' : 'tailwind-typography'}"
                                      th:utext="${issueVO.spec.content.html}"></div>
                                 <div class="piw-w-full piw-p-1 piw-space-y-3" x-show="editIssue" x-data="issueUpdateEditor(false, issueId)"
-                                x-effect="if(editIssue){await fetchEditData();}">
+                                x-effect="if(editIssue && !rawContentIue){await fetchEditData();}">
                                     <th:block th:replace="~{fragments/IssueUpdateEditor}" />
                                     <!-- 提交按钮 -->
                                     <div class="piw-w-full piw-my-3 piw-flex piw-items-center piw-gap-x-3">
@@ -154,7 +153,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                             <span x-text="updateBtnText" class="piw-text-white piw-text-sm"></span>
                                         </button>
                                         <div class="piw-w-20 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center piw-cursor-pointer"
-                                             @click="editIssue=false;resetUpdateStatus();">取消</div>
+                                             @click="editIssue=false;">取消</div>
                                     </div>
                                 </div>
                             </div>
@@ -214,9 +213,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                                 </th:block>
                                                 <th:block sec:authorize="isAuthenticated()" th:if="${#strings.equals(currentUser.name, issueComment.contributorVo.name)}">
                                                     <hr class="piw-w-full piw-bg-slate-200" />
-                                                    <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"
-                                                         @click="showEdit = true;close();"
-                                                         x-init="const issueContent = await main.getIssueContent(issueName);issueRawContent = issueContent.raw;">
+                                                    <div class="issue-item-operation t-lazy-item"
+                                                         @click="showEdit = true;close();">
                                                         <span class="piw-icon-[iconamoon--edit-light] piw-text-lg"></span>
                                                         <span class="piw-text-sm">编辑</span>
                                                     </div>
@@ -229,7 +227,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                         <div class="piw-text-sm" th:utext="${issueComment.spec.content.html}"></div>
                                     </div>
                                     <div class="piw-w-full piw-p-2 piw-space-y-3" x-show="showEdit" x-data="issueUpdateEditor(true, commentId)"
-                                         x-effect="if(showEdit){await fetchEditData();}">
+                                         x-effect="if(showEdit && !rawContentIue){await fetchEditData();}">
                                         <th:block th:replace="~{fragments/IssueUpdateEditor}" />
                                         <!-- 提交按钮 -->
                                         <div class="piw-w-full piw-my-3 piw-flex piw-items-center piw-gap-x-3">
@@ -239,7 +237,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                                 <span x-text="updateBtnText" class="piw-text-white piw-text-sm"></span>
                                             </button>
                                             <div class="piw-w-20 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center piw-cursor-pointer"
-                                                 @click="showEdit = false;resetUpdateStatus();">取消</div>
+                                                 @click="showEdit = false;">取消</div>
                                         </div>
                                     </div>
                                 </div>
