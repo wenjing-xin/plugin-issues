@@ -1,10 +1,6 @@
 package com.webjing.issues.finder.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webjing.issues.entity.IssueStats;
-import com.webjing.issues.entity.ListedIssue;
 import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.extension.IssueLabel;
 import com.webjing.issues.extension.IssueTemplate;
@@ -35,7 +31,6 @@ import run.halo.app.extension.router.selector.FieldSelector;
 import run.halo.app.theme.finders.Finder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +67,7 @@ public class IssueFinderImpl implements IssueFinder {
     @Override
     public Mono<ListResult<IssueVO>> list(Integer page, Integer size, String subjectName, String issueState) {
         var query = all();
-        if (StringUtils.isNoneBlank(issueState)) {
+        if (StringUtils.isNoneBlank(issueState) && !"all".equals(issueState)) {
             query = and(query, equal("status.state", issueState));
         }
         var pageRequest = PageRequestImpl.of(pageNullSafe(page), sizeNullSafe(size), defaultSort());
