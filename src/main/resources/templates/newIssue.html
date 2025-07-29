@@ -156,7 +156,10 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                         <button type="button"
                             class="piw-bg-gray-100 piw-text-gray-600 piw-text-sm piw-px-3 piw-py-1 piw-rounded-md piw-border piw-border-gray-200 piw-transition hover:piw-bg-gray-200"
                             @click="cancelCreate()">取消</button>
-                        <button type="submit" :disabled="saveLoading"
+                        <button type="submit" :disabled="saveLoading || rawContent.trim() == ''"
+                                @mouseenter="if(rawContent.trim() == ''){main.showTooltip('请填入Issue描述', $event)}"
+                                @mouseleave="if(rawContent.trim() == ''){main.hideTooltip()}"
+                                :class="{'piw-cursor-not-allowed piw-opacity-60': saveLoading || rawContent.trim() == ''}"
                             class="piw-bg-green-600 piw-px-4 piw-py-1 piw-rounded-md piw-shadow-sm piw-transition hover:piw-bg-green-700 transition-all duration-300 inline-flex items-center gap-x-1">
                             <span class="text-lg piw-icon-[eos-icons--loading]" x-show="saveLoading"></span>
                             <span x-text="submitText" class="piw-text-white piw-text-sm"></span>

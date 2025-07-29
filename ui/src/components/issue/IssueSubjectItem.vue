@@ -196,7 +196,7 @@ const handlerIssueSubjectType = (
     <div class="p-2 bg-neutral-50 rounded-md h-12 flex items-center">
       <p
         v-if="listedIssueSubject.issueSubject.spec?.description"
-        class="text-sm"
+        class="text-sm line-clamp-2"
       >
         {{ listedIssueSubject.issueSubject.spec?.description }}
       </p>

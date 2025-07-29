@@ -17,7 +17,7 @@ content = ~{::content}, version = ${pluginVersion}, head = null)}">
                 <span class="piw-size-4 piw-text-gray-400 piw-absolute piw-left-3 piw-top-2 piw-icon-[mingcute--list-search-line]"></span>
             </div>
             <a th:if="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" th:href="${'/subject/' + issueSubjectInfo.name + '/issues/new'}"
-               class="piw-outline-none piw-inline-block piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8">New issue</a>
+               class="piw-outline-none piw-inline-block piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8 piw-flex piw-items-center piw-justify-center">New issue</a>
             <button th:unless="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8" @click="issueTemplateModal = true">New issue</button>
         </div>
 

@@ -86,6 +86,10 @@ export function setColorScheme(colorScheme: ColorSchemeType, store: boolean) {
 }
 
 export function publishIssueComment(issueId: string, rawContent: string, htmlContent: string, quoteCommentId: string) {
+    if(!rawContent){
+        messageUtils.showMessage("warning", '请填写Issue的内容', 2000);
+        return;
+    }
     let initComment: IssueComment = {
         kind: "IssueComment",
         apiVersion: "issue.webjing.com/v1alpha1",
