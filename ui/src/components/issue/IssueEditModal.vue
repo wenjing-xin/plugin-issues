@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
+import { consoleApiClient } from "@halo-dev/api-client";
 import {
   computed,
   nextTick,
@@ -7,7 +8,6 @@ import {
   ref,
   toRaw,
   watch,
-  watchEffect,
 } from "vue";
 import type {
   Issue,
@@ -208,6 +208,9 @@ const onSubmit = async () => {
       ...annotations,
       ...customAnnotations,
     };
+    const currentUser = await consoleApiClient.user.getCurrentUserDetail();
+    const curUserName = currentUser.data.user.metadata.name;
+    formState.value.spec.assignees = formState.value.spec.assignees?.filter(assignee => assignee !== curUserName);
     if (isUpdateMode.value) {
       await handleUpdate();
       emit("update", formState.value);
@@ -333,7 +336,7 @@ const handleReset = () => {
               valueField: 'user.metadata.name',
               fieldSelectorKey: 'metadata.name',
             }"
-            help="Issue创建者和经办人将会收到和此条Issue相关的所有通知"
+            help="Issue创建者和经办人将会收到和此条Issue相关的所有通知。请注意，经办人无法选择创建者，即使选择后也会被过滤"
           />
         </FormKit>
         <div class="space-y-2 my-2 py-2">
