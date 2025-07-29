@@ -564,7 +564,7 @@ onBeforeMount(async () => {
               <FormKit
                 v-if="initIssueTemplate?.spec?.scope == 'SUBJECT_TYPE'"
                 type="select"
-                name="scope"
+                name="subjectType"
                 clearable
                 label="模版归属的主体类型"
                 :options="subjectSelectTypeOptions"

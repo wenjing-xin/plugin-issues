@@ -17,7 +17,7 @@ spec:
   configMapName: plugin-issues-configmap
   settingName: plugin-issues-settings
   pluginDependencies:
-  "WebjingMandateCore": ">=1.2.0"
+    "WebjingMandateCore": ">=1.2.0"
   license:
     - name: "WEBJING-AUTH-LICENSE"
       url: "https://webjing.com/docs/webjing-auth-license"
