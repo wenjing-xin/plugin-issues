@@ -72,9 +72,7 @@ public class ConsoleIssueTemplateEndpoint implements CustomEndpoint {
                         .required(false)
                         .implementation(String.class)
                     )
-                    .response(responseBuilder()
-                        .implementation(ListResult.generateGenericClass(IssueTemplateOptions.class))
-                    )
+                    .response(responseBuilder().implementation(IssueTemplateOptions.class))
             )
             .POST("issuetemplates", this::createIssueTemplate, builder ->
                 builder.operationId("CreateIssueTemplate")

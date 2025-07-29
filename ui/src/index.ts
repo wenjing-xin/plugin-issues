@@ -23,7 +23,7 @@ export default definePlugin({
           mobile: true,
           permissions: ["plugin:issues:manage"],
           menu: {
-            name: "灵犀Issue",
+            name: "言答Issue",
             group: "content",
             icon: markRaw(PajamasIssueTypeObjective),
             mobile: true,

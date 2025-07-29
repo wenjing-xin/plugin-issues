@@ -1,9 +1,13 @@
 package com.webjing.issues.entity;
 
 import com.webjing.issues.extension.IssueTemplate;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import java.util.ArrayList;
 import java.util.List;
+
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 /**
  * @description:  Issue模版选项构建数据模型
@@ -14,7 +18,8 @@ import java.util.List;
 @Data
 public class IssueTemplateOptions {
 
-    private List<IssueTemplateItem> issueTemplateOptions;
+    @Schema(description = "issue模版选项", requiredMode = REQUIRED)
+    private List<IssueTemplateItem> issueTemplateOptions = new ArrayList<>();
 
     @Data
     @Builder

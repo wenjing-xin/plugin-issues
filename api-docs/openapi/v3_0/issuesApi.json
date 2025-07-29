@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:56276",
+    "url" : "http://localhost:30743",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -247,6 +247,34 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/issues/templateOptions/{subjectName}" : {
+      "get" : {
+        "description" : "Get a issue template options by subjectName.",
+        "operationId" : "GetIssueSelectTemplateOptions",
+        "parameters" : [ {
+          "description" : "IssueSubject name",
+          "in" : "path",
+          "name" : "subjectName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplateOptions"
                 }
               }
             },
@@ -924,7 +952,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/IssueTemplateOptionsList"
+                  "$ref" : "#/components/schemas/IssueTemplateOptions"
                 }
               }
             },
@@ -3199,6 +3227,7 @@
         }
       },
       "IssueStatus" : {
+        "required" : [ "state" ],
         "type" : "object",
         "properties" : {
           "observedVersion" : {
@@ -3215,6 +3244,7 @@
           },
           "state" : {
             "type" : "string",
+            "description" : "当前状态",
             "enum" : [ "AWAIT", "PROGRESS", "CLOSED" ]
           },
           "transitions" : {
@@ -3403,7 +3433,8 @@
           "value" : {
             "type" : "string"
           }
-        }
+        },
+        "description" : "issue模版选项"
       },
       "IssueTemplateList" : {
         "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
@@ -3455,63 +3486,15 @@
         }
       },
       "IssueTemplateOptions" : {
+        "required" : [ "issueTemplateOptions" ],
         "type" : "object",
         "properties" : {
           "issueTemplateOptions" : {
             "type" : "array",
+            "description" : "issue模版选项",
             "items" : {
               "$ref" : "#/components/schemas/IssueTemplateItem"
             }
-          }
-        },
-        "description" : "A chunk of items."
-      },
-      "IssueTemplateOptionsList" : {
-        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
-        "type" : "object",
-        "properties" : {
-          "first" : {
-            "type" : "boolean",
-            "description" : "Indicates whether current page is the first page."
-          },
-          "hasNext" : {
-            "type" : "boolean",
-            "description" : "Indicates whether current page has previous page."
-          },
-          "hasPrevious" : {
-            "type" : "boolean",
-            "description" : "Indicates whether current page has previous page."
-          },
-          "items" : {
-            "type" : "array",
-            "description" : "A chunk of items.",
-            "items" : {
-              "$ref" : "#/components/schemas/IssueTemplateOptions"
-            }
-          },
-          "last" : {
-            "type" : "boolean",
-            "description" : "Indicates whether current page is the last page."
-          },
-          "page" : {
-            "type" : "integer",
-            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
-            "format" : "int32"
-          },
-          "size" : {
-            "type" : "integer",
-            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
-            "format" : "int32"
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "Total elements.",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "description" : "Indicates total pages.",
-            "format" : "int64"
           }
         }
       },

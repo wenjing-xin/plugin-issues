@@ -28,7 +28,6 @@ export * from './issue-template';
 export * from './issue-template-item';
 export * from './issue-template-list';
 export * from './issue-template-options';
-export * from './issue-template-options-list';
 export * from './issue-template-render';
 export * from './issue-template-spec';
 export * from './json-patch-inner';

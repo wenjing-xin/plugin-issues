@@ -42,11 +42,11 @@ export interface IssueStatus {
      */
     'priority'?: string;
     /**
-     * 
+     * 当前状态
      * @type {string}
      * @memberof IssueStatus
      */
-    'state'?: IssueStatusStateEnum;
+    'state': IssueStatusStateEnum;
     /**
      * 状态变更历史（时间+操作人）
      * @type {Array<StateTransition>}

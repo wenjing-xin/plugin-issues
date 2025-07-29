@@ -9,20 +9,20 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import type { IssueSubject, IssueTemplateOptions } from "@/api/generated";
+import type { IssueSubject, IssueTemplateItem } from "@/api/generated";
 import { subjectTypeOptions } from "@/dictionary";
 import cloneDeep from "lodash.clonedeep";
 import {
-  issueSubjectApiClient,
   consoleIssueSubjectApiClient,
   consoleIssueTemplateApiClient,
 } from "@/api";
-
-import TextEditor from "@/components/editor/index.vue";
-import { submitForm } from "@formkit/core";
-const modalTitle = ref("新增 Issue 依托主体");
 import { accepts } from "@/dictionary/index";
 import type { AttachmentLike } from "@halo-dev/console-shared";
+import TextEditor from "@/components/editor/index.vue";
+import { submitForm } from "@formkit/core";
+
+
+const modalTitle = ref("新增 Issue 依托主体");
 const saving = ref<boolean>(false);
 
 const props = withDefaults(
@@ -42,7 +42,7 @@ const emit = defineEmits<{
   (event: "update", issueSubject: IssueSubject): void;
 }>();
 
-const issueTemplateFilterOptions = ref<Array<IssueTemplateOptions>>();
+const issueTemplateFilterOptions = ref<Array<IssueTemplateItem>>([]);
 const attachmentSelectorModal = ref(false);
 
 const initIssueSubject: IssueSubject = {
@@ -165,8 +165,7 @@ watch(
         subjectName: props.issueSubject?.metadata.name,
       })
       .then(({ data }) => {
-        // @ts-ignore
-        issueTemplateFilterOptions.value = data?.issueTemplateOptions as Array<IssueTemplateOptions>;
+        issueTemplateFilterOptions.value = data.issueTemplateOptions;
       });
   },
 );

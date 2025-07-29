@@ -18,7 +18,7 @@ content = ~{::content}, version = ${pluginVersion}, head = null)}">
             </div>
             <a th:if="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" th:href="${'/subject/' + issueSubjectInfo.name + '/issues/new'}"
                class="piw-outline-none piw-inline-block piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8 piw-flex piw-items-center piw-justify-center">New issue</a>
-            <button th:unless="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8" @click="issueTemplateModal = true">New issue</button>
+            <button th:unless="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8 piw-items-center piw-justify-center" @click="issueTemplateModal = true">New issue</button>
         </div>
 
         <th:block th:if="${ not #lists.isEmpty(issueSubjectInfo.issueTemplates)}">

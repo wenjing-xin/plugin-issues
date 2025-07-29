@@ -1,5 +1,6 @@
 package com.webjing.issues.service;
 
+import com.webjing.issues.entity.IssueTemplateOptions;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.entity.ListedIssue;
@@ -36,4 +37,6 @@ public interface IssueService {
     Mono<Issue> reopenIssue(Issue issue, String reopenOwner);
 
     Mono<Issue> consoleUpdateIssue(Issue issue);
+
+    Mono<IssueTemplateOptions> listIssueSelectTemplateOptions(String subjectName);
 }

@@ -15,7 +15,7 @@
 
 
 /**
- * 
+ * issue模版选项
  * @export
  * @interface IssueTemplateItem
  */

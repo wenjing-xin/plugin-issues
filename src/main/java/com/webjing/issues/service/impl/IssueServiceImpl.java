@@ -2,8 +2,11 @@ package com.webjing.issues.service.impl;
 
 import com.webjing.issues.Constant;
 import com.webjing.issues.entity.IssueStats;
+import com.webjing.issues.entity.IssueTemplateOptions;
 import com.webjing.issues.extension.IssueComment;
 import com.webjing.issues.extension.IssueSubject;
+import com.webjing.issues.extension.IssueTemplate;
+import com.webjing.issues.finder.IssueSubjectFinder;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.MeterUtils;
@@ -278,6 +281,26 @@ public class IssueServiceImpl implements IssueService {
                 }
             })
             .flatMap(oldIssue -> client.update(issue));
+    }
+
+    /**
+     * 列出当前主体下可供选择的模版
+     * @param subjectName
+     * @return
+     */
+    @Override
+    public Mono<IssueTemplateOptions> listIssueSelectTemplateOptions(String subjectName) {
+        return client.fetch(IssueSubject.class, subjectName)
+            .flatMap(issueSubject ->  Flux.fromIterable(issueSubject.getSpec().getIssueTemplates())
+                .flatMap(templateName -> client.fetch(IssueTemplate.class, templateName)
+                    .map(issueTemplate -> IssueTemplateOptions.IssueTemplateItem.from(issueTemplate))
+                ).collectList()
+                .map(templates -> {
+                    IssueTemplateOptions options = new IssueTemplateOptions();
+                    options.setIssueTemplateOptions(templates);
+                    return options;
+                })
+            );
     }
 
     /**

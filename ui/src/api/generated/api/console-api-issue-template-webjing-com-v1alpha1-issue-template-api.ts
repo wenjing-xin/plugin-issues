@@ -24,7 +24,7 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { IssueTemplate } from '../models';
 // @ts-ignore
-import type { IssueTemplateOptionsList } from '../models';
+import type { IssueTemplateOptions } from '../models';
 // @ts-ignore
 import type { ListedIssueTemplateList } from '../models';
 /**
@@ -238,7 +238,7 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFp = funct
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listIssueTemplateOptions(subjectType: string, subjectName?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueTemplateOptionsList>> {
+        async listIssueTemplateOptions(subjectType: string, subjectName?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IssueTemplateOptions>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.listIssueTemplateOptions(subjectType, subjectName, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApi.listIssueTemplateOptions']?.[localVarOperationServerIndex]?.url;
@@ -290,7 +290,7 @@ export const ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiFactory = 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listIssueTemplateOptions(requestParameters: ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueTemplateOptionsList> {
+        listIssueTemplateOptions(requestParameters: ConsoleApiIssueTemplateWebjingComV1alpha1IssueTemplateApiListIssueTemplateOptionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<IssueTemplateOptions> {
             return localVarFp.listIssueTemplateOptions(requestParameters.subjectType, requestParameters.subjectName, options).then((request) => request(axios, basePath));
         },
         /**

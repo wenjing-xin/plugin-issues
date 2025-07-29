@@ -5,6 +5,7 @@ import static org.springdoc.core.fn.builders.content.Builder.contentBuilder;
 import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
 import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuilder;
 
+import com.webjing.issues.entity.IssueTemplateOptions;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueService;
@@ -173,6 +174,19 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     )
                     .response(responseBuilder().implementation(Issue.class))
             )
+            .GET("issues/templateOptions/{subjectName}", this::getIssueSelectTemplateOptions,
+                builder -> builder.operationId("GetIssueSelectTemplateOptions")
+                    .description("Get a issue template options by subjectName.")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .name("subjectName")
+                        .in(ParameterIn.PATH)
+                        .description("IssueSubject name")
+                        .required(true)
+                        .implementation(String.class)
+                    )
+                    .response(responseBuilder().implementation(IssueTemplateOptions.class))
+            )
             .build();
     }
 
@@ -247,6 +261,12 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
         return client.get(Issue.class, name)
             .flatMap(issue -> issueService.deleteBy(issue))
             .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
+    }
+
+    private Mono<ServerResponse> getIssueSelectTemplateOptions(ServerRequest serverRequest){
+        String subjectName = serverRequest.pathVariable("subjectName");
+        return issueService.listIssueSelectTemplateOptions(subjectName)
+            .flatMap(listedIssueTemplateOptions -> ServerResponse.ok().bodyValue(listedIssueTemplateOptions));
     }
 
     @Override

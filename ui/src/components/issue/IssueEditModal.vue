@@ -13,14 +13,13 @@ import type {
   Issue,
   IssueLabelItem,
   IssueLabelOptions,
-  IssueTemplate,
-  TemplateField,
+  IssueTemplateItem,
+  TemplateField
 } from "@/api/generated";
 import cloneDeep from "lodash.clonedeep";
 import {
   consoleIssueApiClient,
   consoleIssueLabelApiClient,
-  issueTemplateApiClient,
   ucIssueApiClient,
 } from "@/api";
 import { submitForm } from "@formkit/core";
@@ -32,12 +31,10 @@ const props = withDefaults(
   defineProps<{
     visible: boolean;
     issueMessage?: Issue | undefined;
-    defaultTemplate: string;
   }>(),
   {
     visible: false,
-    issueMessage: undefined,
-    defaultTemplate: "",
+    issueMessage: undefined
   },
 );
 const emit = defineEmits<{
@@ -48,9 +45,7 @@ const emit = defineEmits<{
 }>();
 
 const currentIssueSubjectName = useRouteQuery<string>("subjectName");
-const issueTemplateFilterOptions = ref<
-  Array<{ label: string | undefined; value: string }>
->([]);
+const issueTemplateFilterOptions = ref<Array<IssueTemplateItem>>([]);
 
 const isUpdateMode = computed(
   () => !!formState.value.metadata.creationTimestamp,
@@ -99,7 +94,9 @@ watch(
         modalTitle.value = "编辑issue";
       } else {
         formState.value = cloneDeep(initIssue);
-        formState.value.spec.issueTemplate = props.defaultTemplate;
+        if(issueTemplateFilterOptions.value.length){
+          formState.value.spec.issueTemplate = issueTemplateFilterOptions.value[0].value;
+        }
         modalTitle.value = "新增issue";
       }
     }
@@ -237,11 +234,9 @@ const handleUpdate = async () => {
 
 //处理issue template的筛选过滤条件
 const handlerIssueTemplateOptions = () => {
-  issueTemplateApiClient.issueTemplate.listIssueTemplate().then(({ data }) => {
-    data.items.forEach((it: IssueTemplate) => {
-      const itemOption = { label: it.spec?.name, value: it.metadata.name };
-      issueTemplateFilterOptions.value.push(itemOption);
-    });
+  consoleIssueApiClient.issue.getIssueSelectTemplateOptions({subjectName: currentIssueSubjectName.value})
+    .then(({data}) => {
+      issueTemplateFilterOptions.value = data.issueTemplateOptions;
   });
 };
 

@@ -18,16 +18,16 @@
 import type { IssueTemplateItem } from './issue-template-item';
 
 /**
- * A chunk of items.
+ * 
  * @export
  * @interface IssueTemplateOptions
  */
 export interface IssueTemplateOptions {
     /**
-     * 
+     * issue模版选项
      * @type {Array<IssueTemplateItem>}
      * @memberof IssueTemplateOptions
      */
-    'issueTemplateOptions'?: Array<IssueTemplateItem>;
+    'issueTemplateOptions': Array<IssueTemplateItem>;
 }
 
