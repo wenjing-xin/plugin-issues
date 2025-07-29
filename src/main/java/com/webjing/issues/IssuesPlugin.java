@@ -5,7 +5,9 @@ import com.webjing.issues.extension.Issue;
 import com.webjing.issues.extension.IssueLabel;
 import com.webjing.issues.extension.IssueSubject;
 import com.webjing.issues.extension.IssueTemplate;
+import com.webjing.mandate.auth.WebjingPluginAuthManager;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import run.halo.app.extension.SchemeManager;
 import run.halo.app.extension.index.IndexSpec;
@@ -25,8 +27,8 @@ import static run.halo.app.extension.index.IndexAttributeFactory.simpleAttribute
 @Component
 public class IssuesPlugin extends BasePlugin {
 
-    // @Autowired
-    // private WebjingPluginAuthManager webjingPluginAuthManager;
+    @Autowired
+    private WebjingPluginAuthManager webjingPluginAuthManager;
 
     private final SchemeManager schemeManager;
 
@@ -38,7 +40,7 @@ public class IssuesPlugin extends BasePlugin {
     @Override
     public void start() {
 
-        // webjingPluginAuthManager.pluginStartCheck();
+        webjingPluginAuthManager.pluginStartCheck();
 
         schemeManager.register(IssueSubject.class, indexSpecs -> {
             indexSpecs.add(new IndexSpec()

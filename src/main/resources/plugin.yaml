@@ -12,12 +12,12 @@ spec:
   homepage: https://github.com/halo-dev/plugn-starter#readme
   repo: https://github.com/wenjing-xin/plugin-issues
   issues: https://github.com/wenjing-xin/plugin-issues/issues
-  displayName: "灵犀Issue"
+  displayName: "言答Issue"
   description: "这是一个专门为halo2.0提供的issue插件，可用于产品QA、问答交流"
   configMapName: plugin-issues-configmap
   settingName: plugin-issues-settings
-#  pluginDependencies:
-#  "WebjingMandateCore": ">=1.1.5"
+  pluginDependencies:
+  "WebjingMandateCore": ">=1.2.0"
   license:
     - name: "WEBJING-AUTH-LICENSE"
       url: "https://webjing.com/docs/webjing-auth-license"
