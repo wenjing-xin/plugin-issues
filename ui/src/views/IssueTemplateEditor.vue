@@ -4,7 +4,7 @@ import {
   ref,
   type SVGAttributes,
   watchEffect,
-  onBeforeMount,
+  onMounted,
   computed,
 } from "vue";
 import draggable from "vuedraggable";
@@ -43,7 +43,7 @@ import {
   issueTemplateApiClient,
 } from "@/api";
 import { subjectTypeOptions, templateScopeTypeOptions } from "@/dictionary";
-const currentEditTempalte = useRouteQuery<string | undefined>("name");
+const currentEditTemplate = useRouteQuery<string | undefined>("name");
 
 interface Component {
   id: string;
@@ -261,12 +261,27 @@ const handlerSaveTemplate = () => {
   if (initIssueTemplate.value.spec) {
     initIssueTemplate.value.spec.fields = fieldList.value;
   }
+  // 新增issue模版
+  if(!initIssueTemplate.value.spec?.name){
+    Toast.warning("请填写模版名称!");
+    return;
+  }
+
+  if(initIssueTemplate.value.spec?.scope == "SUBJECT_TYPE" && !initIssueTemplate.value.spec?.subjectType){
+    Toast.warning("请选择模版作用的主体类型范围!");
+    return;
+  }
+
+  if(initIssueTemplate.value.spec?.scope == "SUBJECT" && !initIssueTemplate.value.spec?.subjectName){
+    Toast.warning("请选择模版作用的主体!");
+    return;
+  }
   if (isUpdateMode.value) {
     // 更新issue模版
     initIssueTemplate.value.metadata;
     issueTemplateApiClient.issueTemplate
       .updateIssueTemplate({
-        name: currentEditTempalte.value as string,
+        name: currentEditTemplate.value as string,
         issueTemplate: initIssueTemplate.value,
       })
       .then((res) => {
@@ -387,9 +402,9 @@ const getFormKitType = (type: TemplateFieldTypeEnum): string => {
 
 // Initialize current edit template
 const initCurEditTemplate = async () => {
-  if (currentEditTempalte.value) {
+  if (currentEditTemplate.value) {
     const result = await issueTemplateApiClient.issueTemplate.getIssueTemplate({
-      name: currentEditTempalte.value,
+      name: currentEditTemplate.value,
     });
     const editIssueTemplate = result.data as IssueTemplate;
     initIssueTemplate.value = editIssueTemplate;
@@ -417,9 +432,9 @@ const handlerIssueSubjectOptions = () => {
   });
 };
 
-onBeforeMount(async () => {
-  await initCurEditTemplate();
+onMounted(async () => {
   handlerIssueSubjectOptions();
+  await initCurEditTemplate();
 });
 </script>
 
@@ -551,6 +566,7 @@ onBeforeMount(async () => {
                 label="模版名称"
                 name="name"
                 type="text"
+                validation="required"
               />
               <FormKit
                 v-if="initIssueTemplate.spec"
@@ -559,11 +575,13 @@ onBeforeMount(async () => {
                 label="模版作用范围"
                 name="scope"
                 type="radio"
+                validation="required"
                 :options="templateSlectTypeOptions"
               />
               <FormKit
                 v-if="initIssueTemplate?.spec?.scope == 'SUBJECT_TYPE'"
                 type="select"
+                v-model="initIssueTemplate.spec.subjectType"
                 name="subjectType"
                 clearable
                 label="模版归属的主体类型"
@@ -572,6 +590,7 @@ onBeforeMount(async () => {
               <FormKit
                 v-if="initIssueTemplate?.spec?.scope == 'SUBJECT'"
                 type="select"
+                v-model="initIssueTemplate.spec.subjectName"
                 name="subjectName"
                 clearable
                 label="模版归属的主体"
