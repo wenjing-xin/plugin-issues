@@ -1,7 +1,7 @@
 import { createAvatar } from '@dicebear/core';
 import { initials, adventurerNeutral, funEmoji, glass, notionistsNeutral, lorelei } from '@dicebear/collection';
 
-export default (avatarType:string, size:number = 36) => ({
+export default (avatarType:string, size:number) => ({
     createAvatarByUserName(username:string){
         let avatar = null;
         let config = {

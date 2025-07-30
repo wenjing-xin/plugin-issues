@@ -159,7 +159,7 @@ function getStatusDotState(status: string) {
         type="info"
         title="提示"
         :description="
-          '确认关闭此Issue' + issue.issue.spec.title + '，关闭后可重新打开'
+          '确认关闭此Issue：' + issue.issue.spec.title + '，关闭后可重新打开'
         "
         @close="showTips = false"
       />

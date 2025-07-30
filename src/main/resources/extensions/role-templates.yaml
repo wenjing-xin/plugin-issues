@@ -16,6 +16,9 @@ rules:
   - apiGroups: ["console.api.issue.webjing.com"]
     resources: ["issues", "labels"]
     verbs: ["get", "list"]
+  - apiGroups: [ "uc.api.issue.webjing.com" ]
+    resources: [ "issues", "labels", "issuetemplates" ]
+    verbs: [ "get", "list" ]
 ---
 apiVersion: v1alpha1
 kind: Role
@@ -38,8 +41,8 @@ rules:
     resources: ["issues", "labels"]
     verbs: ["create", "patch", "update", "delete", "deletecollection"]
   - apiGroups: [ "uc.api.issue.webjing.com" ]
-    resources: [ "issuetemplates" ]
-    verbs: [ "get", "list" ]
+    resources: [ "issues", "labels", "issuetemplates" ]
+    verbs: [ "create", "update", "patch" ]
 ---
 apiVersion: v1alpha1
 kind: Role
@@ -52,10 +55,12 @@ metadata:
     rbac.authorization.halo.run/display-name: "允许用户发布issue"
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:publish"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-view"]
 rules:
   - apiGroups: ["uc.api.issue.webjing.com"]
     resources: ["issues", "labels", "issuetemplates"]
-    verbs: ["get", "list", "create", "update"]
+    verbs: [ "create", "patch", "update"]
 ---
 apiVersion: v1alpha1
 kind: Role
@@ -124,6 +129,8 @@ metadata:
     rbac.authorization.halo.run/display-name: "允许用户发布issue评论"
     rbac.authorization.halo.run/ui-permissions: |
       ["uc:plugin:issues:comment:publish"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-comment-view"]
 rules:
   - apiGroups: ["uc.api.issueComment.webjing.com"]
     resources: ["issuecomments"]

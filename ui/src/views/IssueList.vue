@@ -280,13 +280,13 @@ onMounted(() => {
                 </div>
                 <div class="w-full flex flex-1 sm:w-auto">
                   <VSpace v-if="selectedIssueMessageNames.length > 0">
-                    <VButton
-                      size="sm"
-                      type="primary"
-                      @click="handleEndIssueInBatch"
-                    >
-                      关闭Issue
-                    </VButton>
+<!--                    <VButton-->
+<!--                      size="sm"-->
+<!--                      type="primary"-->
+<!--                      @click="handleEndIssueInBatch"-->
+<!--                    >-->
+<!--                      关闭Issue-->
+<!--                    </VButton>-->
                     <VButton
                       type="danger"
                       size="sm"
