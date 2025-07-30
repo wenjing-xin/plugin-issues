@@ -1,6 +1,6 @@
 <!-- 顶部导航 -->
 <header th:fragment="header(subjectType, title, name, totalIssue, activeTab)" class="piw-w-full piw-bg-slate-100 piw-border piw-border-slate-200">
-    <div class="piw-container piw-mx-auto piw-space-y-2">
+    <div class="piw-container piw-mx-auto piw-space-y-2" x-data="diceBearAvatar(avatarStyle,size)">
         <div class="piw-flex piw-items-center piw-justify-between piw-mt-3">
             <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-sm">
                 <span class="piw-text-slate-600">
@@ -35,7 +35,12 @@
                                     </div>
                                 </th:block>
                                 <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
-                                    <img class="piw-size-6 piw-rounded-full piw-border piw-border-slate-200" src="https://weavatar.com/avatar/plugin-issues?d=wavatar" draggable="false" th:alt="${name}" />
+                                    <img class="piw-size-6 piw-rounded-full piw-border piw-border-slate-200"
+                                         th:attr="x-data=|{issueOwnerName: '${currentUser.name}', avatarUri: ''}|"
+                                         x-init="avatarUri = createAvatarByUserName(issueOwnerName)"
+                                         :src="avatarUri"
+                                         draggable="false"
+                                         th:alt="${name}" />
                                 </th:block>
                             </th:block>
                             <th:block th:if="${ not #strings.isEmpty(currentUser.avatar)}">

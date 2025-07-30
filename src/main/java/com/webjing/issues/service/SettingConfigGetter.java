@@ -20,6 +20,10 @@ public interface SettingConfigGetter {
 
         private String defaultAvatarMode;
 
+        private String diceBarAvatarStyle;
+
+        private Integer diceBarAvatarSize;
+
     }
 
 }

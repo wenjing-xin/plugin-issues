@@ -9,7 +9,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
 <th:block th:fragment="content" th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}">
     <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
     totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
-    <main class="piw-container piw-mx-auto piw-py-6 piw-space-y-4" >
+    <main class="piw-container piw-mx-auto piw-py-6 piw-space-y-4" x-data="diceBearAvatar(avatarStyle,size)">
         <div class="piw-w-full piw-flex piw-items-center piw-flex-wrap piw-justify-between piw-gap-x-3 piw-pb-3 piw-border-b piw-border-slate-300"
              x-data="{issueTemplateModal: false}">
             <div class="piw-inline-flex piw-items-center piw-flex-wrap piw-gap-x-1.5">
@@ -43,7 +43,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                 <div class="piw-w-full" th:attr="x-data=|{issueLink: '${issueVO.status.permalink}', issueName: '${issueVO.metadata.name}', hoverReplyCommentId: ''}|">
                     <!--  原有的issue信息  -->
                     <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full">
-                        <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block">
+                        <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block" th:attr="x-data=|{issueOwnerName: '${issueVO.contributorVo.name}'}|">
                             <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueVO.contributorVo.avatar}, name=${issueVO.contributorVo.name})}" />
                         </div>
                         <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200" x-data="{editIssue: false}"
@@ -53,7 +53,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                     <div class="lg:piw-hidden">
                                         <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueVO.contributorVo.avatar}, name=${issueVO.contributorVo.name})}" />
                                     </div>
-                                     <span class="piw-text-sm" th:text="${issueVO.contributorVo.name}"></span>
+                                     <span class="piw-text-sm" th:text="${issueVO.contributorVo.displayName}"></span>
                                     <span class="piw-text-sm piw-text-neutral-500"></span>
                                     <p class="piw-inline-flex piw-items-center piw-gap-x-1" th:attr="x-data=|{publishTime: '${issueVO.spec.releaseTime}'}|">
                                         <span class="piw-text-sm">发布于</span>
@@ -163,7 +163,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                     <th:block th:if="${ not #lists.isEmpty(issueComments)}" th:each="issueComment : ${issueComments}">
                         <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}', issueCommentName: '${issueComment.metadata.name}', showEdit:false, replyCommentId: '${issueComment.spec.quoteCommentUid}'}|"
                              :id="commentId">
-                            <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block lg:piw-pt-4">
+                            <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block lg:piw-pt-4" th:attr="x-data=|{ issueOwnerName: '${issueComment.contributorVo.name}' }|">
                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
                             </div>
                             <div class="piw-w-full">
@@ -247,7 +247,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                 </div>
                 <div class="piw-w-full">
                     <div sec:authorize="isAuthenticated()" id="issueComment" class="lg:piw-flex lg:piw-gap-x-3 piw-w-full piw-my-4">
-                        <div class="piw-hidden lg:piw-block lg:piw-flex-shrink-0">
+                        <div class="piw-hidden lg:piw-block lg:piw-flex-shrink-0" th:attr="x-data=|{ issueOwnerName: '${currentUser.name}' }|">
                             <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${currentUser.avatar}, name=${currentUser.name})}" />
                         </div>
                         <div class="piw-w-full piw-space-y-3">

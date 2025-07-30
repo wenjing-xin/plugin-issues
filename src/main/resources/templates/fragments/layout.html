@@ -12,8 +12,7 @@
         <th:block th:replace="${head}" />
     </th:block>
 </head>
-<body class="relative w-full">
-
+<body class="piw-relative piw-w-full" th:attr="x-data=|{size: ${diceBarAvatarSize}, avatarStyle: '${diceBarAvatarStyle}'}|">
     <th:block th:replace="${content}" />
 </body>
 </html>

@@ -163,9 +163,20 @@ public class IssuesRouter {
         model.put("pluginVersion", version);
         model.put("issueAvatarMode", this.getIssuesAvatarSetting());
         model.put("contentStyle", this.getContentStyle());
+        model.put("diceBarAvatarStyle", this.getDiceBarAvatarStyle());
+        model.put("diceBarAvatarSize", this.getDiceBarAvatarSize());
     }
 
     private Mono<String> getContentStyle(){
         return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getContentStyle());
     }
+
+    private Mono<String> getDiceBarAvatarStyle(){
+        return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getDiceBarAvatarStyle());
+    }
+
+    private Mono<Integer> getDiceBarAvatarSize() {
+        return settingConfigGetter.getIssuesBasic().map(issuesBasic -> issuesBasic.getDiceBarAvatarSize());
+    }
+
 }

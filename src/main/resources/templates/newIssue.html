@@ -147,8 +147,8 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
                     <th:block th:replace="~{fragments/IssueEditor}" />
                 </div>
                 <!-- 提交按钮 -->
-                <div class="piw-w-full piw-flex piw-justify-between piw-items-center">
-                    <div class="piw-w-10">
+                <div class="piw-w-full piw-flex piw-justify-between piw-items-center" x-data="diceBearAvatar(avatarStyle,size)">
+                    <div class="piw-w-10" th:attr="x-data=|{ issueOwnerName: '${currentUser.name}'}|">
                         <th:block
                             th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${currentUser.avatar}, name=${currentUser.name})}" />
                     </div>

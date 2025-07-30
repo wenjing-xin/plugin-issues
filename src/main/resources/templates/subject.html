@@ -10,10 +10,10 @@
     name = ${issueSubjectVO.metadata.name}, totalIssue = ${issueSubjectVO.issueSubjectStats.awaitIssue + issueSubjectVO.issueSubjectStats.progressIssue},
      activeTab = 'subject')}" />
     <!-- 依托主体内容 -->
-    <main id="content-subject" class="piw-container piw-mx-auto piw-px-4 piw-py-4 piw-space-y-4">
+    <main id="content-subject" class="piw-container piw-mx-auto piw-px-4 piw-py-4 piw-space-y-4" x-data="diceBearAvatar(avatarStyle,size)">
         <!-- 项目标题 -->
         <div class="piw-w-full piw-flex piw-justify-between piw-items-center piw-pb-4 piw-border-b piw-border-dotted piw-border-slate-400">
-            <div class="piw-inline-flex piw-gap-x-2 piw-items-center">
+            <div class="piw-inline-flex piw-gap-x-2 piw-items-center" th:attr="x-data=|{ issueOwnerName: '${issueSubjectVO.createOwner.name}'}|">
                 <th:block th:unless="${#strings.isEmpty(issueSubjectVO.spec.subjectIcon)}">
                     <img th:src="${issueSubjectVO.spec.subjectIcon}"
                          class="piw-size-8 piw-rounded-full piw-border-2 piw-border-neutral-300" />
@@ -78,8 +78,8 @@
             <div class="piw-grid piw-grid-cols-1 sm:piw-grid-cols-2 md:piw-grid-cols-3 lg:piw-grid-cols-4 xl:piw-grid-cols-5 piw-gap-4">
                 <!-- 创建者 -->
                 <div class="piw-flex piw-items-center piw-p-3 piw-rounded-lg piw-border-l-4 piw-border-orange-400 piw-bg-orange-400/5 piw-contributor-hover">
-                    <div class="piw-relative">
-                        <img th:src="${issueSubjectVO.createOwner.avatar}" alt="创建者头像" class="piw-w-12 piw-h-12 piw-rounded-full piw-border-2 piw-border-accent">
+                    <div class="piw-relative" th:attr="x-data=|{ issueOwnerName: '${issueSubjectVO.createOwner.avatar}'}|">
+                        <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueSubjectVO.createOwner.avatar}, name=${issueSubjectVO.createOwner.name})}" />
                         <div class="piw-absolute -piw-bottom-1 -piw-right-1 piw-w-5 piw-h-5 piw-rounded-full piw-bg-orange-400 piw-text-white piw-flex piw-items-center piw-justify-center piw-text-xs">
                         </div>
                     </div>
@@ -97,8 +97,8 @@
                 <!-- 参与者列表 -->
                 <div th:each="user, iterStat : ${issueSubjectVO.participateUsers}"
                      class="piw-flex piw-items-center piw-p-3 piw-bg-indigo-600/5 piw-border-l-4 piw-border-indigo-600 piw-rounded-lg piw-contributor-hover">
-                    <div class="piw-relative">
-                        <img th:src="${user.avatar}" alt="参与者头像" class="piw-w-12 piw-h-12 piw-rounded-full">
+                    <div class="piw-relative"  th:attr="x-data=|{ issueOwnerName: '${user.name}'}|">
+                        <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${user.avatar}, name=${user.name})}" />
                         <div class="piw-absolute -piw-bottom-1 -piw-right-1 piw-w-5 piw-h-5 piw-rounded-full piw-bg-indigo-600 piw-text-white piw-flex piw-items-center piw-justify-center piw-text-xs">
                             [[${iterStat.index + 1}]]
                         </div>

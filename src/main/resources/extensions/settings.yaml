@@ -30,6 +30,8 @@ spec:
           value: Issue已解决
           help: "默认关闭Issued原因"
         - $formkit: radio
+          key: defaultAvatarMode
+          id: defaultAvatarMode
           name: defaultAvatarMode
           label: 默认头像
           value: "default"
@@ -37,6 +39,40 @@ spec:
           options:
             - label: 默认
               value: "default"
-            - label: 随机特征人脸头像
+            - label: DiceBar头像
               value: "random_figure"
+        - $formkit: select
+          if: $get(defaultAvatarMode).value == "random_figure"
+          key: diceBarAvatarStyle
+          id: diceBarAvatarStyle
+          name: diceBarAvatarStyle
+          label: DiceBar头像风格
+          value: "initials"
+          help: "DiceBar头像风格，可参考https://www.dicebear.com/styles/选择"
+          options:
+            - label: initials
+              value: "initials"
+            - label: adventurerNeutral
+              value: "adventurerNeutral"
+            - label: Fun Emoji
+              value: "FunEmoji"
+            - label: Glass
+              value: "Glass"
+            - label: Notionists Neutral
+              value: "NotionistsNeutral"
+            - label: lorelei
+              value: "lorelei"
+        - $formkit: range
+          if: $get(defaultAvatarMode).value == "random_figure"
+          name: diceBarAvatarSize
+          id: diceBarAvatarSize
+          key: diceBarAvatarSize
+          label: '头像大小'
+          value: 36
+          min: 24
+          step: 1
+          max: 48
+          help: $get(diceBarAvatarSize).value
+
+
 

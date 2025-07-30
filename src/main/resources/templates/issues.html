@@ -64,11 +64,11 @@ content = ~{::content}, version = ${pluginVersion}, head = null)}">
         </div>
         <div class="piw-w-full piw-space-y-2" x-show="searchResShow" x-data="dateUtils">
             <p class="piw-text-sm piw-text-neutral-700" x-text="`已搜索到相关的Issue${searchHits.total}条，共消耗时间${searchHits.processingTimeMillis}毫秒`"></p>
-            <div x-show="searchHits.hits.length == 0" class="piw-w-full piw-bg-white piw-px-4 piw-py-5 piw-flex piw-flex-col piw-justify-center piw-items-center piw-border piw-border-neutral-200 piw-rounded-md">
+            <div x-show="searchHits.hits && searchHits.hits.length == 0" class="piw-w-full piw-bg-white piw-px-4 piw-py-5 piw-flex piw-flex-col piw-justify-center piw-items-center piw-border piw-border-neutral-200 piw-rounded-md">
                 <img th:src="@{/plugins/PluginIssues/assets/static/img/empty.svg}" alt="empty" width="128" />
                 <p class="piw-text-neutral-500 piw-text-sm">很抱歉，没有匹配到相关的Issues</p>
             </div>
-            <div x-show="searchHits.hits.length > 0" class="w-full piw-space-y-1 piw-border-x piw-border-b piw-border-neutral-200 piw-rounded piw-divide-y piw-divide-slate-200">
+            <div x-show="searchHits.hits && searchHits.hits.length > 0" class="w-full piw-space-y-1 piw-border-x piw-border-b piw-border-neutral-200 piw-rounded piw-divide-y piw-divide-slate-200">
                 <template x-for="searchItem in searchHits.hits">
                     <div class="piw-w-full piw-bg-white piw-px-4 piw-py-3 piw-flex piw-justify-between piw-items-center last:piw-rounded-b-md">
                         <div class="piw-space-y-2">

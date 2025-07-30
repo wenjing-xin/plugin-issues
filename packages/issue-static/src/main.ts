@@ -11,6 +11,7 @@ import dateUtils from "./alpine-data/date";
 import issueEditor from "./alpine-data/issue-editor";
 import issueUpdateEditor from "./alpine-data/issue-update-editor";
 import issueSubmit from "./alpine-data/issue-submit";
+import dicebear from "./alpine-data/dicebear";
 import {IssueComment, IssueCommentContent, IssueContent} from "./types";
 import {
     createIssueComment,
@@ -20,6 +21,7 @@ import {
     reopenMyIssue,
     searchIssue
 } from "./api";
+
 
 window.Alpine = Alpine;
 Alpine.data("dropdown", dropdown);
@@ -32,6 +34,7 @@ Alpine.data("dateUtils", dateUtils);
 Alpine.data("issueEditor", issueEditor);
 Alpine.data("issueSubmit", issueSubmit);
 Alpine.data("issueUpdateEditor", issueUpdateEditor);
+Alpine.data("diceBearAvatar", dicebear)
 Alpine.start();
 
 const messageUtils = message();

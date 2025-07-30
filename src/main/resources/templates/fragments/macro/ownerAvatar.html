@@ -12,9 +12,11 @@
             </div>
         </th:block>
         <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
-            <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200" src="https://weavatar.com/avatar/plugin-issues?d=wavatar"
+            <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200"
                  draggable="false" th:alt="${name}"
-                 th:attr="x-data=|{assignUsername: '${name}'}|"
+                 th:attr="x-data=|{assignUsername: '${name}', avatarUri: ''}|"
+                 x-init="avatarUri = createAvatarByUserName(issueOwnerName)"
+                 :src="avatarUri"
                  @mouseenter="main.showTooltip(assignUsername, $event)"
                  @mouseleave="main.hideTooltip()"/>
         </th:block>
