@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '依托主体', content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = ${issueSubjectVO.spec.displayName}, content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
 <th:block th:fragment="head">
     <th:block th:if="${ #strings.equals(contentStyle,'github') }">
         <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
@@ -27,7 +27,6 @@
             <div class="piw-flex piw-items-center">
                 <div class="piw-ml-3 piw-text-sm piw-text-neutral-600">
                     <span class="piw-font-medium">由 <a href="#" class="piw-text-slate-800">[[${issueSubjectVO.createOwner.displayName}]]</a> 创建</span>
-                    <span>上次更新于 2 天前</span>
                 </div>
             </div>
         </div>
