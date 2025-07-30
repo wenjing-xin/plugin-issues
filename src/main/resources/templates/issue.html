@@ -175,12 +175,12 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                             <div class="lg:piw-hidden">
                                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
                                             </div>
-                                            <span class="piw-text-sm" th:text="${issueComment.contributorVo.name}"></span>
+                                            <span class="piw-text-sm" th:text="${issueComment.contributorVo.displayName}"></span>
                                             <th:block th:if="${not #strings.isEmpty(issueComment.replyToOwner)}">
                                                 <p class="piw-inline-flex piw-items-center piw-gap-x-2 piw-text-sm">
                                                     <span class="piw-text-neutral-500">回复</span>
                                                     <span class="piw-text-indigo-500 hover:piw-text-indigo-600 piw-font-medium piw-transition-all piw-duration-500 piw-cursor-pointer"
-                                                          th:text="${issueComment.replyToOwner.name}"
+                                                          th:text="${issueComment.replyToOwner.displayName}"
                                                     @mouseenter="hoverReplyCommentId = replyCommentId;"
                                                     @mouseleave="hoverReplyCommentId = ''"></span>
                                                 </p>
@@ -260,14 +260,14 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                         <button class="piw-w-24 piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-h-8 piw-text-sm piw-tracking-wider"
                                 @click="main.publishIssueComment(issueId, rawContent, preview, quoteCommentId)" >评论</button>
                         <button class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center "
-                                th:disabled="${not #strings.equals(currentUser.name, issueVO.contributorVo.name)}"
-                                th:classappend="${not #strings.equals(currentUser.name, issueVO.contributorVo.name)} ? 'piw-cursor-not-allowed'"
+                                th:disabled="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees, currentUser.name))}"
+                                th:classappend="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees, currentUser.name))} ? 'piw-cursor-not-allowed'"
                                 th:if="${not #strings.equals(issueVO.status.state + '', 'CLOSED')}"
                                 @click="issueClosedModal = true;">关闭 Issue</button>
                         <button class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
                                 th:if="${#strings.equals(issueVO.status.state + '', 'CLOSED')}"
-                                th:disabled="${not #strings.equals(currentUser.name, issueVO.contributorVo.name)}"
-                                th:classappend="${not #strings.equals(currentUser.name, issueVO.contributorVo.name)} ? 'piw-cursor-not-allowed'"
+                                th:disabled="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees,currentUser.name))}"
+                                th:classappend="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees,currentUser.name))} ? 'piw-cursor-not-allowed'"
                                 @click="main.reopenIssue(issueId)">重新打开</button>
                     </div>
                     <th:block th:replace="~{fragments/issue-close-comment}" />

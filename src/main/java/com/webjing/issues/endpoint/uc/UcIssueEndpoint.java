@@ -329,10 +329,11 @@ public class UcIssueEndpoint implements CustomEndpoint {
                 return client.fetch(Issue.class, issueName)
                     .flatMap(issue -> roleService.getCurrentUser()
                         .flatMap(curUser -> {
-                            if (curUser.getName().equals(issue.getSpec().getOwner())) {
+                            boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
+                            if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
                                 return issueService.closeIssue(issue, issueClosedParam.getClosedComment(), curUser.getName());
                             } else {
-                                return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can close it"));
+                                return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can close it"));
                             }
                         }));
             })
@@ -344,10 +345,11 @@ public class UcIssueEndpoint implements CustomEndpoint {
         return client.get(Issue.class, issueName)
             .flatMap(issue -> roleService.getCurrentUser()
                 .flatMap(curUser -> {
-                    if (curUser.getName().equals(issue.getSpec().getOwner())) {
+                    boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
+                    if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
                         return issueService.reopenIssue(issue, curUser.getName());
                     } else {
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner can reopen it"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can reopen it"));
                     }
                 }))
             .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
