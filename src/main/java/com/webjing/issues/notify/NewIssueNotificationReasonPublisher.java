@@ -99,7 +99,7 @@ public class NewIssueNotificationReasonPublisher {
                             .format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm")))
                         .issueRawContent(issue.getSpec().getContent().getRaw())
                         .issueHtmlContent(issue.getSpec().getContent().getHtml())
-                        .issuePermalink(issue.getStatus().getPermalink())
+                        .issuePermalink(contentUrl)
                         .issueOwner(issue.getSpec().getOwner())
                         .receiveOwner(participateUser)
                         .approved(issue.getSpec().getApproved())
