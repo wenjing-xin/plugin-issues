@@ -50,7 +50,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                              :class="{'!piw-border-indigo-500 !piw-border-2': curCommentPos != '' && curCommentPos === issueId}">
                             <div class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
                                 <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2" x-data="dateUtils" >
-                                    <div class="lg:piw-hidden">
+                                    <div class="lg:piw-hidden" th:attr="x-data=|{issueOwnerName: '${issueVO.contributorVo.name}'}|">
                                         <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueVO.contributorVo.avatar}, name=${issueVO.contributorVo.name})}" />
                                     </div>
                                      <span class="piw-text-sm" th:text="${issueVO.contributorVo.displayName}"></span>
@@ -172,7 +172,7 @@ content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
                                      :class="{'!piw-border-indigo-500 !piw-border-2': curCommentPos != '' && curCommentPos === commentId, 'piw-animate-bounce': hoverReplyCommentId === commentId }">
                                     <div x-show="!showEdit" class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
                                         <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2" x-data="dateUtils">
-                                            <div class="lg:piw-hidden">
+                                            <div class="lg:piw-hidden" th:attr="x-data=|{ issueOwnerName: '${issueComment.contributorVo.name}' }|">
                                                 <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
                                             </div>
                                             <span class="piw-text-sm" th:text="${issueComment.contributorVo.displayName}"></span>
