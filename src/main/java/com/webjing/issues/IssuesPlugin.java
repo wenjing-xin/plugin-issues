@@ -27,8 +27,8 @@ import static run.halo.app.extension.index.IndexAttributeFactory.simpleAttribute
 @Component
 public class IssuesPlugin extends BasePlugin {
 
-    // @Autowired
-    // private WebjingPluginAuthManager webjingPluginAuthManager;
+    @Autowired
+    private WebjingPluginAuthManager webjingPluginAuthManager;
 
     private final SchemeManager schemeManager;
 
@@ -40,7 +40,7 @@ public class IssuesPlugin extends BasePlugin {
     @Override
     public void start() {
 
-        // webjingPluginAuthManager.pluginStartCheck();
+        webjingPluginAuthManager.pluginStartCheck();
 
         schemeManager.register(IssueSubject.class, indexSpecs -> {
             indexSpecs.add(new IndexSpec()

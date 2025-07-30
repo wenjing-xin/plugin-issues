@@ -117,6 +117,7 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
 
         return client.listAll(Issue.class, ListOptions.builder().fieldQuery(QueryFactory.equal("spec.subjectName", issueSubjectName))
                     .build(), Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
+            .filter(issue -> issue.getSpec().getApproved())
             .collectList()
             .map(issues -> {
                 int progress = (int) issues.stream()
