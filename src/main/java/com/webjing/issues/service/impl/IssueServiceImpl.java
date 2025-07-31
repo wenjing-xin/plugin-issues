@@ -226,13 +226,15 @@ public class IssueServiceImpl implements IssueService {
                         .getSubjectType());
                     return IssueSubjectInfo.builder()
                        .subjectDisplayName(issueSubject.getSpec().getDisplayName())
-                       .subjectType(issueSubjectTypeName);
-                }).flatMap(issueSubjectInfoBuilder -> {
+                       .subjectType(issueSubjectTypeName)
+                        .build();
+                }).flatMap(issueSubjectInfo -> {
                     //添加已经通知的标识
                     issueAnnotations.put(Constant.CLOSED_ISSUE_NOTIFIED_ANNO, "true");
-                    return client.update(issue).then(this.sendClosedIssueNotification(issue, issueWatchers, issueSubjectInfoBuilder.subjectDisplayName,
-                        issueSubjectInfoBuilder.subjectType, closedComment, closedOwner));
-                }).thenReturn(issue);
+                    return client.update(issue).then(this.sendClosedIssueNotification(issue, issueWatchers, issueSubjectInfo.subjectDisplayName,
+                        issueSubjectInfo.subjectType, closedComment, closedOwner))
+                        .thenReturn(issue);
+                });
         }
         return client.update(issue);
     }

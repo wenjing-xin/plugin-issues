@@ -78,6 +78,17 @@ public class NotificationSubscriptionHelper {
         return Mono.empty();
     }
 
+    Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
+        var interestReason = new Subscription.InterestReason();
+        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
+        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
+        var subscriber = createSubscriber(identity);
+        if(subscriber == null){
+            return Mono.empty();
+        }
+        return notificationCenter.subscribe(subscriber, interestReason).then();
+    }
+
     /**
      * 为issue依托主体订阅新issue
      * @param identity
@@ -150,17 +161,6 @@ public class NotificationSubscriptionHelper {
         interestReason.setReasonType(Constant.HAS_NEW_REPLY_ISSUE_COMMENT);
         interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
         notificationCenter.subscribe(subscriber, interestReason).block();
-    }
-
-    Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
-        var subscriber = createSubscriber(identity);
-        if(subscriber == null){
-            return Mono.empty();
-        }
-        var interestReason = new Subscription.InterestReason();
-        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
-        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
-        return notificationCenter.subscribe(subscriber, interestReason).then();
     }
 
     /**
