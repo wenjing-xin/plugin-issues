@@ -81,7 +81,7 @@ const handleDelete = (issueSubject: ListedIssueSubject) => {
 };
 const copySubjectLink = (subjectName: string) => {
   navigator.clipboard
-    .writeText("/subject/" + subjectName)
+    .writeText(window.location.origin + "/subject/" + subjectName)
     .then(() => {
       Toast.success("复制成功");
     })
