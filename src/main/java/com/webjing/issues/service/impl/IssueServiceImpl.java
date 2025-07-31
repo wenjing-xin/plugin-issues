@@ -254,6 +254,10 @@ public class IssueServiceImpl implements IssueService {
         issue.getStatus().getTransitions().add(stateTransition);
         // 设置状态为关闭
         issue.getStatus().setState(Issue.IssueState.PROGRESS);
+
+        // 更新状态
+        var issueAnnotations = nullSafeAnnotations(issue);
+        issueAnnotations.put(Constant.CLOSED_ISSUE_NOTIFIED_ANNO, "false");
         return client.update(issue);
     }
 
@@ -269,6 +273,10 @@ public class IssueServiceImpl implements IssueService {
         issue.getStatus().getTransitions().add(stateTransition);
         // 设置状态为等待中
         issue.getStatus().setState(Issue.IssueState.AWAIT);
+        if(oldState.equals(Issue.IssueState.CLOSED)){
+            var issueAnnotations = nullSafeAnnotations(issue);
+            issueAnnotations.put(Constant.CLOSED_ISSUE_NOTIFIED_ANNO, "false");
+        }
         return client.update(issue);
     }
 
