@@ -5,7 +5,7 @@
     "version" : "2.21.1"
   },
   "servers" : [ {
-    "url" : "http://localhost:58562",
+    "url" : "http://localhost:31371",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -192,70 +192,6 @@
         "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
       }
     },
-    "/apis/console.api.issue.webjing.com/v1alpha1/issues/closed" : {
-      "put" : {
-        "description" : "Closed the Issue",
-        "operationId" : "ClosedIssue",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "closedComment",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/Issue"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "default" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Issue"
-                }
-              }
-            },
-            "description" : "default response"
-          }
-        },
-        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
-      }
-    },
-    "/apis/console.api.issue.webjing.com/v1alpha1/issues/reopen/{issueName}" : {
-      "put" : {
-        "description" : "Reopen a My Issue.",
-        "operationId" : "ReopenIssue",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "issueName",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "default" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Issue"
-                }
-              }
-            },
-            "description" : "default response"
-          }
-        },
-        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
-      }
-    },
     "/apis/console.api.issue.webjing.com/v1alpha1/issues/templateOptions/{subjectName}" : {
       "get" : {
         "description" : "Get a issue template options by subjectName.",
@@ -328,6 +264,35 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ListedIssue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/issuestatus" : {
+      "put" : {
+        "description" : "Update a My Issue status.",
+        "operationId" : "updateIssueStatus",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueStatusChangeParam"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
                 }
               }
             },
@@ -2169,35 +2134,6 @@
         "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
       }
     },
-    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/-/closed" : {
-      "post" : {
-        "description" : "Closed the myself of owner",
-        "operationId" : "closedMyIssue",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/IssueClosedParam"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "default" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Issue"
-                }
-              }
-            },
-            "description" : "default response"
-          }
-        },
-        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
-      }
-    },
     "/apis/uc.api.issue.webjing.com/v1alpha1/issues/content" : {
       "get" : {
         "description" : "fetch issue content.",
@@ -2215,33 +2151,6 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/IssueContent"
-                }
-              }
-            },
-            "description" : "default response"
-          }
-        },
-        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
-      }
-    },
-    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/reopen/{issueName}" : {
-      "put" : {
-        "description" : "Reopen a My Issue.",
-        "operationId" : "ReopenIssue_1",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "issueName",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "default" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Issue"
                 }
               }
             },
@@ -2318,6 +2227,35 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issuestatus" : {
+      "put" : {
+        "description" : "Update a My Issue status.",
+        "operationId" : "UpdateMyIssueStatus",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueStatusChangeParam"
               }
             }
           },
@@ -2700,17 +2638,6 @@
           },
           "status" : {
             "$ref" : "#/components/schemas/IssueStatus"
-          }
-        }
-      },
-      "IssueClosedParam" : {
-        "type" : "object",
-        "properties" : {
-          "closedComment" : {
-            "type" : "string"
-          },
-          "issueName" : {
-            "type" : "string"
           }
         }
       },
@@ -3253,6 +3180,21 @@
             "items" : {
               "$ref" : "#/components/schemas/StateTransition"
             }
+          }
+        }
+      },
+      "IssueStatusChangeParam" : {
+        "type" : "object",
+        "properties" : {
+          "changeComment" : {
+            "type" : "string"
+          },
+          "issueName" : {
+            "type" : "string"
+          },
+          "issueState" : {
+            "type" : "string",
+            "enum" : [ "AWAIT", "PROGRESS", "CLOSED" ]
           }
         }
       },

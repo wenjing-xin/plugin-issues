@@ -36,6 +36,8 @@ public interface IssueService {
 
     Mono<Issue> reopenIssue(Issue issue, String reopenOwner);
 
+    Mono<Issue> setAwaitIssue(Issue issue, String setAwaitOwner);
+
     Mono<Issue> consoleUpdateIssue(Issue issue);
 
     Mono<IssueTemplateOptions> listIssueSelectTemplateOptions(String subjectName);

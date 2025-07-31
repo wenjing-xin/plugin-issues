@@ -28,12 +28,12 @@ export function updateMyIssue(issue: Issue){
     return axiosInstance.put(urlPath, issue)
 }
 
-export function closedMyIssue(issueName: string, closedComment: string){
-    const urlPath = `${apiVersion}/issues/-/closed`;
-    return axiosInstance.post(urlPath, {issueName,closedComment})
+export function closedMyIssue(curIssueName: string, closedComment: string){
+    const urlPath = `${apiVersion}/issuestatus`;
+    return axiosInstance.put(urlPath, {issueName: curIssueName, changeComment: closedComment, issueState: 'CLOSED'})
 }
 
-export function reopenMyIssue(issueName: string){
-    const urlPath = `${apiVersion}/issues/reopen/${issueName}`;
-    return axiosInstance.put(urlPath)
+export function reopenMyIssue(curIssueName: string){
+    const urlPath = `${apiVersion}/issuestatus`;
+    return axiosInstance.put(urlPath, {issueName: curIssueName, changeComment: "重新打开Issue", issueState: 'PROGRESS'})
 }

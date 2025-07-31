@@ -5,6 +5,7 @@ import static org.springdoc.core.fn.builders.content.Builder.contentBuilder;
 import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
 import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuilder;
 
+import com.webjing.issues.entity.IssueStatusChangeParam;
 import com.webjing.issues.entity.IssueTemplateRender;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
@@ -170,31 +171,19 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementationArray(String.class)
                     ))
-            .POST("issues/-/closed", this::closedMyIssue,
-                builder -> builder.operationId("closedMyIssue")
-                    .description("Closed the myself of owner")
+            .PUT("issuestatus", this::updateMyIssueStatus,
+                builder -> builder.operationId("UpdateMyIssueStatus")
+                    .description("Update a My Issue status.")
                     .tag(tag)
                     .requestBody(requestBodyBuilder()
                         .required(true)
                         .content(contentBuilder()
                             .mediaType(MediaType.APPLICATION_JSON_VALUE)
                             .schema(Builder.schemaBuilder()
-                                .implementation(IssueClosedParam.class))
+                                .implementation(IssueStatusChangeParam.class))
                         ))
-                    .response(responseBuilder().implementation(Issue.class))
-            )
-            .PUT("issues/reopen/{issueName}", this::reopenIssue,
-                builder -> builder.operationId("ReopenIssue")
-                    .description("Reopen a My Issue.")
-                    .tag(tag)
-                    .parameter(parameterBuilder()
-                        .name("issueName")
-                        .in(ParameterIn.PATH)
-                        .required(true)
-                        .implementation(String.class)
-                )
-                .response(responseBuilder()
-                    .implementation(Issue.class))
+                    .response(responseBuilder()
+                        .implementation(Issue.class))
             )
             .build();
     }
@@ -318,52 +307,59 @@ public class UcIssueEndpoint implements CustomEndpoint {
             .flatMap(result -> ServerResponse.ok().bodyValue(result));
     }
 
-    private Mono<ServerResponse> closedMyIssue(ServerRequest request){
+    private Mono<ServerResponse> updateMyIssueStatus(ServerRequest request){
         // 从请求体获取 IssueClosedParam 对象
-        return request.bodyToMono(IssueClosedParam.class)
-            .flatMap(issueClosedParam -> {
-                if (StringUtils.isBlank(issueClosedParam.getClosedComment())) {
-                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "未填写关闭原因"));
+        return request.bodyToMono(IssueStatusChangeParam.class)
+            .flatMap(issueStatusChangeParam -> {
+                String issueName = issueStatusChangeParam.getIssueName();
+                if(issueStatusChangeParam.getIssueState().equals(Issue.IssueState.CLOSED)){
+                    if (StringUtils.isBlank(issueStatusChangeParam.getChangeComment())) {
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "未填写关闭原因"));
+                    }
+                    return client.fetch(Issue.class, issueName)
+                        .flatMap(issue -> roleService.getCurrentUser()
+                            .flatMap(curUser -> {
+                                boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
+                                if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
+                                    return issueService.closeIssue(issue, issueStatusChangeParam.getChangeComment(), curUser.getName());
+                                } else {
+                                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can close it"));
+                                }
+                            }));
+                }else if (issueStatusChangeParam.getIssueState().equals(Issue.IssueState.PROGRESS)){
+                    return client.get(Issue.class, issueName)
+                        .flatMap(issue -> roleService.getCurrentUser()
+                            .flatMap(curUser -> {
+                                boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
+                                if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
+                                    return issueService.reopenIssue(issue, curUser.getName());
+                                } else {
+                                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can reopen it"));
+                                }
+                            }));
+                }else{
+                    // 添加默认情况，返回错误响应
+                    return client.get(Issue.class, issueName)
+                        .flatMap(issue -> roleService.getCurrentUser()
+                            .flatMap(curUser -> {
+                                boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
+                                if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
+                                    return issueService.setAwaitIssue(issue, curUser.getName());
+                                } else {
+                                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can set await status"));
+                                }
+                            }));
                 }
-                String issueName = issueClosedParam.getIssueName();
-                return client.fetch(Issue.class, issueName)
-                    .flatMap(issue -> roleService.getCurrentUser()
-                        .flatMap(curUser -> {
-                            boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
-                            if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
-                                return issueService.closeIssue(issue, issueClosedParam.getClosedComment(), curUser.getName());
-                            } else {
-                                return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can close it"));
-                            }
-                        }));
             })
             .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
     }
 
-    private Mono<ServerResponse> reopenIssue(ServerRequest request) {
-        String issueName = request.pathVariable("issueName");
-        return client.get(Issue.class, issueName)
-            .flatMap(issue -> roleService.getCurrentUser()
-                .flatMap(curUser -> {
-                    boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
-                    if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
-                        return issueService.reopenIssue(issue, curUser.getName());
-                    } else {
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can reopen it"));
-                    }
-                }))
-            .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
-    }
 
     @Override
     public GroupVersion groupVersion() {
         return GroupVersion.parseAPIVersion("uc.api.issue.webjing.com/v1alpha1");
     }
 
-    @Data
-    static class  IssueClosedParam{
-        private String closedComment;
-        private String issueName;
-    }
+
 
 }

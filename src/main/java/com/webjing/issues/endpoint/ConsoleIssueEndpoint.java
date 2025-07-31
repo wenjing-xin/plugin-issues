@@ -5,6 +5,8 @@ import static org.springdoc.core.fn.builders.content.Builder.contentBuilder;
 import static org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder;
 import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuilder;
 
+import com.webjing.issues.endpoint.uc.UcIssueEndpoint;
+import com.webjing.issues.entity.IssueStatusChangeParam;
 import com.webjing.issues.entity.IssueTemplateOptions;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
@@ -130,38 +132,6 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementation(Issue.class))
             )
-            .PUT("issues/closed", this::closedIssue,
-                builder -> builder.operationId("ClosedIssue")
-                    .description("Closed the Issue")
-                    .tag(tag)
-                    .parameter(parameterBuilder()
-                        .name("closedComment")
-                        .in(ParameterIn.QUERY)
-                        .required(true)
-                        .implementation(String.class)
-                    )
-                    .requestBody(requestBodyBuilder()
-                        .required(true)
-                        .content(contentBuilder()
-                            .mediaType(MediaType.APPLICATION_JSON_VALUE)
-                            .schema(Builder.schemaBuilder()
-                                .implementation(Issue.class))
-                        ))
-                    .response(responseBuilder().implementation(Issue.class))
-                    )
-            .PUT("issues/reopen/{issueName}", this::reopenIssue,
-                builder -> builder.operationId("ReopenIssue")
-                    .description("Reopen a My Issue.")
-                    .tag(tag)
-                    .parameter(parameterBuilder()
-                        .name("issueName")
-                        .in(ParameterIn.PATH)
-                        .required(true)
-                        .implementation(String.class)
-                    )
-                    .response(responseBuilder()
-                        .implementation(Issue.class))
-            )
             .DELETE("issues/{name}", this::deleteIssue,
                 builder -> builder.operationId("DeleteIssue")
                     .description("Delete a Issue.")
@@ -186,6 +156,20 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
                         .implementation(String.class)
                     )
                     .response(responseBuilder().implementation(IssueTemplateOptions.class))
+            )
+            .PUT("issuestatus", this::updateIssueStatus,
+                builder -> builder.operationId("updateIssueStatus")
+                    .description("Update a My Issue status.")
+                    .tag(tag)
+                    .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .content(contentBuilder()
+                            .mediaType(MediaType.APPLICATION_JSON_VALUE)
+                            .schema(Builder.schemaBuilder()
+                                .implementation(IssueStatusChangeParam.class))
+                        ))
+                    .response(responseBuilder()
+                        .implementation(Issue.class))
             )
             .build();
     }
@@ -230,31 +214,6 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
             .flatMap(result -> ServerResponse.ok().bodyValue(result));
     }
 
-    private Mono<ServerResponse> closedIssue(ServerRequest request){
-        return Mono.justOrEmpty(request.queryParam("closedComment"))
-            .switchIfEmpty(Mono.defer(() ->
-                settingConfigGetter.getIssuesBasic()
-                    .map(issuesBasic -> issuesBasic.getDefaultClosedComment())
-                    .onErrorResume(e -> Mono.just("默认关闭原因"))
-            ))
-            .flatMap(closedComment ->
-                request.bodyToMono(Issue.class).flatMap(issue ->
-                        roleService.getCurrentUser()
-                            .flatMap(curUser ->
-                                issueService.closeIssue(issue, closedComment, curUser.getName())
-                            )
-                    ).flatMap(updatedIssue ->
-                        ServerResponse.ok().bodyValue(updatedIssue)
-                    )
-            );
-    }
-
-    private Mono<ServerResponse> reopenIssue(ServerRequest request) {
-        String issueName = request.pathVariable("issueName");
-        return client.get(Issue.class, issueName)
-            .flatMap(issue -> roleService.getCurrentUser().flatMap(curUser -> issueService.reopenIssue(issue, curUser.getName())))
-            .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
-    }
 
     private Mono<ServerResponse> deleteIssue(ServerRequest request) {
         var name = request.pathVariable("name");
@@ -268,6 +227,33 @@ public class ConsoleIssueEndpoint implements CustomEndpoint {
         return issueService.listIssueSelectTemplateOptions(subjectName)
             .flatMap(listedIssueTemplateOptions -> ServerResponse.ok().bodyValue(listedIssueTemplateOptions));
     }
+
+    private Mono<ServerResponse> updateIssueStatus(ServerRequest request){
+        // 从请求体获取 IssueClosedParam 对象
+        return request.bodyToMono(IssueStatusChangeParam.class)
+            .flatMap(issueStatusChangeParam -> {
+                String issueName = issueStatusChangeParam.getIssueName();
+                if(issueStatusChangeParam.getIssueState().equals(Issue.IssueState.CLOSED)){
+                    if (StringUtils.isEmpty(issueStatusChangeParam.getChangeComment())) {
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "未填写关闭原因"));
+                    }
+                    return client.fetch(Issue.class, issueName)
+                        .flatMap(issue -> roleService.getCurrentUser()
+                            .flatMap(curUser -> issueService.closeIssue(issue, issueStatusChangeParam.getChangeComment(), curUser.getName())));
+                }else if (issueStatusChangeParam.getIssueState().equals(Issue.IssueState.PROGRESS)){
+                    return client.get(Issue.class, issueName)
+                        .flatMap(issue -> roleService.getCurrentUser()
+                            .flatMap(curUser -> issueService.reopenIssue(issue, curUser.getName())));
+                }else{
+                    // 添加默认情况，返回错误响应
+                    return client.get(Issue.class, issueName)
+                        .flatMap(issue -> roleService.getCurrentUser()
+                            .flatMap(curUser -> issueService.setAwaitIssue(issue, curUser.getName())));
+                }
+            })
+            .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
+    }
+
 
     @Override
     public GroupVersion groupVersion() {

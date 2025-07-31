@@ -23,7 +23,6 @@ models/add-operation.ts
 models/contributor-vo.ts
 models/copy-operation.ts
 models/index.ts
-models/issue-closed-param.ts
 models/issue-comment-content.ts
 models/issue-comment-list.ts
 models/issue-comment-media.ts
@@ -40,6 +39,7 @@ models/issue-list.ts
 models/issue-media.ts
 models/issue-spec.ts
 models/issue-stats.ts
+models/issue-status-change-param.ts
 models/issue-status.ts
 models/issue-subject-list.ts
 models/issue-subject-spec.ts

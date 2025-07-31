@@ -19,15 +19,12 @@ import {
   VLoading,
   VEmpty,
 } from "@halo-dev/components";
-import {computed, inject, provide, type Ref, ref} from "vue";
+import { computed, inject, provide, type Ref, ref } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
 import IssueCommentItem from "@/components/issue/IssueCommentItem.vue";
 
-import type {
-  Issue,
-  ListedIssue, ListedIssueComment
-} from "@/api/generated";
-import {issueApiClient, consoleIssueApiClient, issueCommentApiClient} from "@/api";
+import type { Issue, ListedIssue, ListedIssueComment } from "@/api/generated";
+import { issueApiClient, consoleIssueApiClient } from "@/api";
 import { submitForm } from "@formkit/core";
 import { useIssueCommentListFetch } from "@/composables/use-consoleIssue";
 
@@ -63,7 +60,10 @@ const { issueComments, refetch, isLoading } = useIssueCommentListFetch(
   showComments,
 );
 const hoveredReply = ref<ListedIssueComment>();
-provide<Ref<ListedIssueComment | undefined>>("hoveredIssueComment", hoveredReply);
+provide<Ref<ListedIssueComment | undefined>>(
+  "hoveredIssueComment",
+  hoveredReply,
+);
 
 const handleDelete = async (issue: ListedIssue) => {
   Dialog.warning({
@@ -96,7 +96,7 @@ const issueStatus = computed(() => {
 });
 
 //审核 issue
-const handlerAuditIssue = async (issue: Issue)=> {
+const handlerAuditIssue = async (issue: Issue) => {
   // 审核逻辑
   await issueApiClient.issue.patchIssue({
     name: issue.metadata.name,
@@ -108,9 +108,9 @@ const handlerAuditIssue = async (issue: Issue)=> {
       },
     ],
   });
-  Toast.success('审核成功');
+  Toast.success("审核成功");
   await queryClient.invalidateQueries({ queryKey: ["issues"] });
-}
+};
 
 // 编辑issue
 const handlerEditIssue = (issue: ListedIssue) => {
@@ -118,9 +118,13 @@ const handlerEditIssue = (issue: ListedIssue) => {
 };
 const onSubmitClose = async () => {
   try {
-    await consoleIssueApiClient.issue.closedIssue({
-      closedComment: closedComment.value,
-      issue: props.issue.issue,
+    closing.value = true;
+    await consoleIssueApiClient.issue.updateIssueStatus({
+      issueStatusChangeParam: {
+        issueName: props.issue.issue.metadata.name,
+        issueState: "CLOSED",
+        changeComment: closedComment.value,
+      },
     });
     Toast.success("关闭Issue成功");
   } catch (error) {
@@ -130,23 +134,24 @@ const onSubmitClose = async () => {
     closedComment.value = "";
     showTips.value = true;
     closedVisibleModal.value = false;
+    closing.value = false;
   }
 };
 
-const reopenCurIssue = async (issueName:string)=> {
-  await consoleIssueApiClient.issue.reopenIssue({issueName: issueName});
+const reopenCurIssue = async (issueName: string) => {
+  await consoleIssueApiClient.issue.updateIssueStatus({
+    issueStatusChangeParam: {
+      issueName: issueName,
+      issueState: "PROGRESS",
+      changeComment: "重新打开Issue",
+    },
+  });
+
   await queryClient.invalidateQueries({ queryKey: ["issues"] });
   Toast.success("操作成功");
-}
+};
 
 function handleRouteToUserDetail() {}
-
-function getStatusDotState(status: string) {
-  if (status === "PENDING") return "warning";
-  if (status === "APPROVED") return "success";
-  if (status === "REJECTED") return "danger";
-  return "default";
-}
 </script>
 <template>
   <VModal title="关闭Issue" :visible="closedVisibleModal" :width="420">
@@ -163,23 +168,11 @@ function getStatusDotState(status: string) {
         "
         @close="showTips = false"
       />
-      <FormKit
-        id="issue-closed"
-        type="form"
-        name="issue-message"
-        :config="{ validationVisibility: 'submit' }"
-        @submit="onSubmitClose"
-      >
-        <FormKit v-model.trim="closedComment" type="text" label="关闭原因" />
-      </FormKit>
+      <FormKit v-model.trim="closedComment" type="text" label="关闭原因" />
     </div>
     <template #footer>
       <VSpace>
-        <VButton
-          :loading="closing"
-          type="secondary"
-          @click="submitForm('issue-closed')"
-        >
+        <VButton :loading="closing" type="secondary" @click="onSubmitClose()">
           提交
         </VButton>
         <VButton
@@ -226,13 +219,23 @@ function getStatusDotState(status: string) {
               <span class="text-xs text-gray-500"
                 >总评论数：{{ issue.issueStats.totalIssueComment }}</span
               >
-              <span class="text-xs text-gray-500" 
-                    v-if="issue.issueStats.awaitApproveIssueComment && issue.issueStats.awaitApproveIssueComment > 0"
-                    @click="showComments = true"
+              <span
+                v-if="
+                  issue.issueStats.awaitApproveIssueComment &&
+                  issue.issueStats.awaitApproveIssueComment > 0
+                "
+                class="text-xs text-gray-500"
+                @click="showComments = true"
               >
-                 <VStatusDot
-                   v-bind="{ state: 'warning', text: '待审核评论：' + issue.issueStats?.awaitApproveIssueComment, animate: true }"
-                 />
+                <VStatusDot
+                  v-bind="{
+                    state: 'warning',
+                    text:
+                      '待审核评论：' +
+                      issue.issueStats?.awaitApproveIssueComment,
+                    animate: true,
+                  }"
+                />
               </span>
               <span
                 v-if="showComments"
@@ -297,7 +300,12 @@ function getStatusDotState(status: string) {
       </VEntityField>
       <VEntityField v-if="!issue.issue.spec.approved">
         <template #description>
-          <VStatusDot v-tooltip="`等待审核`" state="warning" animate  text="等待审核" />
+          <VStatusDot
+            v-tooltip="`等待审核`"
+            state="warning"
+            animate
+            text="等待审核"
+          />
         </template>
       </VEntityField>
       <VEntityField v-if="issue.issue.metadata.deletionTimestamp">
@@ -314,12 +322,13 @@ function getStatusDotState(status: string) {
       </VEntityField>
     </template>
     <template #dropdownItems>
-      <VDropdownItem @click="handlerAuditIssue(issue.issue)"  v-if="!issue.issue.spec.approved">
+      <VDropdownItem
+        v-if="!issue.issue.spec.approved"
+        @click="handlerAuditIssue(issue.issue)"
+      >
         审核
       </VDropdownItem>
-      <VDropdownItem @click="handlerEditIssue(issue)">
-        编辑
-      </VDropdownItem>
+      <VDropdownItem @click="handlerEditIssue(issue)"> 编辑 </VDropdownItem>
       <HasPermission :permissions="['plugin:issues:manage']">
         <VDropdownItem
           v-if="issue.issue.status?.state != 'CLOSED'"
@@ -374,8 +383,8 @@ function getStatusDotState(status: string) {
               v-for="comment in issueComments"
               :key="comment.issueComment.metadata.name"
               :comment="comment"
-              @update-issue-comments="refetch()"
               :comments="issueComments"
+              @update-issue-comments="refetch()"
             ></IssueCommentItem>
           </VEntityContainer>
         </Transition>

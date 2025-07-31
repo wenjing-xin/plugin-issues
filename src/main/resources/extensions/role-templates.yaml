@@ -38,10 +38,10 @@ rules:
     resources: ["issues"]
     verbs: ["create", "patch", "update", "delete", "deletecollection"]
   - apiGroups: ["console.api.issue.webjing.com"]
-    resources: ["issues", "labels"]
+    resources: ["issues", "labels", "issuestatus"]
     verbs: ["create", "patch", "update", "delete", "deletecollection"]
   - apiGroups: [ "uc.api.issue.webjing.com" ]
-    resources: [ "issues", "labels", "issuetemplates" ]
+    resources: [ "issues", "labels", "issuetemplates", "issuestatus" ]
     verbs: [ "create", "update", "patch" ]
 ---
 apiVersion: v1alpha1
@@ -59,7 +59,7 @@ metadata:
       ["role-template-issues-view"]
 rules:
   - apiGroups: ["uc.api.issue.webjing.com"]
-    resources: ["issues", "labels", "issuetemplates"]
+    resources: ["issues", "labels", "issuetemplates", "issuestatus"]
     verbs: [ "create", "patch", "update"]
 ---
 apiVersion: v1alpha1

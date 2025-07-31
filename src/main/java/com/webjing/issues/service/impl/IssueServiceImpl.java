@@ -257,6 +257,21 @@ public class IssueServiceImpl implements IssueService {
         return client.update(issue);
     }
 
+    @Override
+    public Mono<Issue> setAwaitIssue(Issue issue, String setAwaitOwner){
+        Issue.StateTransition stateTransition = new Issue.StateTransition();
+        Issue.IssueState oldState = issue.getStatus().getState();
+        stateTransition.setFromState(oldState);
+        stateTransition.setToState(Issue.IssueState.AWAIT);
+        stateTransition.setTime(Instant.now());
+        stateTransition.setOperator(setAwaitOwner);
+        stateTransition.setComment("设置Issue为等待中");
+        issue.getStatus().getTransitions().add(stateTransition);
+        // 设置状态为等待中
+        issue.getStatus().setState(Issue.IssueState.AWAIT);
+        return client.update(issue);
+    }
+
     /**
      * console端更新issue
      * @param issue
