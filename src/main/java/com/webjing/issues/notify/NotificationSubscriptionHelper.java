@@ -65,27 +65,17 @@ public class NotificationSubscriptionHelper {
     }
 
     /**
-     * 关闭 issue 的时候为issue拥有者和issue关注者进行通知
-     * @param issue
+     * 关闭 issue 的时候为issue拥有者和issue关注者进行通知 (响应式堆中调用)
+     * @param identity
      */
-    public Mono<Void> subscribeClosedIssueReasonForSubject(Issue issue) {
-        // 当issue被关闭的时候，为 issue 拥有者和关注者进行通知
-        String issueOwner = issue.getSpec().getOwner();
-        Set<String> watchers = issue.getSpec().getAssignees();
-        // 为创建者订阅关闭 Issue 通知
-        subscribeClosedIssueNotify(UserIdentity.of(issueOwner));
-        watchers.forEach(participateUser -> subscribeClosedIssueNotify(UserIdentity.of(participateUser)));
-        return Mono.empty();
-    }
-
-    Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
-        var interestReason = new Subscription.InterestReason();
-        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
-        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
+    public Mono<Void> subscribeClosedIssueNotify(UserIdentity identity) {
         var subscriber = createSubscriber(identity);
         if(subscriber == null){
             return Mono.empty();
         }
+        var interestReason = new Subscription.InterestReason();
+        interestReason.setReasonType(Constant.MANAGER_CLOSED_ISSUE);
+        interestReason.setExpression("props.receiveOwner == '%s'".formatted(identity.name()));
         return notificationCenter.subscribe(subscriber, interestReason).then();
     }
 

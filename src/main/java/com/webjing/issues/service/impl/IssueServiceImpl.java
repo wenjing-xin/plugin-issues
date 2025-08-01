@@ -218,7 +218,7 @@ public class IssueServiceImpl implements IssueService {
         var issueAnnotations = nullSafeAnnotations(issue);
         var newIssueNotified = issueAnnotations.getOrDefault(Constant.CLOSED_ISSUE_NOTIFIED_ANNO,"false");
         if (Objects.equals(newIssueNotified,"false")) {
-            Set<String> issueWatchers = issue.getSpec().getAssignees();
+            Set<String> issueWatchers = new HashSet<>(issue.getSpec().getAssignees());
             issueWatchers.add(issue.getSpec().getOwner());
             return client.fetch(IssueSubject.class, issue.getSpec().getSubjectName())
                 .map(issueSubject -> {
@@ -231,9 +231,8 @@ public class IssueServiceImpl implements IssueService {
                 }).flatMap(issueSubjectInfo -> {
                     //添加已经通知的标识
                     issueAnnotations.put(Constant.CLOSED_ISSUE_NOTIFIED_ANNO, "true");
-                    return client.update(issue).then(this.sendClosedIssueNotification(issue, issueWatchers, issueSubjectInfo.subjectDisplayName,
-                        issueSubjectInfo.subjectType, closedComment, closedOwner))
-                        .thenReturn(issue);
+                    return client.update(issue).flatMap(updatedIssue ->this.sendClosedIssueNotification(updatedIssue, issueWatchers, issueSubjectInfo.subjectDisplayName,
+                        issueSubjectInfo.subjectType, closedComment, closedOwner).thenReturn(updatedIssue));
                 });
         }
         return client.update(issue);
@@ -371,7 +370,8 @@ public class IssueServiceImpl implements IssueService {
                         .author(UserIdentity.of(owner))
                         .subject(reasonSubject);
                 });
-            return notificationSubscriptionHelper.subscribeClosedIssueReasonForSubject(issue).then(emitReasonMono);
+            Mono<Void> subscribeMono = notificationSubscriptionHelper.subscribeClosedIssueNotify(UserIdentity.of(participateUser));
+            return Mono.when(subscribeMono).then(emitReasonMono);
         }).then();
 
     }
