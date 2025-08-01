@@ -1,18 +1,19 @@
 <div class="piw-w-full piw-rounded-md piw-border">
-    <div class="piw-w-full piw-flex piw-items-center piw-gap-x-0 piw-bg-slate-100 piw-h-9 piw-rounded-t-md">
-        <button :class="{ 'tab-button-active piw-border-r piw-border-slate-200 piw-rounded-tr-md': activeTabIue === 'editor'}"
-                @click="switchTabIue('editor')" class="tab-button piw-rounded-tl-md" type="button">
-            <span class="piw-icon-[lucide--edit]"></span>
-            <span class="piw-text-sm piw-whitespace-nowrap">编辑</span>
-        </button>
-        <button :class="{ 'tab-button-active piw-border-x piw-border-x piw-border-slate-200 piw-rounded-t-md': activeTabIue === 'preview'}"
-                @click="switchTabIue('preview')" class="tab-button" type="button">
-            <span class="piw-icon-[icon-park-outline--preview-open] piw-text-lg"></span>
-            <span class="piw-text-sm piw-whitespace-nowrap">预览</span>
-        </button>
-        <div x-show="activeTabIue === 'editor'" class="piw-w-full piw-h-full piw-border-b piw-flex piw-items-center piw-justify-end
-                piw-rounded-tr-md piw-gap-x-2 piw-px-3 piw-transition-all piw-duration-500">
-
+    <div class="piw-w-full piw-flex piw-items-center max-md:piw-flex-col-reverse piw-gap-x-0 piw-bg-slate-100 piw-rounded-t-md">
+        <div class="piw-w-full piw-h-9">
+            <button :class="{ 'tab-button-active piw-border-r piw-border-slate-200 piw-rounded-tr-md': activeTabIue === 'editor'}"
+                    @click="switchTabIue('editor')" class="tab-button piw-rounded-tl-md" type="button">
+                <span class="piw-icon-[lucide--edit]"></span>
+                <span class="piw-text-sm piw-whitespace-nowrap">编辑</span>
+            </button>
+            <button :class="{ 'tab-button-active piw-border-x piw-border-x piw-border-slate-200 piw-rounded-t-md': activeTabIue === 'preview'}"
+                    @click="switchTabIue('preview')" class="tab-button" type="button">
+                <span class="piw-icon-[icon-park-outline--preview-open] piw-text-lg"></span>
+                <span class="piw-text-sm piw-whitespace-nowrap">预览</span>
+            </button>
+        </div>
+        <div x-show="activeTabIue === 'editor'" class="piw-w-full piw-h-full piw-h-9 piw-border-b piw-flex piw-items-center md:piw-justify-end piw-justify-start
+                piw-rounded-tr-md piw-gap-x-1 piw-px-1.5 piw-transition-all piw-duration-500 piw-overflow-x-scroll no-scrollbar">
             <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100 editor-heading-list-iue" x-data="dropdown"
                  @mouseenter="main.showTooltip('插入标题', $event);open();main.triggerLazyAnimation('.editor-heading-list-iue ')"
                  @mouseleave="main.hideTooltip(); close();">
