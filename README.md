@@ -100,7 +100,9 @@ Issue标签管理
 
 ![](https://www.webjing.cn/upload/wfly-qq.png#pic_center)
 
+## ⚠️注意
 
+> 若是引用了本插件的代码，请务必保留本插件的版权声明。记住，真正的力量来自于创造！
 
 ### 开发环境
 

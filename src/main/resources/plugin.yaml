@@ -7,9 +7,9 @@ spec:
   requires: ">=2.21.0"
   author:
     name: webjing
-    website: https://github.com/halo-dev
+    website: https://www.webjing.cn
   logo: logo.png
-  homepage: https://github.com/halo-dev/plugn-starter#readme
+  homepage: https://github.com/wenjing-xin/plugin-issues#readme
   repo: https://github.com/wenjing-xin/plugin-issues
   issues: https://github.com/wenjing-xin/plugin-issues/issues
   displayName: "言答Issue"
