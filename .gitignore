@@ -79,4 +79,5 @@ application-local.properties
 /workplace/
 /src/main/resources/console/
 /old_project/
-
+.claude
+CLAUDE.md
