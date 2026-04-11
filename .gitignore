@@ -81,3 +81,4 @@ application-local.properties
 /old_project/
 .claude
 CLAUDE.md
+.agents
