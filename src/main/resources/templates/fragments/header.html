@@ -1,0 +1,108 @@
+<!-- 顶部导航 -->
+<header th:fragment="header(subjectType, title, name, totalIssue, activeTab)" class="piw-w-full piw-bg-slate-100 piw-border piw-border-slate-200">
+    <div class="piw-container piw-mx-auto piw-space-y-2" x-data="diceBearAvatar(avatarStyle,size)">
+        <div class="piw-flex piw-items-center piw-justify-between piw-mt-3">
+            <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-sm">
+                <span class="piw-text-slate-600">
+                    <th:block th:switch="${subjectType + ''}">
+                        <th:block th:case="'POST'">文章</th:block>
+                        <th:block th:case="'PROJECT'">项目</th:block>
+                        <th:block th:case="'PRODUCT'">产品</th:block>
+                        <th:block th:case="'TOPIC'">话题</th:block>
+                        <th:block th:case="'LEAVE_MESSAGE'">留言</th:block>
+                    </th:block>
+                </span>
+                <span class="piw-text-slate-600 piw-text-base">/</span>
+                <p class="piw-text-slate-800 piw-font-bold" th:text="${title}"></p>
+            </div>
+            <div class="piw-flex piw-items-center">
+                <!-- 明暗切换  -->
+                <div>
+
+                </div>
+                <div x-data="dropdown" class="piw-relative piw-transition-all piw-p-1 piw-flex piw-items-center piw-rounded-full piw-duration-700 hover:piw-cursor-pointer"
+                     th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}"
+                     @mouseenter="open();main.triggerLazyAnimation('.login-group ')" @mouseleave="close()">
+                    <div class="piw-size-7 piw-flex piw-items-center piw-justify-center piw-transition-all piw-duration-500 piw-text-neutral-600 dark:piw-text-neutral-200 hover:piw-text-neutral-700">
+                        <th:block th:if="${#strings.equals(#authentication.name,'anonymousUser')}">
+                            <span class="piw-icon-[carbon--user-avatar] piw-text-2xl piw-font-bold"></span>
+                        </th:block>
+                        <th:block th:unless="${#strings.equals(#authentication.name, 'anonymousUser')}">
+                            <th:block th:if="${#strings.isEmpty(currentUser.avatar)}">
+                                <th:block th:if="${ #strings.equals(issueAvatarMode, 'default') }">
+                                    <div class="piw-size-full piw-h-6 piw-rounded-full piw-flex piw-items-center piw-justify-center piw-bg-neutral-100 piw-border piw-border-slate-200">
+                                        <span class="piw-font-normal piw-text-xl piw-text-neutral-800" th:text="${#strings.substring(name, 0, 1)}"></span>
+                                    </div>
+                                </th:block>
+                                <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
+                                    <img class="piw-size-6 piw-rounded-full piw-border piw-border-slate-200"
+                                         th:attr="x-data=|{issueOwnerName: '${currentUser.name}', avatarUri: ''}|"
+                                         x-init="avatarUri = createAvatarByUserName(issueOwnerName)"
+                                         :src="avatarUri"
+                                         draggable="false"
+                                         th:alt="${name}" />
+                                </th:block>
+                            </th:block>
+                            <th:block th:if="${ not #strings.isEmpty(currentUser.avatar)}">
+                                <img width="24" height="24" class="piw-rounded-full" avatar-img="true" th:src="${currentUser.avatar}" th:alt="${currentUser.displayName}" />
+                            </th:block>
+                        </th:block>
+                    </div>
+                    <div @mouseenter="open()" @mouseleave="close()" x-show="show"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="piw-absolute piw-right-0 piw-top-8 piw-z-30 piw-mt-2 piw-w-36 piw-divide-y piw-divide-gray-200 piw-overflow-hidden piw-rounded-md dark:piw-divide-neutral-800 piw-bg-white dark:piw-bg-neutral-900 login-group"
+                    >
+                        <div sec:authorize="isAuthenticated()" class="piw-flex piw-w-full piw-items-center piw-text-left piw-text-sm login-selection t-lazy-item">
+                            <a class="piw-size-full piw-truncate piw-px-4 piw-py-2 piw-text-neutral-600 dark:piw-text-neutral-200 piw-text-xs" href="/console" target="_blank">控制台</a>
+                        </div>
+                        <li sec:authorize="isAuthenticated()" class="piw-flex piw-w-full piw-items-center piw-text-left piw-text-sm login-selection t-lazy-item">
+                            <a class="piw-size-full piw-truncate piw-px-4 piw-py-2 piw-text-neutral-600 dark:piw-text-neutral-200 piw-text-xs" href="/logout">退出登录</a>
+                        </li>
+                        <li sec:authorize="isAnonymous()" class="piw-flex piw-w-full piw-items-center piw-text-left piw-text-sm login-selection t-lazy-item">
+                            <a class="piw-size-full piw-truncate piw-px-4 piw-py-2 piw-text-neutral-600 dark:piw-text-neutral-200 piw-text-xs" href="/login" onclick="this.href = '/login?redirect_uri=' + encodeURIComponent(window.location.href)">登录</a>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 选项卡导航 -->
+        <div class="piw-flex piw-items-center piw-gap-x-2 piw-overflow-x-auto piw-scrollbar-hide">
+            <a th:href="${'/subject/' + name}" class="tab-transfer piw-transition-all piw-duration-300"
+               th:classappend="${#strings.equals(activeTab, 'subject') ? 'tab-transfer-active' : ''}">
+                <th:block th:switch="${subjectType + ''}">
+                    <th:block th:case="'POST'">
+                        <span class="piw-icon-[material-symbols-light--post-add]"></span>
+                        <span class="text-base">文章</span>
+                    </th:block>
+                    <th:block th:case="'PROJECT'">
+                        <span class="piw-icon-[ix--project]"></span>
+                        <span class="text-base">项目</span>
+                    </th:block>
+                    <th:block th:case="'PRODUCT'">
+                        <span class="piw-icon-[carbon--product]"></span>
+                        <span class="text-base">产品</span>
+                    </th:block>
+                    <th:block th:case="'TOPIC'">
+                        <span class="piw-icon-[icon-park-outline--topic-discussion]"></span>
+                        <span class="text-base">话题</span></th:block>
+                    <th:block th:case="'LEAVE_MESSAGE'">
+                        <span class="piw-icon-[ep--message]"></span>
+                        <span class="text-base">留言</span>
+                    </th:block>
+                </th:block>
+            </a>
+            <a th:href="${'/subject/' + name + '/issues'}" class="tab-transfer piw-duration-300"
+               th:classappend="${#strings.equals(activeTab, 'issues') ? 'tab-transfer-active' : ''}">
+                <span class="piw-mr-2 piw-icon-[codicon--issues] piw-font-bold piw-text-xl"></span>
+                <span class="piw-text-neutral-800 -piw-ml-1.5">Issues</span>
+                <span class="piw-bg-neutral-200 piw-text-neutral-700 piw-text-xs piw-rounded-lg piw-px-2 piw-py-0.5 piw-ml-1"
+                      th:text="${totalIssue}"></span>
+            </a>
+        </div>
+    </div>
+</header>

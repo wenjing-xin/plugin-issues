@@ -1,0 +1,104 @@
+<div class="piw-w-full piw-rounded-md piw-border">
+    <div class="piw-w-full piw-flex piw-items-center max-md:piw-flex-col-reverse piw-gap-x-0 piw-bg-slate-100 piw-h-full piw-rounded-t-md">
+        <div class="piw-w-full piw-h-9">
+            <button :class="{ 'tab-button-active piw-border-r piw-border-slate-200 piw-rounded-tr-md': activeTab === 'editor'}"
+                    @click="switchTab('editor')" class="tab-button piw-rounded-tl-md" type="button">
+                <span class="piw-icon-[lucide--edit]"></span>
+                <span class="piw-text-sm piw-whitespace-nowrap">编辑</span>
+            </button>
+            <button :class="{ 'tab-button-active piw-border-x piw-border-slate-200 piw-rounded-t-md': activeTab === 'preview'}"
+                    @click="switchTab('preview')" class="tab-button" type="button">
+                <span class="piw-icon-[icon-park-outline--preview-open] piw-text-lg"></span>
+                <span class="piw-text-sm piw-whitespace-nowrap">预览</span>
+            </button>
+        </div>
+        <div x-show="activeTab === 'editor'" class="piw-w-full piw-h-9 piw-border-b piw-flex piw-items-center md:piw-justify-end piw-justify-start
+                piw-rounded-tr-md piw-gap-x-1 piw-px-1.5 piw-transition-all piw-duration-500 piw-overflow-x-scroll no-scrollbar ">
+            <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100"
+                 x-data="dropdown" @mouseenter="main.showTooltip('插入标题', $event);open();"
+                 @mouseleave="main.hideTooltip(); close();">
+                <span class="piw-icon-[ci--heading] piw-text-lg"></span>
+                <div x-show="show"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="transform opacity-0 scale-95"
+                     x-transition:enter-end="transform opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-100"
+                     x-transition:leave-start="transform opacity-100 scale-100"
+                     x-transition:leave-end="transform opacity-0 scale-95"
+                     class="piw-w-12 piw-absolute piw-top-7 -piw-right-2 piw-z-10 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md piw-flex piw-flex-col piw-items-center piw-p-1 piw-divide-y piw-divide-slate-200">
+                    <div class="editor-heading" @click="heading(1);close();">
+                        <span class="piw-text-sm">H1</span>
+                    </div>
+                    <div class="editor-heading" @click="heading(2);close();">
+                        <span class="piw-text-sm">H2</span>
+                    </div>
+                    <div class="editor-heading" @click="heading(3);close();">
+                        <span class="piw-text-sm">H3</span>
+                    </div>
+                    <div class="editor-heading" @click="heading(4);close();">
+                        <span class="piw-text-sm">H4</span>
+                    </div>
+                    <div class="editor-heading" @click="heading(5);close();">
+                        <span class="piw-text-sm">H5</span>
+                    </div>
+                    <div class="editor-heading" @click="heading(6);close();">
+                        <span class="piw-text-sm">H6</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="issue-editor-toolbar" @click="bold()" @mouseenter="main.showTooltip('加粗', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[tabler--bold] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar" @click="italic()" @mouseenter="main.showTooltip('斜体', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[mingcute--italic-fill]"></span>
+            </div>
+
+            <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
+
+            <div class="issue-editor-toolbar" @click="insertBlockquote()" @mouseenter="main.showTooltip('引用块', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar" @click="insertInlineCode()" @mouseenter="main.showTooltip('行内代码', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[material-symbols--code-rounded] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar" @click="insertLink()" @mouseenter="main.showTooltip('插入链接', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[ci--link] piw-text-xl"></span>
+            </div>
+            <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
+
+            <div class="issue-editor-toolbar" @click="unorderedList()" @mouseenter="main.showTooltip('无序列表', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[ci--list-unordered] piw-text-xl"></span>
+            </div>
+            <div class="issue-editor-toolbar" @click="orderedList()" @mouseenter="main.showTooltip('有序列表', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[lucide--list-ordered] piw-text-lg"></span>
+            </div>
+            <div class="issue-editor-toolbar" @click="insertTaskList()" @mouseenter="main.showTooltip('任务列表', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[octicon--tasklist-24] piw-text-lg"></span>
+            </div>
+
+            <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
+
+            <div class="issue-editor-toolbar" @click="insertImage()" @mouseenter="main.showTooltip('外链图片', $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-icon-[stash--image-light] piw-text-lg"></span>
+            </div>
+        </div>
+    </div>
+    <div class="piw-bg-white">
+        <div class="issue-editor" :class="{'piw-hidden': activeTab !== 'editor'}">
+            <textarea id="editor" x-ref="editor" placeholder="请输入..."></textarea>
+        </div>
+        <div class="issue-editor-preview markdown-body" :class="{'piw-hidden': activeTab !== 'preview'}">
+            <div class="!piw-text-sm" x-html="preview"></div>
+        </div>
+    </div>
+</div>

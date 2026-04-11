@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = ${issueSubjectVO.spec.displayName}, content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
+<th:block th:fragment="head">
+    <th:block th:if="${ #strings.equals(contentStyle,'github') }">
+        <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
+    </th:block>
+</th:block>
+<th:block th:fragment="content" th:with="subjectType = ${issueSubjectVO.spec.subjectType + ''}">
+    <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectVO.spec.subjectType}, title = ${issueSubjectVO.spec.displayName},
+    name = ${issueSubjectVO.metadata.name}, totalIssue = ${issueSubjectVO.issueSubjectStats.awaitIssue + issueSubjectVO.issueSubjectStats.progressIssue},
+     activeTab = 'subject')}" />
+    <!-- 依托主体内容 -->
+    <main id="content-subject" class="piw-container piw-mx-auto piw-px-4 piw-py-4 piw-space-y-4" x-data="diceBearAvatar(avatarStyle,size)">
+        <!-- 项目标题 -->
+        <div class="piw-w-full piw-flex piw-justify-between piw-items-center piw-pb-4 piw-border-b piw-border-dotted piw-border-slate-400">
+            <div class="piw-inline-flex piw-gap-x-2 piw-items-center" th:attr="x-data=|{ issueOwnerName: '${issueSubjectVO.createOwner.name}'}|">
+                <th:block th:unless="${#strings.isEmpty(issueSubjectVO.spec.subjectIcon)}">
+                    <img th:src="${issueSubjectVO.spec.subjectIcon}"
+                         class="piw-size-8 piw-rounded-full piw-border-2 piw-border-neutral-300" />
+                </th:block>
+                <th:block th:if="${#strings.isEmpty(issueSubjectVO.spec.subjectIcon)}">
+                    <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueSubjectVO.createOwner.avatar}, name=${issueSubjectVO.createOwner.displayName})}" />
+                </th:block>
+                <p class="piw-text-base piw-font-bold piw-text-neutral-900" th:text="${issueSubjectVO.spec.displayName}"></p>
+            </div>
+
+            <div class="piw-flex piw-items-center">
+                <div class="piw-ml-3 piw-text-sm piw-text-neutral-600">
+                    <span class="piw-font-medium">由 <a href="#" class="piw-text-slate-800">[[${issueSubjectVO.createOwner.displayName}]]</a> 创建</span>
+                </div>
+            </div>
+        </div>
+        <!-- 描述 -->
+        <div class="piw-w-full piw-p-3.5 piw-rounded-xl piw-border piw-border-slate-100/45 dark:piw-border-slate-950/50 piw-mx-auto piw-space-y-2 piw-shadow
+                    piw-bg-neutral-50/55 dark:piw-bg-neutral-900/55">
+            <div class="piw-w-full piw-flex piw-justify-between piw-items-center">
+                <p class="piw-inline-flex piw-items-center piw-gap-x-1.5">
+                    <span class="piw-icon-[mdi--resource-description-framework] piw-text-xl"></span>
+                    <span class="piw-text-sm piw-tracking-wider">描述</span>
+                </p>
+                <span class="piw-text-sm piw-tracking-wider" th:text="${issueSubjectVO.spec.displayName}"></span>
+            </div>
+            <p class="piw-px-2 piw-py-1 piw-tracking-wider piw-leading-8 piw-text-sm piw-rounded-lg piw-bg-neutral-100/55 dark:piw-bg-neutral-900/55 piw-border
+            piw-border-slate-100/50 dark:piw-border-neutral-950" th:text="${issueSubjectVO.spec.description}"></p>
+        </div>
+        <!-- 统计卡片 -->
+        <div class="piw-w-full piw-bg-neutral-50/55 piw-border piw-border-neutral-100 piw-rounded-2xl piw-px-3 piw-pt-3 piw-pb-6 piw-shadow">
+            <div class="piw-flex piw-items-center piw-gap-3 piw-mb-6">
+                <div class="piw-rounded-full piw-size-8 piw-bg-neutral-100/85 piw-inline-flex piw-items-center piw-justify-center">
+                    <span class="piw-icon-[uil--statistics] piw-text-2xl piw-text-indigo-600"></span>
+                </div>
+                <p class="piw-text-base piw-font-semibold piw-text-gray-800">Issues和标签数据</p>
+            </div>
+            <div class="piw-w-full piw-flex piw-justify-center piw-items-center piw-gap-x-8 piw-gap-y-5 piw-flex-wrap">
+                <th:block th:replace="~{fragments/macro/subject-stats-card::subjectStatsCard(intro = '总数', data = ${issueSubjectVO.issueSubjectStats.totalIssue})}" />
+                <th:block th:replace="~{fragments/macro/subject-stats-card::subjectStatsCard(intro = '处理中', data = ${issueSubjectVO.issueSubjectStats.progressIssue})}" />
+                <th:block th:replace="~{fragments/macro/subject-stats-card::subjectStatsCard(intro = '等待中', data = ${issueSubjectVO.issueSubjectStats.awaitIssue})}" />
+                <th:block th:replace="~{fragments/macro/subject-stats-card::subjectStatsCard(intro = '已关闭', data = ${issueSubjectVO.issueSubjectStats.closedIssue})}" />
+                <th:block th:replace="~{fragments/macro/subject-stats-card::subjectStatsCard(intro = '标签数', data = ${issueSubjectVO.issueSubjectStats.labels})}" />
+            </div>
+        </div>
+        <!-- 参与者展示区域 -->
+        <div class="piw-w-full piw-bg-neutral-50/55 piw-border piw-border-neutral-100 piw-rounded-2xl piw-p-3 piw-shadow">
+            <!-- 标题区域 -->
+            <div class="piw-flex piw-items-center piw-gap-3 piw-mb-6">
+                <div class="piw-rounded-full piw-size-10 piw-bg-neutral-100/85 piw-inline-flex piw-items-center piw-justify-center">
+                    <span class="piw-icon-[vscode-icons--file-type-allcontributors] piw-text-3xl piw-text-indigo-600"></span>
+                </div>
+                <h2 class="piw-text-base piw-font-semibold piw-text-gray-800">
+                    贡献者列表
+                    <span class="piw-text-gray-500 piw-text-sm piw-font-normal"
+                          th:text="'(' + (${#lists.size(issueSubjectVO.participateUsers)} + 1) + ')'">(6)</span>
+                </h2>
+            </div>
+
+            <!-- 贡献者网格 -->
+            <div class="piw-grid piw-grid-cols-1 sm:piw-grid-cols-2 md:piw-grid-cols-3 lg:piw-grid-cols-4 xl:piw-grid-cols-5 piw-gap-4">
+                <!-- 创建者 -->
+                <div class="piw-flex piw-items-center piw-p-3 piw-rounded-lg piw-border-l-4 piw-border-orange-400 piw-bg-orange-400/5 piw-contributor-hover">
+                    <div class="piw-relative" th:attr="x-data=|{ issueOwnerName: '${issueSubjectVO.createOwner.avatar}'}|">
+                        <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueSubjectVO.createOwner.avatar}, name=${issueSubjectVO.createOwner.name})}" />
+                        <div class="piw-absolute -piw-bottom-1 -piw-right-1 piw-w-5 piw-h-5 piw-rounded-full piw-bg-orange-400 piw-text-white piw-flex piw-items-center piw-justify-center piw-text-xs">
+                        </div>
+                    </div>
+                    <div class="piw-ml-4">
+                        <h3 class="piw-font-semibold piw-text-gray-900" th:text="${issueSubjectVO.createOwner.displayName}">张明</h3>
+                        <div class="piw-flex piw-items-center">
+                            <span class="piw-text-xs piw-text-gray-500" th:text="'@' + ${issueSubjectVO.createOwner.name}">@zhangming</span>
+                            <span class="piw-ml-2 piw-text-xs piw-font-medium piw-text-accent piw-bg-amber-300/10 piw-py-0.5 piw-px-2 piw-rounded-full">
+                                    创建者
+                                </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 参与者列表 -->
+                <div th:each="user, iterStat : ${issueSubjectVO.participateUsers}"
+                     class="piw-flex piw-items-center piw-p-3 piw-bg-indigo-600/5 piw-border-l-4 piw-border-indigo-600 piw-rounded-lg piw-contributor-hover">
+                    <div class="piw-relative"  th:attr="x-data=|{ issueOwnerName: '${user.name}'}|">
+                        <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${user.avatar}, name=${user.name})}" />
+                        <div class="piw-absolute -piw-bottom-1 -piw-right-1 piw-w-5 piw-h-5 piw-rounded-full piw-bg-indigo-600 piw-text-white piw-flex piw-items-center piw-justify-center piw-text-xs">
+                            [[${iterStat.index + 1}]]
+                        </div>
+                    </div>
+                    <div class="piw-ml-4">
+                        <h3 class="piw-font-semibold piw-text-gray-900" th:text="${user.displayName}"></h3>
+                        <span class="piw-text-xs piw-text-gray-500" th:text="${'@' + user.name}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- issue主体内容 -->
+        <article class="piw-bg-white piw-mb-6 !piw-max-w-none piw-break-words"
+                 th:classappend="${ #strings.equals(contentStyle, 'github') ? 'markdown-body' : 'tailwind-typography'}" >
+            <th:block th:switch="${issueSubjectVO.spec.subjectType + ''}">
+                <th:block th:case="'POST'" th:with="postVO = ${postFinder.getByName(issueSubjectVO.spec.content.uid)}">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${postVO.content.content}">
+                    </div>
+                </th:block>
+                <th:block th:case="'PROJECT'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+                <th:block th:case="'PRODUCT'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+                <th:block th:case="'TOPIC'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+                <th:block th:case="'LEAVE_MESSAGE'">
+                    <div class="piw-bg-neutral-50/60 piw-p-4 piw-rounded-xl piw-border piw-border-neutral-100 piw-text-neutral-700 piw-text-sm piw-min-h-[100px]"
+                         th:utext="${issueSubjectVO.spec.content.htmlContent}">
+                    </div>
+                </th:block>
+            </th:block>
+        </article>
+    </main>
+</th:block>
+</html>

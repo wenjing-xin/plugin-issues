@@ -1,0 +1,173 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  --tw-bg-opacity: 1;
+  --mi-post-line-height: 2.5rem;
+  --mi-post-letter-spacing: 0.07em;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+
+*::-webkit-scrollbar-track-piece {
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+  @apply piw-bg-slate-50 dark:piw-bg-slate-800
+}
+
+*::-webkit-scrollbar {
+  width: 0px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+  @apply piw-bg-gradient-to-b piw-from-primary piw-to-secondary
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #bbb;
+}
+
+ul {
+  list-style: decimal;
+}
+.tailwind-typography {
+  @apply piw-prose piw-prose-base piw-mt-4 dark:piw-prose-invert prose-pre:piw-p-0;
+}
+
+
+.system-info-show-animation {
+  font-weight: bold;
+  background-image: -webkit-linear-gradient(left, #ffdd00, #3e2f08 25%, #ffdd00 50%, #3e2f08 75%, #ffdd00);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-background-size: 200% 100%;
+  -webkit-animation: maskedAnimation 1s infinite linear;
+}
+
+.theme-info-show-animation {
+  font-weight: bold;
+  background-image: -webkit-linear-gradient(left, #ffde00, #3e2f08 25%, #ffdd00 50%, #3e2f08 75%, #ffdd00);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-background-size: 200% 100%;
+  -webkit-animation: maskedAnimation 1s infinite linear;
+}
+
+.tab-transfer{
+    @apply piw-inline-block piw-inline-flex piw-items-center piw-py-1.5 piw-pr-2 piw-gap-x-1.5
+}
+.tab-transfer-active {
+    @apply piw-border-b-2 piw-border-[#EE9279]
+}
+/*分页元素的一些样式*/
+.page-numbers {
+    @apply piw-block piw-size-7 piw-items-center piw-inline-flex piw-justify-center piw-items-center piw-rounded-md
+    piw-text-sm piw-text-neutral-600 dark:piw-text-neutral-300 piw-bg-white dark:piw-bg-neutral-800 piw-transition-all piw-duration-300
+    hover:piw-text-white hover:piw-bg-blue-600
+}
+
+
+.contributor-hover {
+    @apply piw-transition-all piw-duration-200 hover:piw-bg-gray-50 hover:piw-shadow-sm
+}
+
+.issue-wrapper-stats{
+    @apply piw-inline-block piw-inline-flex piw-items-center piw-p-1.5 piw-gap-x-1.5
+}
+.issue-wrapper-stats-num {
+    @apply piw-p-1 piw-min-w-8 piw-rounded-xl piw-text-xs piw-bg-slate-300/55 piw-text-center
+}
+.pagination-button {
+    @apply piw-block piw-size-7 piw-inline-flex piw-items-center piw-rounded-md piw-transition-bg piw-duration-300 piw-border piw-border-neutral-200
+    piw-bg-white dark:piw-bg-neutral-800 hover:piw-bg-slate-300/70 hover:piw-text-neutral-700
+}
+
+.issue-detail-state{
+    @apply piw-px-2 piw-py-1 piw-rounded-3xl piw-text-xs
+}
+
+.tab-button{
+    @apply piw-h-full piw-py-2 piw-px-4 piw-text-sm piw-text-slate-600 piw-cursor-pointer piw-transition-all piw-ease-in piw-duration-200
+    piw-inline-flex piw-items-center piw-gap-x-1.5
+}
+.tab-button-active{
+    @apply piw-bg-white piw-border-slate-300
+}
+
+.issue-editor-preview{
+    @apply piw-p-3 piw-leading-7 piw-text-neutral-700 piw-min-h-40
+}
+.issue-editor{
+    @apply piw-box-border piw-p-0
+}
+.issue-editor textarea, .CodeMirror {
+    @apply piw-w-full !piw-h-40 !piw-overflow-y-auto piw-border-none piw-text-sm piw-leading-6 piw-p-3 piw-box-border
+}
+
+
+.issue-editor-toolbar{
+    @apply piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-p-1
+    hover:piw-cursor-pointer
+}
+
+.issue-item-operation {
+   @apply piw-w-full piw-inline-flex piw-items-center piw-rounded-md piw-gap-x-2 piw-p-1 hover:piw-cursor-pointer hover:piw-bg-slate-100
+}
+.editor-heading{
+    @apply piw-w-full piw-text-xs piw-text-center piw-px-2 piw-py-1 hover:piw-cursor-pointer hover:piw-bg-slate-200/50 piw-transition-all piw-duration-300
+}
+
+
+/* 懒加载动画 */
+@keyframes radialReveal {
+    0% {
+        opacity: 0;
+        transform: translate(-20px, 15px) scale(0.98);
+        filter: blur(2px);
+    }
+    60% {
+        transform: translate(5px, -3px) scale(1.02);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* 初始状态 */
+.t-lazy-item {
+    opacity: 0;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    animation-fill-mode: both;
+    transition:
+            opacity 0.5s ease-out,
+            transform 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+/* 隐藏 Chrome, Safari 和 Opera 的滚动条 */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+/* 隐藏 IE, Edge 和 Firefox 的滚动条 */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE 和 Edge */
+    scrollbar-width: none;  /* Firefox */
+}

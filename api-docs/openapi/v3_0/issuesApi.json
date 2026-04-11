@@ -1,0 +1,4104 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Halo",
+    "version" : "2.23.0"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:55321",
+    "description" : "Generated server url"
+  } ],
+  "security" : [ {
+    "basicAuth" : [ ],
+    "bearerAuth" : [ ]
+  } ],
+  "paths" : {
+    "/apis/console.api.issue.webjing.com/v1alpha1/issues" : {
+      "get" : {
+        "description" : "List issues.",
+        "operationId" : "ListIssues",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueMessages filtered by keyword.",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "the subject of issue",
+          "in" : "query",
+          "name" : "subjectName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Owner name.",
+          "in" : "query",
+          "name" : "ownerName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueMessages label.",
+          "in" : "query",
+          "name" : "label",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueMessages start date.",
+          "in" : "query",
+          "name" : "startDate",
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "description" : "IssueMessages end date.",
+          "in" : "query",
+          "name" : "endDate",
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "description" : "IssueMessages approved.",
+          "in" : "query",
+          "name" : "approved",
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "description" : "IssueMessages’s issueTemplate.",
+          "in" : "query",
+          "name" : "issueTemplate",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      },
+      "post" : {
+        "description" : "Create a Issue.",
+        "operationId" : "CreateIssue",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      },
+      "put" : {
+        "description" : "update a Issue.",
+        "operationId" : "UpdateIssue",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/issues/templateOptions/{subjectName}" : {
+      "get" : {
+        "description" : "Get a issue template options by subjectName.",
+        "operationId" : "GetIssueSelectTemplateOptions",
+        "parameters" : [ {
+          "description" : "IssueSubject name",
+          "in" : "path",
+          "name" : "subjectName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplateOptions"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/issues/{name}" : {
+      "delete" : {
+        "description" : "Delete a Issue.",
+        "operationId" : "DeleteIssue",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      },
+      "get" : {
+        "description" : "Get a issue message by name.",
+        "operationId" : "GetIssue",
+        "parameters" : [ {
+          "description" : "IssueMessage name",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/issuestatus" : {
+      "put" : {
+        "description" : "Update a My Issue status.",
+        "operationId" : "updateIssueStatus",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueStatusChangeParam"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issue.webjing.com/v1alpha1/labels" : {
+      "get" : {
+        "description" : "List current issueSubject all issue labels.",
+        "operationId" : "ListSubjectLabels",
+        "parameters" : [ {
+          "description" : "subject name to query",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Label name to query",
+          "in" : "query",
+          "name" : "name",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issueComment.webjing.com/v1alpha1/issuecomments" : {
+      "get" : {
+        "description" : "List current issues comment.",
+        "operationId" : "ListIssuesComment",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueComment owner.",
+          "in" : "query",
+          "name" : "owner",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueComment approved.",
+          "in" : "query",
+          "name" : "approved",
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "description" : "issue name.",
+          "in" : "query",
+          "name" : "issueName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueCommentList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueComment.webjing.com/v1alpha1/Issue" ]
+      },
+      "post" : {
+        "description" : "Create a IssueComment.",
+        "operationId" : "CreateIssueComment",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueComment"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueComment.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/console.api.issueLabel.webjing.com/v1alpha1/issuelabels" : {
+      "get" : {
+        "description" : "List IssueLabels.",
+        "operationId" : "ListIssueLabels",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueLabels filtered by keyword.",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "subject name.",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "subject type.",
+          "in" : "query",
+          "name" : "subjectType",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          }
+        }, {
+          "description" : "label scope",
+          "in" : "query",
+          "name" : "scope",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "GLOBAL", "SUBJECT_TYPE", "SUBJECT" ]
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueLabelList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueLabel.webjing.com/v1alpha1/IssueLabel" ]
+      },
+      "post" : {
+        "description" : "Create a issue label.",
+        "operationId" : "CreateIssueLabel",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueLabel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueLabel.webjing.com/v1alpha1/IssueLabel" ]
+      }
+    },
+    "/apis/console.api.issueLabel.webjing.com/v1alpha1/issuelabels/{subjectName}" : {
+      "get" : {
+        "description" : "List IssueLabels.",
+        "operationId" : "ListSubjectIssueLabels",
+        "parameters" : [ {
+          "description" : "IssueSubject name",
+          "in" : "path",
+          "name" : "subjectName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueLabel name",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabelOptionsList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueLabel.webjing.com/v1alpha1/IssueLabel" ]
+      }
+    },
+    "/apis/console.api.issueSubject.webjing.com/v1alpha1/issuesubjects" : {
+      "get" : {
+        "description" : "List issueSubjects.",
+        "operationId" : "ListIssueSubjects",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueMessages filtered by keyword.",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueTemplate owner.",
+          "in" : "query",
+          "name" : "owner",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "subject type.",
+          "in" : "query",
+          "name" : "subjectType",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          }
+        }, {
+          "description" : "subject visible.",
+          "in" : "query",
+          "name" : "subjectVisible",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "PUBLIC", "PRIVATE" ]
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueSubjectList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueSubject.webjing.com/v1alpha1/IssueSubject" ]
+      },
+      "post" : {
+        "description" : "create issue subject.",
+        "operationId" : "CreateIssueSubject",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueSubject"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueSubject"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueSubject.webjing.com/v1alpha1/IssueSubject" ]
+      },
+      "put" : {
+        "description" : "update issue subject.",
+        "operationId" : "UpdateIssueSubject",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueSubject"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueSubject"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueSubject.webjing.com/v1alpha1/IssueSubject" ]
+      }
+    },
+    "/apis/console.api.issueTemplate.webjing.com/v1alpha1/issuetemplates" : {
+      "get" : {
+        "description" : "List issueTemplates.",
+        "operationId" : "ListIssueTemplates",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueMessages filtered by keyword.",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueTemplate owner.",
+          "in" : "query",
+          "name" : "owner",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "template scope",
+          "in" : "query",
+          "name" : "scope",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "SUBJECT_TYPE", "SUBJECT" ]
+          }
+        }, {
+          "description" : "subject name.",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "subject type.",
+          "in" : "query",
+          "name" : "subjectType",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueTemplateList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueTemplate.webjing.com/v1alpha1/IssueTemplate" ]
+      },
+      "post" : {
+        "description" : "create issue template.",
+        "operationId" : "CreateIssueTemplate",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueTemplate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplate"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueTemplate.webjing.com/v1alpha1/IssueTemplate" ]
+      }
+    },
+    "/apis/console.api.issueTemplate.webjing.com/v1alpha1/issuetemplates/{subjectType}" : {
+      "get" : {
+        "description" : "List issueTemplate options.",
+        "operationId" : "ListIssueTemplateOptions",
+        "parameters" : [ {
+          "description" : "IssueSubject type",
+          "in" : "path",
+          "name" : "subjectType",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueSubject name",
+          "in" : "query",
+          "name" : "subjectName",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplateOptions"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "console.api.issueTemplate.webjing.com/v1alpha1/IssueTemplate" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuecomments" : {
+      "get" : {
+        "description" : "List IssueComment",
+        "operationId" : "listIssueComment",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueCommentList"
+                }
+              }
+            },
+            "description" : "Response issuecomments"
+          }
+        },
+        "tags" : [ "IssueCommentV1alpha1" ]
+      },
+      "post" : {
+        "description" : "Create IssueComment",
+        "operationId" : "createIssueComment",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueComment"
+              }
+            }
+          },
+          "description" : "Fresh issuecomment"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "Response issuecomments created just now"
+          }
+        },
+        "tags" : [ "IssueCommentV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuecomments/{name}" : {
+      "delete" : {
+        "description" : "Delete IssueComment",
+        "operationId" : "deleteIssueComment",
+        "parameters" : [ {
+          "description" : "Name of issuecomment",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Response issuecomment deleted just now"
+          }
+        },
+        "tags" : [ "IssueCommentV1alpha1" ]
+      },
+      "get" : {
+        "description" : "Get IssueComment",
+        "operationId" : "getIssueComment",
+        "parameters" : [ {
+          "description" : "Name of issuecomment",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "Response single issuecomment"
+          }
+        },
+        "tags" : [ "IssueCommentV1alpha1" ]
+      },
+      "patch" : {
+        "description" : "Patch IssueComment",
+        "operationId" : "patchIssueComment",
+        "parameters" : [ {
+          "description" : "Name of issuecomment",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json-patch+json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/JsonPatch"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "Response issuecomment patched just now"
+          }
+        },
+        "tags" : [ "IssueCommentV1alpha1" ]
+      },
+      "put" : {
+        "description" : "Update IssueComment",
+        "operationId" : "updateIssueComment",
+        "parameters" : [ {
+          "description" : "Name of issuecomment",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueComment"
+              }
+            }
+          },
+          "description" : "Updated issuecomment"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "Response issuecomments updated just now"
+          }
+        },
+        "tags" : [ "IssueCommentV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuelabels" : {
+      "get" : {
+        "description" : "List IssueLabel",
+        "operationId" : "listIssueLabel",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabelList"
+                }
+              }
+            },
+            "description" : "Response issuelabels"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "post" : {
+        "description" : "Create IssueLabel",
+        "operationId" : "createIssueLabel",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueLabel"
+              }
+            }
+          },
+          "description" : "Fresh issuelabel"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response issuelabels created just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuelabels/{name}" : {
+      "delete" : {
+        "description" : "Delete IssueLabel",
+        "operationId" : "deleteIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Response issuelabel deleted just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "get" : {
+        "description" : "Get IssueLabel",
+        "operationId" : "getIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response single issuelabel"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "patch" : {
+        "description" : "Patch IssueLabel",
+        "operationId" : "patchIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json-patch+json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/JsonPatch"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response issuelabel patched just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      },
+      "put" : {
+        "description" : "Update IssueLabel",
+        "operationId" : "updateIssueLabel",
+        "parameters" : [ {
+          "description" : "Name of issuelabel",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueLabel"
+              }
+            }
+          },
+          "description" : "Updated issuelabel"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueLabel"
+                }
+              }
+            },
+            "description" : "Response issuelabels updated just now"
+          }
+        },
+        "tags" : [ "IssueLabelV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issues" : {
+      "get" : {
+        "description" : "List Issue",
+        "operationId" : "listIssue",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueList"
+                }
+              }
+            },
+            "description" : "Response issues"
+          }
+        },
+        "tags" : [ "IssueV1alpha1" ]
+      },
+      "post" : {
+        "description" : "Create Issue",
+        "operationId" : "createIssue",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "description" : "Fresh issue"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "Response issues created just now"
+          }
+        },
+        "tags" : [ "IssueV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issues/{name}" : {
+      "delete" : {
+        "description" : "Delete Issue",
+        "operationId" : "deleteIssue",
+        "parameters" : [ {
+          "description" : "Name of issue",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Response issue deleted just now"
+          }
+        },
+        "tags" : [ "IssueV1alpha1" ]
+      },
+      "get" : {
+        "description" : "Get Issue",
+        "operationId" : "getIssue",
+        "parameters" : [ {
+          "description" : "Name of issue",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "Response single issue"
+          }
+        },
+        "tags" : [ "IssueV1alpha1" ]
+      },
+      "patch" : {
+        "description" : "Patch Issue",
+        "operationId" : "patchIssue",
+        "parameters" : [ {
+          "description" : "Name of issue",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json-patch+json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/JsonPatch"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "Response issue patched just now"
+          }
+        },
+        "tags" : [ "IssueV1alpha1" ]
+      },
+      "put" : {
+        "description" : "Update Issue",
+        "operationId" : "updateIssue",
+        "parameters" : [ {
+          "description" : "Name of issue",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "description" : "Updated issue"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "Response issues updated just now"
+          }
+        },
+        "tags" : [ "IssueV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuesubjects" : {
+      "get" : {
+        "description" : "List IssueSubject",
+        "operationId" : "listIssueSubject",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueSubjectList"
+                }
+              }
+            },
+            "description" : "Response issuesubjects"
+          }
+        },
+        "tags" : [ "IssueSubjectV1alpha1" ]
+      },
+      "post" : {
+        "description" : "Create IssueSubject",
+        "operationId" : "createIssueSubject",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueSubject"
+              }
+            }
+          },
+          "description" : "Fresh issuesubject"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueSubject"
+                }
+              }
+            },
+            "description" : "Response issuesubjects created just now"
+          }
+        },
+        "tags" : [ "IssueSubjectV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuesubjects/{name}" : {
+      "delete" : {
+        "description" : "Delete IssueSubject",
+        "operationId" : "deleteIssueSubject",
+        "parameters" : [ {
+          "description" : "Name of issuesubject",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Response issuesubject deleted just now"
+          }
+        },
+        "tags" : [ "IssueSubjectV1alpha1" ]
+      },
+      "get" : {
+        "description" : "Get IssueSubject",
+        "operationId" : "getIssueSubject",
+        "parameters" : [ {
+          "description" : "Name of issuesubject",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueSubject"
+                }
+              }
+            },
+            "description" : "Response single issuesubject"
+          }
+        },
+        "tags" : [ "IssueSubjectV1alpha1" ]
+      },
+      "patch" : {
+        "description" : "Patch IssueSubject",
+        "operationId" : "patchIssueSubject",
+        "parameters" : [ {
+          "description" : "Name of issuesubject",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json-patch+json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/JsonPatch"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueSubject"
+                }
+              }
+            },
+            "description" : "Response issuesubject patched just now"
+          }
+        },
+        "tags" : [ "IssueSubjectV1alpha1" ]
+      },
+      "put" : {
+        "description" : "Update IssueSubject",
+        "operationId" : "updateIssueSubject",
+        "parameters" : [ {
+          "description" : "Name of issuesubject",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueSubject"
+              }
+            }
+          },
+          "description" : "Updated issuesubject"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueSubject"
+                }
+              }
+            },
+            "description" : "Response issuesubjects updated just now"
+          }
+        },
+        "tags" : [ "IssueSubjectV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuetemplates" : {
+      "get" : {
+        "description" : "List IssueTemplate",
+        "operationId" : "listIssueTemplate",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplateList"
+                }
+              }
+            },
+            "description" : "Response issuetemplates"
+          }
+        },
+        "tags" : [ "IssueTemplateV1alpha1" ]
+      },
+      "post" : {
+        "description" : "Create IssueTemplate",
+        "operationId" : "createIssueTemplate",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueTemplate"
+              }
+            }
+          },
+          "description" : "Fresh issuetemplate"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplate"
+                }
+              }
+            },
+            "description" : "Response issuetemplates created just now"
+          }
+        },
+        "tags" : [ "IssueTemplateV1alpha1" ]
+      }
+    },
+    "/apis/issue.webjing.com/v1alpha1/issuetemplates/{name}" : {
+      "delete" : {
+        "description" : "Delete IssueTemplate",
+        "operationId" : "deleteIssueTemplate",
+        "parameters" : [ {
+          "description" : "Name of issuetemplate",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Response issuetemplate deleted just now"
+          }
+        },
+        "tags" : [ "IssueTemplateV1alpha1" ]
+      },
+      "get" : {
+        "description" : "Get IssueTemplate",
+        "operationId" : "getIssueTemplate",
+        "parameters" : [ {
+          "description" : "Name of issuetemplate",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplate"
+                }
+              }
+            },
+            "description" : "Response single issuetemplate"
+          }
+        },
+        "tags" : [ "IssueTemplateV1alpha1" ]
+      },
+      "patch" : {
+        "description" : "Patch IssueTemplate",
+        "operationId" : "patchIssueTemplate",
+        "parameters" : [ {
+          "description" : "Name of issuetemplate",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json-patch+json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/JsonPatch"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplate"
+                }
+              }
+            },
+            "description" : "Response issuetemplate patched just now"
+          }
+        },
+        "tags" : [ "IssueTemplateV1alpha1" ]
+      },
+      "put" : {
+        "description" : "Update IssueTemplate",
+        "operationId" : "updateIssueTemplate",
+        "parameters" : [ {
+          "description" : "Name of issuetemplate",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueTemplate"
+              }
+            }
+          },
+          "description" : "Updated issuetemplate"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplate"
+                }
+              }
+            },
+            "description" : "Response issuetemplates updated just now"
+          }
+        },
+        "tags" : [ "IssueTemplateV1alpha1" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issues" : {
+      "get" : {
+        "description" : "List My issues.",
+        "operationId" : "ListMyIssues",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueMessages filtered by keyword.",
+          "in" : "query",
+          "name" : "keyword",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "the subject of issue",
+          "in" : "query",
+          "name" : "subjectName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Owner name.",
+          "in" : "query",
+          "name" : "ownerName",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueMessages label.",
+          "in" : "query",
+          "name" : "label",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueMessages start date.",
+          "in" : "query",
+          "name" : "startDate",
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "description" : "IssueMessages end date.",
+          "in" : "query",
+          "name" : "endDate",
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "description" : "IssueMessages approved.",
+          "in" : "query",
+          "name" : "approved",
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "description" : "IssueMessages’s issueTemplate.",
+          "in" : "query",
+          "name" : "issueTemplate",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      },
+      "post" : {
+        "description" : "Create a My Issue.",
+        "operationId" : "CreateMyIssue",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/content" : {
+      "get" : {
+        "description" : "fetch issue content.",
+        "operationId" : "FetchIssueContent",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "issueName",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueContent"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issues/{name}" : {
+      "delete" : {
+        "description" : "Delete a My Issue.",
+        "operationId" : "DeleteMyIssue",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      },
+      "get" : {
+        "description" : "Get a My Issue.",
+        "operationId" : "GetMyIssue",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      },
+      "put" : {
+        "description" : "Update a My Issue.",
+        "operationId" : "UpdateMyIssue",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Issue"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issuestatus" : {
+      "put" : {
+        "description" : "Update a My Issue status.",
+        "operationId" : "UpdateMyIssueStatus",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueStatusChangeParam"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/issuetemplates/{templateName}" : {
+      "get" : {
+        "description" : "fetch issue template.",
+        "operationId" : "FetchIssueTemplateData",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "templateName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueTemplateRender"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issue.webjing.com/v1alpha1/labels" : {
+      "get" : {
+        "description" : "List all issue labels.",
+        "operationId" : "ListMyLabels",
+        "parameters" : [ {
+          "description" : "Label name to query",
+          "in" : "query",
+          "name" : "name",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issue.webjing.com/v1alpha1/Issue" ]
+      }
+    },
+    "/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments" : {
+      "get" : {
+        "description" : "List My issues comment.",
+        "operationId" : "ListMyIssuesComment",
+        "parameters" : [ {
+          "description" : "Page number. Default is 0.",
+          "in" : "query",
+          "name" : "page",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Size number. Default is 0.",
+          "in" : "query",
+          "name" : "size",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Label selector. e.g.: hidden!=true",
+          "in" : "query",
+          "name" : "labelSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Field selector. e.g.: metadata.name==halo",
+          "in" : "query",
+          "name" : "fieldSelector",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "IssueComment owner.",
+          "in" : "query",
+          "name" : "owner",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "IssueComment approved.",
+          "in" : "query",
+          "name" : "approved",
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "description" : "issue name.",
+          "in" : "query",
+          "name" : "issueName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListedIssueCommentList"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issueComment.webjing.com/v1alpha1/IssueComment" ]
+      },
+      "post" : {
+        "description" : "Create a My IssueComment.",
+        "operationId" : "CreateMyIssueComment",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueComment"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Issue"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issueComment.webjing.com/v1alpha1/IssueComment" ]
+      },
+      "put" : {
+        "description" : "Update a My IssueComment.",
+        "operationId" : "UpdateMyIssueComment",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IssueComment"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issueComment.webjing.com/v1alpha1/IssueComment" ]
+      }
+    },
+    "/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments/content" : {
+      "get" : {
+        "description" : "fetch issue comment content.",
+        "operationId" : "FetchIssueCommentContent",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "issueCommentName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueContent"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issueComment.webjing.com/v1alpha1/IssueComment" ]
+      }
+    },
+    "/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments/{commentName}" : {
+      "get" : {
+        "description" : "Get a My IssueComment.",
+        "operationId" : "GetMyIssueComment",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "commentName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issueComment.webjing.com/v1alpha1/IssueComment" ]
+      }
+    },
+    "/apis/uc.api.issueComment.webjing.com/v1alpha1/issuecomments/{name}" : {
+      "delete" : {
+        "description" : "Delete a My Issue Comment.",
+        "operationId" : "DeleteMyIssueComment",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IssueComment"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "uc.api.issueComment.webjing.com/v1alpha1/IssueComment" ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AddOperation" : {
+        "required" : [ "op", "path", "value" ],
+        "type" : "object",
+        "properties" : {
+          "op" : {
+            "type" : "string",
+            "enum" : [ "add" ]
+          },
+          "path" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          },
+          "value" : {
+            "description" : "Value can be any JSON value"
+          }
+        }
+      },
+      "ContributorVO" : {
+        "type" : "object",
+        "properties" : {
+          "avatar" : {
+            "type" : "string"
+          },
+          "bio" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CopyOperation" : {
+        "required" : [ "op", "from", "path" ],
+        "type" : "object",
+        "properties" : {
+          "from" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          },
+          "op" : {
+            "type" : "string",
+            "enum" : [ "copy" ]
+          },
+          "path" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          }
+        }
+      },
+      "Issue" : {
+        "required" : [ "apiVersion", "kind", "metadata", "spec", "status" ],
+        "type" : "object",
+        "properties" : {
+          "apiVersion" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/Metadata"
+          },
+          "spec" : {
+            "$ref" : "#/components/schemas/IssueSpec"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/IssueStatus"
+          }
+        }
+      },
+      "IssueComment" : {
+        "required" : [ "apiVersion", "kind", "metadata", "spec" ],
+        "type" : "object",
+        "properties" : {
+          "apiVersion" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/Metadata"
+          },
+          "spec" : {
+            "$ref" : "#/components/schemas/IssueCommentSpec"
+          }
+        }
+      },
+      "IssueCommentContent" : {
+        "type" : "object",
+        "properties" : {
+          "html" : {
+            "type" : "string",
+            "description" : "Rendered result with HTML format"
+          },
+          "medium" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "description" : "Medium of issueDetail",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueCommentMedia"
+            }
+          },
+          "raw" : {
+            "type" : "string",
+            "description" : "Raw of content"
+          }
+        }
+      },
+      "IssueCommentList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueComment"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueCommentMedia" : {
+        "type" : "object",
+        "properties" : {
+          "originType" : {
+            "type" : "string",
+            "description" : "Origin type of media."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of media",
+            "enum" : [ "PHOTO", "POST" ]
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "External URL of media"
+          }
+        },
+        "description" : "Media item of issueDetail"
+      },
+      "IssueCommentSpec" : {
+        "required" : [ "content", "hidden", "issueName", "owner", "top" ],
+        "type" : "object",
+        "properties" : {
+          "allowNotification" : {
+            "type" : "boolean",
+            "description" : "是否允许通知",
+            "default" : true
+          },
+          "approved" : {
+            "type" : "boolean",
+            "default" : false
+          },
+          "approvedTime" : {
+            "type" : "string",
+            "description" : "approvedTime of the issue message",
+            "format" : "date-time"
+          },
+          "content" : {
+            "$ref" : "#/components/schemas/IssueCommentContent"
+          },
+          "hidden" : {
+            "type" : "boolean",
+            "description" : "是否隐藏",
+            "default" : false
+          },
+          "ipAddress" : {
+            "type" : "string"
+          },
+          "issueName" : {
+            "type" : "string"
+          },
+          "owner" : {
+            "type" : "string",
+            "description" : "Owner of the issue message"
+          },
+          "quoteCommentUid" : {
+            "type" : "string",
+            "description" : "父评论 UID（为空表示顶层评论）"
+          },
+          "top" : {
+            "type" : "boolean",
+            "description" : "是否置顶",
+            "default" : false
+          },
+          "userAgent" : {
+            "type" : "string"
+          }
+        }
+      },
+      "IssueContent" : {
+        "required" : [ "html", "raw" ],
+        "type" : "object",
+        "properties" : {
+          "html" : {
+            "type" : "string",
+            "description" : "Rendered result with HTML format"
+          },
+          "medium" : {
+            "type" : "array",
+            "description" : "rendered medium",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueMedia"
+            }
+          },
+          "raw" : {
+            "type" : "string",
+            "description" : "Raw of content"
+          }
+        }
+      },
+      "IssueLabel" : {
+        "required" : [ "apiVersion", "kind", "metadata", "spec" ],
+        "type" : "object",
+        "properties" : {
+          "apiVersion" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/Metadata"
+          },
+          "spec" : {
+            "$ref" : "#/components/schemas/IssueLabelSpec"
+          }
+        }
+      },
+      "IssueLabelItem" : {
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "IssueLabelList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueLabel"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueLabelOptions" : {
+        "type" : "object",
+        "properties" : {
+          "issueLabelOptions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueLabelItem"
+            }
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "IssueLabelOptionsList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueLabelOptions"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueLabelSpec" : {
+        "required" : [ "labelName", "scope" ],
+        "type" : "object",
+        "properties" : {
+          "color" : {
+            "type" : "string",
+            "description" : "标签颜色"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "标签描述"
+          },
+          "labelName" : {
+            "type" : "string",
+            "description" : "标签名称"
+          },
+          "scope" : {
+            "type" : "string",
+            "description" : "标签生效范围",
+            "default" : "false",
+            "enum" : [ "GLOBAL", "SUBJECT_TYPE", "SUBJECT" ]
+          },
+          "slug" : {
+            "type" : "string",
+            "description" : "标签模版路径"
+          },
+          "subjectName" : {
+            "type" : "string",
+            "description" : "标签范围为主体时的归属主体ID"
+          },
+          "subjectType" : {
+            "type" : "string",
+            "description" : "当标签范围为主体类型的时候，为必填项",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          }
+        }
+      },
+      "IssueList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/Issue"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueMedia" : {
+        "type" : "object",
+        "properties" : {
+          "originType" : {
+            "type" : "string",
+            "description" : "Origin type of media."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of media",
+            "enum" : [ "PHOTO", "POST" ]
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "External URL of media"
+          }
+        },
+        "description" : "rendered medium"
+      },
+      "IssueSpec" : {
+        "required" : [ "content", "owner", "subjectName", "title", "top" ],
+        "type" : "object",
+        "properties" : {
+          "approved" : {
+            "type" : "boolean",
+            "default" : false
+          },
+          "approvedTime" : {
+            "type" : "string",
+            "description" : "approvedTime of the issue message",
+            "format" : "date-time"
+          },
+          "assignees" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "closedAt" : {
+            "type" : "string",
+            "description" : "closed time of the issue message",
+            "format" : "date-time"
+          },
+          "content" : {
+            "$ref" : "#/components/schemas/IssueContent"
+          },
+          "issueTemplate" : {
+            "type" : "string"
+          },
+          "labels" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "owner" : {
+            "type" : "string",
+            "description" : "Owner of the issue message"
+          },
+          "releaseTime" : {
+            "type" : "string",
+            "description" : "Release timestamp. This field can be customized by owner",
+            "format" : "date-time"
+          },
+          "subjectName" : {
+            "type" : "string",
+            "description" : "关联主体唯一标识"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "top" : {
+            "type" : "boolean",
+            "description" : "是否置顶",
+            "default" : false
+          }
+        }
+      },
+      "IssueStats" : {
+        "type" : "object",
+        "properties" : {
+          "approvedIssueComment" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "awaitApproveIssueComment" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "downvote" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalIssueComment" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "upvote" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "visit" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "IssueStatus" : {
+        "required" : [ "state" ],
+        "type" : "object",
+        "properties" : {
+          "observedVersion" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "permalink" : {
+            "type" : "string"
+          },
+          "priority" : {
+            "type" : "string",
+            "description" : "优先级（P0-P3）",
+            "default" : "P2"
+          },
+          "state" : {
+            "type" : "string",
+            "description" : "当前状态",
+            "enum" : [ "AWAIT", "PROGRESS", "CLOSED" ]
+          },
+          "transitions" : {
+            "type" : "array",
+            "description" : "状态变更历史（时间+操作人）",
+            "items" : {
+              "$ref" : "#/components/schemas/StateTransition"
+            }
+          }
+        }
+      },
+      "IssueStatusChangeParam" : {
+        "type" : "object",
+        "properties" : {
+          "changeComment" : {
+            "type" : "string"
+          },
+          "issueName" : {
+            "type" : "string"
+          },
+          "issueState" : {
+            "type" : "string",
+            "enum" : [ "AWAIT", "PROGRESS", "CLOSED" ]
+          }
+        }
+      },
+      "IssueSubject" : {
+        "required" : [ "apiVersion", "kind", "metadata", "spec" ],
+        "type" : "object",
+        "properties" : {
+          "apiVersion" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/Metadata"
+          },
+          "spec" : {
+            "$ref" : "#/components/schemas/IssueSubjectSpec"
+          }
+        }
+      },
+      "IssueSubjectList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueSubject"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueSubjectSpec" : {
+        "required" : [ "content", "displayName", "owner", "subjectType", "subjectVisible" ],
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "$ref" : "#/components/schemas/SubjectContent"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "描述"
+          },
+          "displayName" : {
+            "type" : "string",
+            "description" : "依托对象显示名称"
+          },
+          "issueTemplates" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "description" : "issue模版",
+            "items" : {
+              "type" : "string",
+              "description" : "issue模版"
+            }
+          },
+          "owner" : {
+            "type" : "string",
+            "description" : "创建者"
+          },
+          "participateUsers" : {
+            "type" : "array",
+            "description" : "参与用户",
+            "items" : {
+              "type" : "string",
+              "description" : "参与用户"
+            }
+          },
+          "subjectIcon" : {
+            "type" : "string",
+            "description" : "主体图标"
+          },
+          "subjectType" : {
+            "type" : "string",
+            "description" : "依托对象类型",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          },
+          "subjectVisible" : {
+            "type" : "string",
+            "description" : "主体可见性",
+            "default" : "PUBLIC",
+            "enum" : [ "PUBLIC", "PRIVATE" ]
+          }
+        },
+        "description" : "依托对象详情"
+      },
+      "IssueSubjectStats" : {
+        "type" : "object",
+        "properties" : {
+          "awaitApproved" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "awaitIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "closedIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "labels" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "progressIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalIssue" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "IssueTemplate" : {
+        "required" : [ "apiVersion", "kind", "metadata" ],
+        "type" : "object",
+        "properties" : {
+          "apiVersion" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/Metadata"
+          },
+          "spec" : {
+            "$ref" : "#/components/schemas/IssueTemplateSpec"
+          }
+        }
+      },
+      "IssueTemplateItem" : {
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        },
+        "description" : "issue模版选项"
+      },
+      "IssueTemplateList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueTemplate"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "IssueTemplateOptions" : {
+        "required" : [ "issueTemplateOptions" ],
+        "type" : "object",
+        "properties" : {
+          "issueTemplateOptions" : {
+            "type" : "array",
+            "description" : "issue模版选项",
+            "items" : {
+              "$ref" : "#/components/schemas/IssueTemplateItem"
+            }
+          }
+        }
+      },
+      "IssueTemplateRender" : {
+        "type" : "object",
+        "properties" : {
+          "annotationFields" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "components" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TemplateField"
+            }
+          },
+          "displayName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "IssueTemplateSpec" : {
+        "required" : [ "scope" ],
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "fields" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/TemplateField"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "owner" : {
+            "type" : "string"
+          },
+          "scope" : {
+            "type" : "string",
+            "description" : "IssueTemplate scope",
+            "enum" : [ "SUBJECT_TYPE", "SUBJECT" ]
+          },
+          "subjectName" : {
+            "type" : "string"
+          },
+          "subjectType" : {
+            "type" : "string",
+            "enum" : [ "POST", "PROJECT", "PRODUCT", "TOPIC", "LEAVE_MESSAGE" ]
+          }
+        }
+      },
+      "JsonPatch" : {
+        "minItems" : 1,
+        "uniqueItems" : true,
+        "type" : "array",
+        "description" : "JSON schema for JSONPatch operations",
+        "items" : {
+          "oneOf" : [ {
+            "$ref" : "#/components/schemas/AddOperation"
+          }, {
+            "$ref" : "#/components/schemas/ReplaceOperation"
+          }, {
+            "$ref" : "#/components/schemas/TestOperation"
+          }, {
+            "$ref" : "#/components/schemas/RemoveOperation"
+          }, {
+            "$ref" : "#/components/schemas/MoveOperation"
+          }, {
+            "$ref" : "#/components/schemas/CopyOperation"
+          } ]
+        }
+      },
+      "ListedIssue" : {
+        "required" : [ "contributorVo", "issue", "issueStats" ],
+        "type" : "object",
+        "properties" : {
+          "contributorVo" : {
+            "$ref" : "#/components/schemas/ContributorVO"
+          },
+          "issue" : {
+            "$ref" : "#/components/schemas/Issue"
+          },
+          "issueStats" : {
+            "$ref" : "#/components/schemas/IssueStats"
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "ListedIssueComment" : {
+        "required" : [ "contributorVo", "issueComment", "stats" ],
+        "type" : "object",
+        "properties" : {
+          "contributorVo" : {
+            "$ref" : "#/components/schemas/ContributorVO"
+          },
+          "issueComment" : {
+            "$ref" : "#/components/schemas/IssueComment"
+          },
+          "stats" : {
+            "$ref" : "#/components/schemas/Stats"
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "ListedIssueCommentList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/ListedIssueComment"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "ListedIssueLabel" : {
+        "required" : [ "issueLabel", "issueNumber" ],
+        "type" : "object",
+        "properties" : {
+          "issueLabel" : {
+            "$ref" : "#/components/schemas/IssueLabel"
+          },
+          "issueNumber" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "subjectDisplayName" : {
+            "type" : "string",
+            "description" : "主体显示名称"
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "ListedIssueLabelList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/ListedIssueLabel"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "ListedIssueList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/ListedIssue"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "ListedIssueSubject" : {
+        "required" : [ "createOwner", "issueSubject", "issueSubjectStats", "participateUsers" ],
+        "type" : "object",
+        "properties" : {
+          "createOwner" : {
+            "$ref" : "#/components/schemas/ContributorVO"
+          },
+          "issueSubject" : {
+            "$ref" : "#/components/schemas/IssueSubject"
+          },
+          "issueSubjectStats" : {
+            "$ref" : "#/components/schemas/IssueSubjectStats"
+          },
+          "participateUsers" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ContributorVO"
+            }
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "ListedIssueSubjectList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/ListedIssueSubject"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "ListedIssueTemplate" : {
+        "required" : [ "contributorVo", "issueTemplate" ],
+        "type" : "object",
+        "properties" : {
+          "contributorVo" : {
+            "$ref" : "#/components/schemas/ContributorVO"
+          },
+          "issueTemplate" : {
+            "$ref" : "#/components/schemas/IssueTemplate"
+          },
+          "subjectDisplayName" : {
+            "type" : "string"
+          }
+        },
+        "description" : "A chunk of items."
+      },
+      "ListedIssueTemplateList" : {
+        "required" : [ "first", "hasNext", "hasPrevious", "items", "last", "page", "size", "total", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "first" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the first page."
+          },
+          "hasNext" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "hasPrevious" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page has previous page."
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "A chunk of items.",
+            "items" : {
+              "$ref" : "#/components/schemas/ListedIssueTemplate"
+            }
+          },
+          "last" : {
+            "type" : "boolean",
+            "description" : "Indicates whether current page is the last page."
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Page number, starts from 1. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size of each page. If not set or equal to 0, it means no pagination.",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total elements.",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "description" : "Indicates total pages.",
+            "format" : "int64"
+          }
+        }
+      },
+      "Metadata" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "annotations" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Annotations are like key-value format."
+          },
+          "creationTimestamp" : {
+            "type" : "string",
+            "description" : "Creation timestamp of the Extension.",
+            "format" : "date-time",
+            "nullable" : true
+          },
+          "deletionTimestamp" : {
+            "type" : "string",
+            "description" : "Deletion timestamp of the Extension.",
+            "format" : "date-time",
+            "nullable" : true
+          },
+          "finalizers" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "nullable" : true,
+            "items" : {
+              "type" : "string",
+              "nullable" : true
+            }
+          },
+          "generateName" : {
+            "type" : "string",
+            "description" : "The name field will be generated automatically according to the given generateName field"
+          },
+          "labels" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Labels are like key-value format."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Metadata name"
+          },
+          "version" : {
+            "type" : "integer",
+            "description" : "Current version of the Extension. It will be bumped up every update.",
+            "format" : "int64",
+            "nullable" : true
+          }
+        },
+        "description" : "Metadata of Extension."
+      },
+      "MoveOperation" : {
+        "required" : [ "op", "from", "path" ],
+        "type" : "object",
+        "properties" : {
+          "from" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          },
+          "op" : {
+            "type" : "string",
+            "enum" : [ "move" ]
+          },
+          "path" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          }
+        }
+      },
+      "RemoveOperation" : {
+        "required" : [ "op", "path" ],
+        "type" : "object",
+        "properties" : {
+          "op" : {
+            "type" : "string",
+            "enum" : [ "remove" ]
+          },
+          "path" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          }
+        }
+      },
+      "ReplaceOperation" : {
+        "required" : [ "op", "path", "value" ],
+        "type" : "object",
+        "properties" : {
+          "op" : {
+            "type" : "string",
+            "enum" : [ "replace" ]
+          },
+          "path" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          },
+          "value" : {
+            "description" : "Value can be any JSON value"
+          }
+        }
+      },
+      "StateTransition" : {
+        "type" : "object",
+        "properties" : {
+          "comment" : {
+            "type" : "string"
+          },
+          "fromState" : {
+            "type" : "string",
+            "enum" : [ "AWAIT", "PROGRESS", "CLOSED" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "time" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "toState" : {
+            "type" : "string",
+            "enum" : [ "AWAIT", "PROGRESS", "CLOSED" ]
+          }
+        },
+        "description" : "状态变更历史（时间+操作人）"
+      },
+      "Stats" : {
+        "type" : "object",
+        "properties" : {
+          "downvote" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "upvote" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "SubjectContent" : {
+        "required" : [ "htmlContent", "rawContent" ],
+        "type" : "object",
+        "properties" : {
+          "htmlContent" : {
+            "type" : "string",
+            "description" : "依托的html内容"
+          },
+          "rawContent" : {
+            "type" : "string",
+            "description" : "依托的原内容"
+          },
+          "uid" : {
+            "type" : "string",
+            "description" : "依托内容UID，文章、产品等类型会存在一个ID"
+          }
+        },
+        "description" : "依托内容"
+      },
+      "TemplateField" : {
+        "required" : [ "key", "title", "type" ],
+        "type" : "object",
+        "properties" : {
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "fieldOptions" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            }
+          },
+          "helpText" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "maxLength" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minLength" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "placeholder" : {
+            "type" : "string"
+          },
+          "requiredMode" : {
+            "type" : "string"
+          },
+          "rows" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "TEXT",
+            "enum" : [ "TEXT", "TEXT_AREA", "SELECT", "RADIO", "PASSWORD", "EMAIL" ]
+          },
+          "validate" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TestOperation" : {
+        "required" : [ "op", "path", "value" ],
+        "type" : "object",
+        "properties" : {
+          "op" : {
+            "type" : "string",
+            "enum" : [ "test" ]
+          },
+          "path" : {
+            "pattern" : "^(/[^/~]*(~[01][^/~]*)*)*$",
+            "type" : "string",
+            "description" : "A JSON Pointer path pointing to the location to move/copy from.",
+            "example" : "/a/b/c"
+          },
+          "value" : {
+            "description" : "Value can be any JSON value"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "basicAuth" : {
+        "scheme" : "basic",
+        "type" : "http"
+      },
+      "bearerAuth" : {
+        "bearerFormat" : "JWT",
+        "scheme" : "bearer",
+        "type" : "http"
+      }
+    }
+  }
+}

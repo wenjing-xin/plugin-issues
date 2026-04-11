@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = ${issueVO.spec.title},
+content = ~{::content}, version = ${pluginVersion}, head = ~{::head} )}">
+<th:block th:fragment="head">
+    <th:block th:if="${ #strings.equals(contentStyle,'github') }">
+        <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/libs/github-markdown.css?v={version}(version=${pluginVersion})}" />
+    </th:block>
+</th:block>
+<th:block th:fragment="content" th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}">
+    <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
+    totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
+    <main class="piw-container piw-mx-auto piw-py-6 piw-space-y-4" x-data="diceBearAvatar(avatarStyle,size)">
+        <div class="piw-w-full piw-flex piw-items-center piw-flex-wrap piw-justify-between piw-gap-x-3 piw-pb-3 piw-border-b piw-border-slate-300"
+             x-data="{issueTemplateModal: false}">
+            <div class="piw-inline-flex piw-items-center piw-flex-wrap piw-gap-x-1.5">
+                <p class="piw-text-xl piw-tracking-wider piw-text-sm piw-font-bold piw-text-neutral-700" th:text="${issueVO.spec.title}"></p>
+                <th:block th:switch="${issueVO.status.state + ''}">
+                    <th:block th:case="'AWAIT'">
+                        <p class="issue-detail-state piw-bg-indigo-600 piw-text-white">等待中</p>
+                    </th:block>
+                    <th:block th:case="'PROGRESS'">
+                        <p class="issue-detail-state piw-bg-green-700 piw-text-white">处理中</p>
+                    </th:block>
+                    <th:block th:case="'CLOSED'">
+                        <p class="issue-detail-state piw-bg-slate-400 piw-text-white">已关闭</p>
+                    </th:block>
+                </th:block>
+            </div>
+            <a th:if="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" th:href="${'/subject/' + issueSubjectInfo.name + '/issues/new'}"
+               class="piw-outline-none piw-inline-block piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8 piw-flex piw-justify-center piw-items-center"
+                >New issue</a>
+            <button th:unless="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" class="piw-outline-none piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-w-[100px] piw-px-2 piw-h-8 piw-flex piw-justify-center piw-items-center" @click="issueTemplateModal = true">New issue</button>
+            <!-- 模版选择   -->
+            <th:block th:if="${ not #lists.isEmpty(issueSubjectInfo.issueTemplates)}">
+                <th:block th:replace="~{fragments/issue-template-select}" />
+            </th:block>
+        </div>
+        <div class="piw-w-full piw-flex lg:piw-flex-nowrap lg:piw-gap-x-4 piw-flex-wrap"
+             th:attr="x-data=|{issueId:'${issueVO.metadata.name}', quoteCommentId: '', curCommentPos: '', closedComment: '${issueCosedComment}', issueClosedModal: false}|"
+             x-init="curCommentPos = window.location.href.replace(window.location.origin+window.location.pathname, '').replace('#', '')">
+            <div class="lg:piw-w-[68%] piw-w-full" x-data="issueEditor">
+                <!--  初始化issue编辑器  -->
+                <div class="piw-w-full" th:attr="x-data=|{issueLink: '${issueVO.status.permalink}', issueName: '${issueVO.metadata.name}', hoverReplyCommentId: ''}|">
+                    <!--  原有的issue信息  -->
+                    <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full">
+                        <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block" th:attr="x-data=|{issueOwnerName: '${issueVO.contributorVo.name}'}|">
+                            <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueVO.contributorVo.avatar}, name=${issueVO.contributorVo.name})}" />
+                        </div>
+                        <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200" x-data="{editIssue: false}"
+                             :class="{'!piw-border-indigo-500 !piw-border-2': curCommentPos != '' && curCommentPos === issueId}">
+                            <div class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
+                                <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2" x-data="dateUtils" >
+                                    <div class="lg:piw-hidden" th:attr="x-data=|{issueOwnerName: '${issueVO.contributorVo.name}'}|">
+                                        <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueVO.contributorVo.avatar}, name=${issueVO.contributorVo.name})}" />
+                                    </div>
+                                     <span class="piw-text-sm" th:text="${issueVO.contributorVo.displayName}"></span>
+                                    <span class="piw-text-sm piw-text-neutral-500"></span>
+                                    <p class="piw-inline-flex piw-items-center piw-gap-x-1" th:attr="x-data=|{publishTime: '${issueVO.spec.releaseTime}'}|">
+                                        <span class="piw-text-sm">发布于</span>
+                                        <span class="piw-text-sm" x-text="relativeTimeTo(publishTime)"></span>
+                                    </p>
+                                </div>
+                                <div class="piw-relative issue-item-tools" x-data="dropdown" @click="open();main.triggerLazyAnimation('.issue-item-tools ')"
+                                     @mouseenter="main.showTooltip('操作', $event)" @mouseleave="main.hideTooltip()">
+                                    <span class="piw-icon-[pepicons-pencil--dots-x] piw-text-2xl hover:piw-cursor-pointer"></span>
+                                    <div x-show="show" @click.outside="close();"  @mouseleave="setTimeout(() => {close();}, 800)"
+                                         class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md
+                                         piw-flex piw-flex-col piw-items-center piw-space-y-1 piw-p-2">
+                                        <div class="issue-item-operation t-lazy-item" @click="main.copyLink(issueLink + '#' + issueId);close();">
+                                            <span class="piw-icon-[ci--link] piw-text-xl"></span>
+                                            <span class="piw-text-sm">复制链接</span>
+                                        </div>
+                                        <hr class="piw-w-full piw-bg-slate-200" />
+                                        <th:block sec:authorize="isAuthenticated()">
+                                            <div class="issue-item-operation t-lazy-item" x-data="{issueRawContent: ''}"
+                                                 @click="insertQuoteByPaste(issueRawContent);"
+                                                 x-init="const issueContent = await main.getIssueContent(issueName);issueRawContent = issueContent.raw;">
+                                                <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
+                                                <span class="piw-text-sm">引用回复</span>
+                                            </div>
+                                        </th:block>
+                                        <th:block th:if="${#strings.equals(currentUser.name, issueVO.contributorVo.name)}">
+                                            <hr class="piw-w-full piw-bg-slate-200" />
+                                            <div class="issue-item-operation t-lazy-item"
+                                                 @click="editIssue=true;close();">
+                                                <span class="piw-icon-[iconamoon--edit-light] piw-text-lg"></span>
+                                                <span class="piw-text-sm">编辑</span>
+                                            </div>
+                                        </th:block>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="piw-w-full piw-p-3">
+                                <!-- 模版元数据信息 -->
+                                <div class="piw-mb-2 piw-space-y-2" x-show="!editIssue">
+                                    <th:block th:each="templateItem:${issueVO.templateData}">
+                                        <div class="piw-w-full piw-space-y-1">
+                                            <label class="piw-block piw-text-sm piw-font-medium piw-mb-1" th:for="${templateItem.title}">
+                                                <span th:text="${templateItem.title}"></span>
+                                            </label>
+                                            <th:block th:switch="${templateItem.type + ''}">
+                                                <th:block th:case="'TEXT'">
+                                                    <p th:text="${templateItem.value}" class="piw-w-full piw-text-sm piw-rounded-md piw-py-2 piw-px-2"></p>
+                                                </th:block>
+                                                <th:block th:case="'TEXT_AREA'">
+                                                     <p th:text="${#strings.isEmpty(templateItem.value) ? '暂未填写' : templateItem.value}"
+                                                               class="piw-w-full piw-text-sm piw-rounded-md piw-p-2 piw-h-auto"></p>
+                                                </th:block>
+                                                <th:block th:case="'EMAIL'">
+                                                    <input type="email" th:value="${templateItem.value}" readonly
+                                                           class="piw-w-full piw-text-sm piw-rounded-md piw-py-2 piw-px-2 focus:piw-outline-none">
+                                                </th:block>
+                                                <th:block th:case="'PASSWORD'">
+                                                    <input type="password" th:value="${templateItem.value}"
+                                                           class="piw-w-full piw-text-sm piw-rounded-md piw-py-2 piw-px-2 focus:piw-outline-none">
+                                                </th:block>
+                                                <th:block th:case="'SELECT'">
+                                                    <div class="piw-relative">
+                                                        <button type="button" class="piw-w-full piw-text-left piw-text-sm piw-rounded-md piw-py-2 piw-px-2 piw-bg-white piw-flex piw-justify-between piw-items-center">
+                                                            <span th:text="${templateItem.selectLabel}"></span>
+                                                        </button>
+                                                    </div>
+                                                </th:block>
+                                                <th:block th:case="'RADIO'">
+                                                    <div th:if="${not #strings.isEmpty(templateItem.checkBoxLabels)}" class="piw-flex piw-flex-wrap piw-gap-2" th:with="checkboxLabels = ${#strings.arraySplit(templateItem.checkBoxLabels, ',')}">
+                                                        <th:block th:each="label:${checkboxLabels}">
+                                                            <label class="piw-inline-flex piw-items-center piw-px-2 piw-py-1 piw-border piw-border-gray-300 piw-rounded piw-cursor-pointer piw-bg-blue-50 piw-border-blue-400">
+                                                                <input type="checkbox" class="piw-mr-1" th:value="${label}" checked="checked" readonly>
+                                                                <span th:text="${label}" class="piw-text-sm piw-tracking-wider"></span>
+                                                            </label>
+                                                        </th:block>
+                                                    </div>
+                                                    <label th:if="${#strings.isEmpty(templateItem.checkBoxLabels)}" class="piw-inline-flex piw-items-center piw-px-2 piw-py-1 piw-border piw-border-gray-300 piw-rounded piw-cursor-pointer piw-bg-blue-50 piw-border-blue-400">
+                                                        <input type="checkbox" class="piw-mr-1" value="暂未选择" checked="checked" disabled>
+                                                        <span class="piw-text-sm piw-tracking-wider">暂未选择</span>
+                                                    </label>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </th:block>
+                                </div>
+                                <div x-show="!editIssue" class="piw-text-sm piw-my-3 !piw-max-w-none piw-break-words"
+                                     th:classappend="${ #strings.equals(contentStyle, 'github') ? 'markdown-body' : 'tailwind-typography'}"
+                                     th:utext="${issueVO.spec.content.html}"></div>
+                                <div class="piw-w-full piw-p-1 piw-space-y-3" x-show="editIssue" x-data="issueUpdateEditor(false, issueId)"
+                                x-effect="if(editIssue && !rawContentIue){await fetchEditData();}">
+                                    <th:block th:replace="~{fragments/IssueUpdateEditor}" />
+                                    <!-- 提交按钮 -->
+                                    <div class="piw-w-full piw-my-3 piw-flex piw-items-center piw-gap-x-3">
+                                        <button type="button" :disabled="updateLoading" @click="updateIssueOrComment()"
+                                                class="piw-w-24 piw-bg-green-600 piw-px-4 piw-py-1 piw-rounded-md piw-shadow-sm piw-transition hover:piw-bg-green-700 transition-all duration-300 inline-flex items-center gap-x-1">
+                                            <span class="text-lg piw-icon-[eos-icons--loading]" x-show="updateLoading"></span>
+                                            <span x-text="updateBtnText" class="piw-text-white piw-text-sm"></span>
+                                        </button>
+                                        <div class="piw-w-20 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center piw-cursor-pointer"
+                                             @click="editIssue=false;">取消</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- issue 评论数据  -->
+                    <th:block th:if="${ not #lists.isEmpty(issueComments)}" th:each="issueComment : ${issueComments}">
+                        <div class="lg:piw-flex lg:piw-gap-x-3 piw-w-full" th:attr="x-data=|{commentId: '${issueComment.metadata.name}', issueCommentName: '${issueComment.metadata.name}', showEdit:false, replyCommentId: '${issueComment.spec.quoteCommentUid}'}|"
+                             :id="commentId">
+                            <div class="lg:piw-flex-shrink-0 piw-hidden lg:piw-block lg:piw-pt-4" th:attr="x-data=|{ issueOwnerName: '${issueComment.contributorVo.name}' }|">
+                                <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
+                            </div>
+                            <div class="piw-w-full">
+                                <div class="piw-h-4 piw-w-0.5 piw-bg-slate-300/80 piw-ml-6"></div>
+                                <div class="piw-w-full piw-rounded-md piw-border piw-border-slate-200 piw-transition-all piw-duration-500"
+                                     :class="{'!piw-border-indigo-500 !piw-border-2': curCommentPos != '' && curCommentPos === commentId, 'piw-animate-bounce': hoverReplyCommentId === commentId }">
+                                    <div x-show="!showEdit" class="piw-w-full piw-border-b piw-border-slate-200 piw-flex piw-px-3 piw-py-1 piw-items-center piw-justify-between piw-bg-slate-100/80">
+                                        <div class="piw-w-full piw-flex piw-items-center piw-gap-x-2" x-data="dateUtils">
+                                            <div class="lg:piw-hidden" th:attr="x-data=|{ issueOwnerName: '${issueComment.contributorVo.name}' }|">
+                                                <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${issueComment.contributorVo.avatar}, name=${issueComment.contributorVo.name})}" />
+                                            </div>
+                                            <span class="piw-text-sm" th:text="${issueComment.contributorVo.displayName}"></span>
+                                            <th:block th:if="${not #strings.isEmpty(issueComment.replyToOwner)}">
+                                                <p class="piw-inline-flex piw-items-center piw-gap-x-2 piw-text-sm">
+                                                    <span class="piw-text-neutral-500">回复</span>
+                                                    <span class="piw-text-indigo-500 hover:piw-text-indigo-600 piw-font-medium piw-transition-all piw-duration-500 piw-cursor-pointer"
+                                                          th:text="${issueComment.replyToOwner.displayName}"
+                                                    @mouseenter="hoverReplyCommentId = replyCommentId;"
+                                                    @mouseleave="hoverReplyCommentId = ''"></span>
+                                                </p>
+                                            </th:block>
+                                            <p class="piw-inline-flex piw-items-center piw-gap-x-1" th:attr="x-data=|{createTime: '${issueComment.metadata.creationTimestamp}'}|">
+                                                <span class="piw-text-sm">创建于</span>
+                                                <span class="piw-text-sm" x-text="relativeTimeTo(createTime)"></span>
+                                            </p>
+                                        </div>
+                                        <div class="piw-relative" :class="commentId" x-data="dropdown" @click="open();main.triggerLazyAnimation('.' + commentId + ' ')"
+                                             @mouseenter="main.showTooltip('操作', $event)"
+                                             @mouseleave="main.hideTooltip()">
+                                            <span class="piw-icon-[pepicons-pencil--dots-x] piw-text-2xl hover:piw-cursor-pointer"></span>
+                                            <div x-show="show" @click.outside="close();" @mouseleave="setTimeout(() => {close();}, 800)"
+                                                 class="piw-w-36 piw-absolute piw-top-8 -piw-right-2 piw-z-10 lg:piw-left-0 piw-bg-white piw-border piw-border-slate-200 piw-rounded-md
+                                             piw-flex piw-flex-col piw-items-center piw-space-y-1 piw-p-2">
+                                                <div class="issue-item-operation t-lazy-item" @click="main.copyLink(issueLink + '#' + commentId);close();close();">
+                                                    <span class="piw-icon-[ci--link] piw-text-xl"></span>
+                                                    <span class="piw-text-sm">复制链接</span>
+                                                </div>
+                                                <hr class="piw-w-full piw-bg-slate-200" />
+                                                <th:block sec:authorize="isAuthenticated()">
+                                                    <div class="issue-item-operation t-lazy-item"
+                                                         @click="quoteCommentId= commentId;insertQuoteByPaste(issueCommentRawContent)"
+                                                         x-data="{issueCommentRawContent: ''}"
+                                                         x-init="const issueCommentContent = await main.getIssueCommentContent(issueCommentName);issueCommentRawContent = issueCommentContent.raw;">
+                                                        <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
+                                                        <span class="piw-text-sm">引用回复</span>
+                                                    </div>
+                                                </th:block>
+                                                <th:block sec:authorize="isAuthenticated()" th:if="${#strings.equals(currentUser.name, issueComment.contributorVo.name)}">
+                                                    <hr class="piw-w-full piw-bg-slate-200" />
+                                                    <div class="issue-item-operation t-lazy-item"
+                                                         @click="showEdit = true;close();">
+                                                        <span class="piw-icon-[iconamoon--edit-light] piw-text-lg"></span>
+                                                        <span class="piw-text-sm">编辑</span>
+                                                    </div>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="piw-w-full piw-p-3 !piw-max-w-none piw-break-words" x-show="!showEdit"
+                                         th:classappend="${ #strings.equals(contentStyle, 'github') ? 'markdown-body' : 'tailwind-typography'}">
+                                        <div class="piw-text-sm" th:utext="${issueComment.spec.content.html}"></div>
+                                    </div>
+                                    <div class="piw-w-full piw-p-2 piw-space-y-3" x-show="showEdit" x-data="issueUpdateEditor(true, commentId)"
+                                         x-effect="if(showEdit && !rawContentIue){await fetchEditData();}">
+                                        <th:block th:replace="~{fragments/IssueUpdateEditor}" />
+                                        <!-- 提交按钮 -->
+                                        <div class="piw-w-full piw-my-3 piw-flex piw-items-center piw-gap-x-3">
+                                            <button type="button" :disabled="updateLoading" @click="updateIssueOrComment()"
+                                                    class="piw-w-24 piw-bg-green-600 piw-px-4 piw-py-1 piw-rounded-md piw-shadow-sm piw-transition hover:piw-bg-green-700 transition-all duration-300 inline-flex items-center gap-x-1">
+                                                <span class="text-lg piw-icon-[eos-icons--loading]" x-show="updateLoading"></span>
+                                                <span x-text="updateBtnText" class="piw-text-white piw-text-sm"></span>
+                                            </button>
+                                            <div class="piw-w-20 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center piw-cursor-pointer"
+                                                 @click="showEdit = false;">取消</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+                <div class="piw-w-full">
+                    <div sec:authorize="isAuthenticated()" id="issueComment" class="lg:piw-flex lg:piw-gap-x-3 piw-w-full piw-my-4">
+                        <div class="piw-hidden lg:piw-block lg:piw-flex-shrink-0" th:attr="x-data=|{ issueOwnerName: '${currentUser.name}' }|">
+                            <th:block th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${currentUser.avatar}, name=${currentUser.name})}" />
+                        </div>
+                        <div class="piw-w-full piw-space-y-3">
+                            <p class="piw-text-sm piw-text-neutral-700 piw-mt-2 piw-font-bold">添加一条评论</p>
+                            <th:block th:replace="~{fragments/IssueEditor}" />
+                        </div>
+                    </div>
+                    <!-- 提交按钮 -->
+                    <div class="piw-w-full piw-my-3 lg:piw-pl-10 piw-flex piw-items-center piw-gap-x-3" sec:authorize="isAuthenticated()" x-data="messageBox">
+                        <button class="piw-w-24 piw-rounded-md piw-bg-green-700 piw-text-neutral-100 piw-h-8 piw-text-sm piw-tracking-wider"
+                                @click="main.publishIssueComment(issueId, rawContent, preview, quoteCommentId)" >评论</button>
+                        <button class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center "
+                                th:disabled="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees, currentUser.name))}"
+                                th:classappend="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees, currentUser.name))} ? 'piw-cursor-not-allowed'"
+                                th:if="${not #strings.equals(issueVO.status.state + '', 'CLOSED')}"
+                                @click="issueClosedModal = true;">关闭 Issue</button>
+                        <button class="piw-w-36 piw-rounded-md piw-bg-slate-100 piw-h-8 piw-text-sm piw-flex piw-items-center piw-justify-center"
+                                th:if="${#strings.equals(issueVO.status.state + '', 'CLOSED')}"
+                                th:disabled="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees,currentUser.name))}"
+                                th:classappend="${(not #strings.equals(currentUser.name, issueVO.contributorVo.name)) and (not #lists.contains(issueVO.spec.assignees,currentUser.name))} ? 'piw-cursor-not-allowed'"
+                                @click="main.reopenIssue(issueId)">重新打开</button>
+                    </div>
+                    <th:block th:replace="~{fragments/issue-close-comment}" />
+                </div>
+            </div>
+            <!--  右侧信息栏 -->
+            <div class="lg:piw-w-[28%] lg:piw-sticky piw-w-full piw-h-full piw-space-y-2 piw-divide-y piw-divide-slate-200">
+                <th:block th:replace="~{fragments/macro/issue-right::issueRight(${issueVO})}" />
+            </div>
+        </div>
+    </main>
+</th:block>
+</html>

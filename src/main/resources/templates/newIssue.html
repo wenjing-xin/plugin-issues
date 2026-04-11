@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{plugin:PluginIssues:fragments/layout :: layoutHtml(title = '创建新Issue',
+content = ~{::content}, version = ${pluginVersion}, head = ~{::head})}">
+<th:block th:fragment="head">
+
+</th:block>
+<th:block th:fragment="content" th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}">
+    <th:block th:replace="~{fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
+    totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
+    <main class="piw-container piw-mx-auto piw-py-6 piw-flex lg:piw-flex-nowrap lg:piw-gap-x-4 piw-flex-wrap"
+        th:attr="x-data=|{issueSubjectName:'${issueSubjectInfo.name}', templateName: main.getSpecialParam('template'), issueTemplateModal: false}|">
+        <!-- 表单提交部分  -->
+        <div class="lg:piw-w-[68%] piw-w-full" x-data="issueSubmit(issueSubjectName, templateName)">
+            <div class="piw-w-full piw-space-y-0.5">
+                <p class="piw-tracking-wider piw-font-bold">创建新 Issue</p>
+                <div class="piw-flex piw-items-center piw-gap-x-1 piw-h-6" x-show="templateName != ''">
+                    <p class="piw-text-xs" x-text="issueTemplateRender.displayName"></p>
+                    <button type="button"
+                        class="piw-outline-none piw-text-xs piw-text-blue-500 hover:piw-border-b hover:piw-border-blue-500 piw-transition-all duration-300"
+                        @click="issueTemplateModal = true">选择其他模版</button>
+                </div>
+            </div>
+            <!-- 模版选择   -->
+            <th:block th:if="${ not #lists.isEmpty(issueSubjectInfo.issueTemplates)}">
+                <th:block th:replace="~{fragments/issue-template-select}" />
+            </th:block>
+            <!-- 基础信息表单  -->
+            <form class="piw-w-full piw-rounded piw-py-4 piw-space-y-6" x-data="issueEditor"
+                @submit="submitForm(rawContent, preview)">
+                <!-- 标题 -->
+                <div>
+                    <label class="piw-block piw-text-sm piw-font-medium piw-mb-1" for="title">
+                        标题 <span class="piw-text-red-500">*</span>
+                    </label>
+                    <input id="title" x-model="issueForm.spec.title" type="text" required
+                        class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400 piw-transition"
+                        placeholder="请输入标题">
+                </div>
+                <!-- 模版表单  -->
+                <div class="piw-space-y-4">
+                    <template x-for="component in issueTemplateRender.components" :key="component.key">
+                        <div class="w-full space-y-1">
+                            <label class="piw-block piw-text-sm piw-font-medium piw-mb-1" :for="component.title">
+                                <span x-text="component.title"></span>
+                                <span class="piw-text-red-500" x-show="component.requiredMode == 'required'">*</span>
+                            </label>
+                            <!-- 文本输入框 -->
+                            <template x-if="component.type === 'TEXT'">
+                                <input :id="component.key" type="text" :maxlength="component.maxLength"
+                                    :minlength="component.minLength" :required="component.requiredMode == 'required'"
+                                    :value="component.defaultValue"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''"
+                                    x-model="issueForm.metadata.annotations[component.key]">
+                            </template>
+                            <!-- 密码框组 -->
+                            <template x-if="component.type === 'PASSWORD'">
+                                <input :id="component.key" type="password" :value="component.defaultValue"
+                                    :required="component.requiredMode == 'required'"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''"
+                                    x-model="issueForm.metadata.annotations[component.key]">
+                            </template>
+                            <!-- 邮箱 -->
+                            <template x-if="component.type === 'EMAIL'">
+                                <input :id="component.key" type="email" :value="component.defaultValue"
+                                    :required="component.requiredMode == 'required'"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''"
+                                    x-model="issueForm.metadata.annotations[component.key]">
+                            </template>
+                            <!-- 多行文本 -->
+                            <template x-if="component.type === 'TEXT_AREA'">
+                                <textarea :id="component.key" :rows="component.rows" :maxlength="component.maxLength"
+                                    :minlength="component.minLength"
+                                    class="piw-w-full piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-p-2 piw-focus:outline-none piw-focus:ring-2 piw-focus:ring-blue-400"
+                                    :placeholder="component.placeholder || ''" :value="component.defaultValue"
+                                    :required="component.requiredMode == 'required'"
+                                    x-model="issueForm.metadata.annotations[component.key]"></textarea>
+                            </template>
+                            <!-- 下拉选择 -->
+                            <template x-if="component.type === 'SELECT'">
+                                <!-- 自定义下拉选择 -->
+                                <div class="piw-relative" x-data="{
+                                    open: false,
+                                    select(val, label) {
+                                        issueForm.metadata.annotations[component.key] = val;
+                                        this.open = false;
+                                    }
+                                }">
+                                    <button type="button"
+                                        class="piw-w-full piw-text-left piw-text-sm piw-border piw-border-gray-300 piw-rounded-md piw-py-2 piw-px-2 piw-bg-white piw-flex piw-justify-between piw-items-center"
+                                        @click="open = !open" :aria-expanded="open">
+                                        <span x-text="component.fieldOptions.find(opt => opt.generateVal === issueForm.metadata.annotations[component.key])?.label || (component.placeholder || '请选择')"></span>
+                                        <span class="piw-ml-2 piw-icon-[tabler--chevron-down]"></span>
+                                    </button>
+                                    <div x-show="open" x-transition:enter="piw-transition piw-ease-out piw-duration-100"
+                                        x-transition:enter-start="piw-opacity-0 piw-scale-95"
+                                        x-transition:enter-end="piw-opacity-100 piw-scale-100"
+                                        x-transition:leave="piw-transition piw-ease-in piw-duration-75"
+                                        x-transition:leave-start="piw-opacity-100 piw-scale-100"
+                                        x-transition:leave-end="piw-opacity-0 piw-scale-95"
+                                        class="piw-absolute piw-z-10 piw-mt-1 piw-w-full piw-bg-white piw-border piw-border-gray-200 piw-rounded-md piw-shadow-lg piw-max-h-60 piw-overflow-auto"
+                                        @click.away="open = false">
+                                        <template x-for="option in component.fieldOptions" :key="option.value">
+                                            <div class="piw-px-4 piw-py-2 piw-cursor-pointer hover:piw-bg-blue-50 piw-text-sm"
+                                                :class="{'piw-bg-blue-100 piw-font-bold': issueForm.metadata.annotations[component.key] === option.generateVal}"
+                                                @click="select(option.generateVal, option.label)" x-text="option.label">
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- 多选框 -->
+                            <template x-if="component.type === 'RADIO'">
+                                <!-- 多选框组 -->
+                                <div class="piw-flex piw-flex-wrap piw-gap-2">
+                                    <template x-for="option in component.fieldOptions" :key="option.value">
+                                        <label
+                                            class="piw-inline-flex piw-items-center piw-px-2 piw-py-1 piw-border piw-border-gray-300 piw-rounded piw-cursor-pointer"
+                                            :class="{'piw-bg-blue-50 piw-border-blue-400': (issueForm.metadata.annotations[component.key] || []).includes(option.generateVal)}">
+                                            <input type="checkbox" class="piw-mr-1" :value="option.generateVal"
+                                                :checked="(issueForm.metadata.annotations[component.key] || []).includes(option.generateVal)"
+                                                @change="
+                                                    (issueForm.metadata.annotations[component.key] = issueForm.metadata.annotations[component.key] || []);
+                                                    if ($event.target.checked) {
+                                                        if (!issueForm.metadata.annotations[component.key].includes(option.generateVal)) {
+                                                            issueForm.metadata.annotations[component.key].push(option.generateVal)
+                                                        }
+                                                    } else {
+                                                        issueForm.metadata.annotations[component.key] = issueForm.metadata.annotations[component.key].filter(v => v !== option.generateVal)
+                                                    }
+                                                ">
+                                            <span x-text="option.label" class="piw-text-sm piw-tracking-wider"></span>
+                                        </label>
+                                    </template>
+                                </div>
+                            </template>
+                            <p class="piw-text-sm piw-text-neutral-500 piw-mt-1" x-show="component.helpText !== ''"
+                                x-text="component.helpText"></p>
+                        </div>
+                    </template>
+                </div>
+                <!-- 描述 -->
+                <div>
+                    <label class="piw-block piw-text-sm piw-font-medium piw-mb-2">描述</label>
+                    <th:block th:replace="~{fragments/IssueEditor}" />
+                </div>
+                <!-- 提交按钮 -->
+                <div class="piw-w-full piw-flex piw-justify-between piw-items-center" x-data="diceBearAvatar(avatarStyle,size)">
+                    <div class="piw-w-10" th:attr="x-data=|{ issueOwnerName: '${currentUser.name}'}|">
+                        <th:block
+                            th:replace="~{fragments/macro/ownerAvatar::ownerAvatar(avatar = ${currentUser.avatar}, name=${currentUser.name})}" />
+                    </div>
+                    <div class="piw-flex piw-justify-end piw-space-x-2">
+                        <button type="button"
+                            class="piw-bg-gray-100 piw-text-gray-600 piw-text-sm piw-px-3 piw-py-1 piw-rounded-md piw-border piw-border-gray-200 piw-transition hover:piw-bg-gray-200"
+                            @click="cancelCreate()">取消</button>
+                        <button type="submit" :disabled="saveLoading || rawContent.trim() == ''"
+                                @mouseenter="if(rawContent.trim() == ''){main.showTooltip('请填入Issue描述', $event)}"
+                                @mouseleave="if(rawContent.trim() == ''){main.hideTooltip()}"
+                                :class="{'piw-cursor-not-allowed piw-opacity-60': saveLoading || rawContent.trim() == ''}"
+                            class="piw-bg-green-600 piw-px-4 piw-py-1 piw-rounded-md piw-shadow-sm piw-transition hover:piw-bg-green-700 transition-all duration-300 inline-flex items-center gap-x-1">
+                            <span class="text-lg piw-icon-[eos-icons--loading]" x-show="saveLoading"></span>
+                            <span x-text="submitText" class="piw-text-white piw-text-sm"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!--  右侧信息栏 -->
+        <div class="lg:piw-w-[28%] lg:piw-sticky piw-w-full piw-h-full piw-space-y-2 piw-divide-y piw-divide-slate-200">
+            <div class="piw-space-y-2 piw-py-3">
+                <p class="piw-text-sm piw-tracking-wider">经办人</p>
+                <p class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+                    暂无经办人
+                </p>
+            </div>
+            <div class="piw-space-y-2 piw-py-3">
+                <p class="piw-text-sm piw-tracking-wider">标签</p>
+                <p class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+                    暂无标签
+                </p>
+            </div>
+        </div>
+    </main>
+</th:block>
+
+</html>

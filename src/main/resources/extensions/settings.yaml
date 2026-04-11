@@ -1,0 +1,78 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: plugin-issues-settings
+spec:
+  forms:
+    - group: issuesBasic
+      label: 基本设置
+      formSchema:
+        - $formkit: select
+          name: contentStyle
+          label: 内容样式
+          value: "tailwind"
+          help: "用于渲染issue主体内容样式"
+          options:
+            - label: GitHub 风格
+              value: github
+            - label: Tailwind CSS Typography
+              value: tailwind
+        - $formkit: number
+          name: pageSize
+          label: 分页大小
+          value: 9
+          max: 20
+          min: 4
+          help: "最大二十条，最小4条"
+        - $formkit: text
+          name: defaultClosedComment
+          label: Issue关闭原因
+          value: Issue已解决
+          help: "默认关闭Issued原因"
+        - $formkit: radio
+          key: defaultAvatarMode
+          id: defaultAvatarMode
+          name: defaultAvatarMode
+          label: 默认头像
+          value: "default"
+          help: "显示在Issue评论和登录头像中"
+          options:
+            - label: 默认
+              value: "default"
+            - label: DiceBar头像
+              value: "random_figure"
+        - $formkit: select
+          if: $get(defaultAvatarMode).value == "random_figure"
+          key: diceBarAvatarStyle
+          id: diceBarAvatarStyle
+          name: diceBarAvatarStyle
+          label: DiceBar头像风格
+          value: "initials"
+          help: "DiceBar头像风格，可参考https://www.dicebear.com/styles/选择"
+          options:
+            - label: initials
+              value: "initials"
+            - label: adventurerNeutral
+              value: "adventurerNeutral"
+            - label: Fun Emoji
+              value: "FunEmoji"
+            - label: Glass
+              value: "Glass"
+            - label: Notionists Neutral
+              value: "NotionistsNeutral"
+            - label: lorelei
+              value: "lorelei"
+        - $formkit: range
+          if: $get(defaultAvatarMode).value == "random_figure"
+          name: diceBarAvatarSize
+          id: diceBarAvatarSize
+          key: diceBarAvatarSize
+          label: '头像大小'
+          value: 36
+          min: 24
+          step: 1
+          max: 48
+          help: $get(diceBarAvatarSize).value
+
+
+

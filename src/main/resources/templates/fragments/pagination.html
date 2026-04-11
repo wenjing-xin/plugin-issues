@@ -1,0 +1,26 @@
+<div th:fragment="pagination(context,prevUrl,nextUrl,totalPages,page,hasPrevious,hasNext)">
+    <div class="piw-w-fit piw-mx-auto piw-flex piw-items-center piw-justify-between piw-gap-x-2.5" th:if="${hasPrevious || hasNext}">
+        <a th:href="@{${prevUrl}}" class="pagination-button" th:classappend="${!hasPrevious ? 'piw-pointer-events-none piw-opacity-60' : ''}"
+        >
+            <span class="piw-icon-[mingcute--left-line] piw-text-xl piw-text-neutral-600 dark:piw-text-neutral-500 piw-mx-auto hover:piw-text-secondary piw-transition-colors piw-duration-300"></span>
+        </a>
+        <th:block th:if="${ page > 2 }">
+            <a class="page-numbers" th:href="${ context + 'page/1'}">1</a>
+            <span class="page-numbers !piw-shadow-none !piw-bg-transparent -piw-mx-2.5" th:if="${page != 3}">…</span>
+        </th:block>
+        <th:block th:each="index:${#numbers.sequence(page - 1, page + 1)}">
+                    <span aria-current="page" class="page-numbers !piw-bg-blue-700 !piw-text-white" th:if="${page} == ${index}"
+                          th:text="${page}"></span>
+            <a th:unless="${page == index}" th:if="${index > 0 && index <= totalPages}"
+               class="page-numbers" th:href="${context + 'page/'+index}" th:text="${index}"></a>
+        </th:block>
+        <th:block th:if="${totalPages - page >= 2}">
+            <span class="page-numbers !piw-shadow-none !piw-bg-transparent -piw-mx-2.5" th:if="${totalPages - page != 2}">…</span>
+            <a class="page-numbers" th:href="${context + 'page/' + totalPages}"
+               th:text="${totalPages}"></a>
+        </th:block>
+        <a th:href="@{${nextUrl}}" class="pagination-button" th:classappend="${!hasNext ? 'pointer-events-none opacity-60' : ''}">
+            <span class="piw-icon-[mingcute--right-line] piw-text-xl piw-text-neutral-600 dark:piw-text-neutral-500 piw-mx-auto piw-transition-colors piw-duration-300"></span>
+        </a>
+    </div>
+</div>

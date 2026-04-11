@@ -1,0 +1,24 @@
+<th:block th:fragment="ownerAvatar(avatar, name)">
+    <th:block th:if="${ not #strings.isEmpty(avatar) }">
+        <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200" th:src="${avatar}" draggable="false" th:alt="${name}" />
+    </th:block>
+    <th:block th:if="${ #strings.isEmpty(avatar) }">
+        <th:block th:if="${ #strings.equals(issueAvatarMode, 'default') }">
+            <div class="piw-size-9 piw-rounded-full piw-flex piw-items-center piw-justify-center piw-bg-neutral-100 piw-border piw-border-slate-200"
+                 th:attr="x-data=|{assignUsername: '${name}'}|"
+                 @mouseenter="main.showTooltip(assignUsername, $event)"
+                 @mouseleave="main.hideTooltip()">
+                <span class="piw-font-normal piw-text-3xl piw-text-neutral-800" th:text="${#strings.substring(name, 0, 1)}"></span>
+            </div>
+        </th:block>
+        <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
+            <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200"
+                 draggable="false" th:alt="${name}"
+                 th:attr="x-data=|{assignUsername: '${name}', avatarUri: ''}|"
+                 x-init="avatarUri = createAvatarByUserName(issueOwnerName)"
+                 :src="avatarUri"
+                 @mouseenter="main.showTooltip(assignUsername, $event)"
+                 @mouseleave="main.hideTooltip()"/>
+        </th:block>
+    </th:block>
+</th:block>

@@ -1,0 +1,10 @@
+<th:block th:fragment="subjectStatsCard(intro, data)">
+    <div class="piw-relative piw-inline-block piw-w-32 piw-h-[70px] piw-px-10">
+        <img th:src="@{/plugins/PluginIssues/assets/static/img/garland-left.svg}" alt="garland-left"
+        class="piw-absolute piw-top-0 piw-left-0 piw-w-5 piw-h-[70px]"/>
+        <p th:text="${intro}" class="piw-font-bold piw-text-base piw-text-center piw-mt-2.5 piw-mb-1 piw-text-neutral-900"></p>
+        <p th:text="${data}" class="piw-text-center piw-font-bold piw-text-sm piw-tracking-wider piw-text-indigo-600 piw-leading-6"></p>
+        <img th:src="@{/plugins/PluginIssues/assets/static/img/garland-right.svg}" alt="garland-right"
+             class="piw-absolute piw-top-0 piw-right-0 piw-w-5 piw-h-[70px]"/>
+    </div>
+</th:block>

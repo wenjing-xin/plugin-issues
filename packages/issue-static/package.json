@@ -1,0 +1,94 @@
+{
+  "description": "A development starter theme with modern front-end technology stack for Halo",
+  "keywords": [
+    "halo",
+    "halo-theme"
+  ],
+  "homepage": "https://github.com/halo-dev/theme-modern-starter#readme",
+  "bugs": {
+    "url": "https://github.com/halo-dev/theme-modern-starter/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/halo-dev/theme-modern-starter"
+  },
+  "license": "GPL-3.0",
+  "author": {
+    "name": "webjing",
+    "email": "mail@webjing.com",
+    "url": "https://github.com/webjing-xin"
+  },
+  "maintainers": [
+    {
+      "name": "webjing",
+      "email": "wb3368316006@outlook.com",
+      "url": "https://github.com/ruibaby"
+    }
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite build --watch",
+    "lint": "eslint ./src --ext .js,.cjs,.mjs,.ts,.cts,.mts --ignore-path .gitignore",
+    "prettier": "prettier --write \"./src/**/*.{js,ts,css,json,ml,yaml,html}\" \"./templates/**/*.html\"",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@dicebear/collection": "^9.2.3",
+    "@dicebear/core": "^9.2.3",
+    "@halo-dev/api-client": "^2.20.0",
+    "alpinejs": "^3.14.3",
+    "codemirror": "^5.65.11",
+    "dayjs": "^1.11.13",
+    "marked": "^15.0.12"
+  },
+  "lint-staged": {
+    "*.{ts,json,yaml,yml,html}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@halo-dev/theme-package-cli": "^1.0.0",
+    "@iconify-json/carbon": "^1.2.9",
+    "@iconify-json/ci": "^1.2.2",
+    "@iconify-json/codicon": "^1.2.19",
+    "@iconify-json/eos-icons": "^1.2.2",
+    "@iconify-json/ep": "^1.2.2",
+    "@iconify-json/fluent": "^1.2.23",
+    "@iconify-json/icon-park-outline": "^1.2.2",
+    "@iconify-json/iconamoon": "^1.2.2",
+    "@iconify-json/ix": "^1.2.4",
+    "@iconify-json/lucide": "^1.2.47",
+    "@iconify-json/material-symbols": "^1.2.25",
+    "@iconify-json/material-symbols-light": "^1.2.25",
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/mingcute": "^1.2.3",
+    "@iconify-json/nrk": "^1.2.4",
+    "@iconify-json/octicon": "^1.2.6",
+    "@iconify-json/pepicons-pencil": "^1.2.1",
+    "@iconify-json/ri": "^1.2.5",
+    "@iconify-json/stash": "^1.2.2",
+    "@iconify-json/tabler": "^1.2.17",
+    "@iconify-json/tdesign": "^1.2.8",
+    "@iconify-json/uil": "^1.2.3",
+    "@iconify-json/vscode-icons": "^1.2.22",
+    "@iconify/tailwind": "^0.1.4",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/alpinejs": "^3.13.11",
+    "@types/codemirror": "^5.60.16",
+    "@types/node": "^18.19.64",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "postcss": "^8.5.3",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.1.13",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^4.9.5",
+    "vite": "^5.4.11"
+  }
+}

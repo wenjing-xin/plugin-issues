@@ -1,0 +1,51 @@
+<template x-teleport="body" xmlns:th="http://www.w3.org/1999/html">
+    <div>
+        <div class="piw-fixed piw-inset-0 piw-z-50 piw-bg-gray-700/30 piw-opacity-100 piw-backdrop-blur-sm dark:piw-bg-black/80"
+             aria-hidden="true"
+             x-show="issueTemplateModal"
+             x-transition:enter="ease-in-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in-out duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+        ></div>
+        <div class="piw-fixed piw-inset-0 piw-z-50 piw-overflow-y-auto"
+             tabindex="-1"
+             x-show="issueTemplateModal"
+             x-transition:enter="ease-out duration-200"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-100"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <div class="piw-flex piw-min-h-full piw-flex-col piw-items-center piw-justify-center piw-text-center sm:piw-p-0">
+                <div @click.outside="issueTemplateModal = false" class="piw-relative piw-transform piw-overflow-hidden piw-rounded-lg piw-bg-white piw-text-left
+                piw-shadow-xl piw-transition-all sm:piw-w-full sm:piw-max-w-xl piw-divide-y piw-divide-slate-300">
+                    <div class="piw-flex piw-justify-between piw-items-center piw-px-5 piw-py-3">
+                        <h1 class="piw-text-sm piw-font-semibold">选择issue模版</h1>
+                        <div class="piw-size-7 piw-rounded-full hover:piw-cursor-pointer piw-bg-slate-100 piw-inline-flex piw-items-center piw-justify-center hover:piw-bg-slate-200 piw-transition-all piw-duration-300"
+                        @click="issueTemplateModal=false">
+                            <span class="piw-icon-[material-symbols--close-rounded] text-lg"></span>
+                        </div>
+                    </div>
+
+                    <div class="piw-flex piw-flex-col piw-items-center piw-px-4 piw-pt-2 piw-pb-4 piw-divide-y piw-divide-slate-200">
+                        <th:block th:each="issueTemplateItem:${issueSubjectInfo.issueTemplates}">
+                            <a th:href="${'/subject/' + issueSubjectInfo.name + '/issues/new?template=' + issueTemplateItem.metadataName}"
+                               class="piw-block piw-w-full piw-p-2 piw-flex piw-justify-between piw-items-center piw-rounded hover:piw-bg-slate-200/50 hover:piw-cursor-pointer piw-transition-all piw-duration-300">
+                                <div class="piw-space-y-0.5">
+                                    <p class="piw-text-sm piw-tracking-wider" th:text="${issueTemplateItem.templateName}"></p>
+                                    <p class="piw-text-xs piw-text-gray-500" th:text="${issueTemplateItem.description}"></p>
+                                </div>
+                                <div class="piw-size-7 piw-rounded-full piw-inline-flex piw-items-center piw-justify-center">
+                                    <span class="piw-icon-[tabler--arrow-right] piw-text-xl piw-text-gray-600"></span>
+                                </div>
+                            </a>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

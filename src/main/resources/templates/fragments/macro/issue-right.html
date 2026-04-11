@@ -1,0 +1,64 @@
+<th:block th:fragment="issueRight(issueVO)">
+    <div class="piw-space-y-2 piw-py-3">
+        <p class="piw-text-sm piw-tracking-wider">经办人</p>
+        <div class="piw-flex piw-flex-wrap piw-items-center piw-gap-2" th:if="${ not #lists.isEmpty(issueVO.spec.assignees)}" >
+            <th:block th:each="assign:${issueVO.spec.assignees}">
+                <th:block th:with="assignUser = ${contributorFinder.getContributor(assign)}, avatar = ${assignUser.avatar}">
+                    <th:block th:if="${ not #strings.isEmpty(avatar) }">
+                        <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200" th:src="${avatar}" draggable="false"
+                             th:alt="${name}"
+                             th:attr="x-data=|{assignUsername: '${assignUser.name}'}|"
+                             @mouseenter="main.showTooltip(assignUsername, $event)"
+                             @mouseleave="main.hideTooltip()"/>
+                    </th:block>
+                    <th:block th:if="${ #strings.isEmpty(avatar) }">
+                        <th:block th:if="${ #strings.equals(issueAvatarMode, 'default') }">
+                            <div class="piw-size-9 piw-rounded-full piw-flex piw-items-center piw-justify-center piw-bg-neutral-100 piw-border piw-border-slate-200"
+                                 th:attr="x-data=|{assignUsername: '${assignUser.name}'}|"
+                                 @mouseenter="main.showTooltip(assignUsername, $event)"
+                                 @mouseleave="main.hideTooltip()">
+                                <span class="piw-font-normal piw-text-3xl piw-text-neutral-800" th:text="${#strings.substring(assignUser.name, 0, 1)}"></span>
+                            </div>
+                        </th:block>
+                        <th:block th:if="${ #strings.equals(issueAvatarMode, 'random_figure') }">
+                            <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200"
+                                 draggable="false" th:alt="${assignUser.name}"
+                                 th:attr="x-data=|{assignUsername: '${assignUser.name}', avatarUri: ''}|"
+                                 :src="avatarUri"
+                                 x-init="avatarUri = createAvatarByUserName(assignUsername)"
+                                 @mouseenter="main.showTooltip(assignUsername, $event)"
+                                 @mouseleave="main.hideTooltip()"/>
+                        </th:block>
+                    </th:block>
+                </th:block>
+            </th:block>
+        </div>
+        <p th:if="${ #lists.isEmpty(issueVO.spec.assignees) }" class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+            暂无经办人
+        </p>
+    </div>
+    <div class="piw-space-y-2 piw-py-3">
+        <p class="piw-text-sm piw-tracking-wider">标签</p>
+        <div class="piw-flex piw-flex-wrap piw-items-center piw-gap-1.5"
+             th:if="${#lists.size(issueVO.issueLabels) > 0}">
+            <th:block th:each="item:${issueVO.issueLabels}">
+                            <span th:text="${item.spec.labelName}" th:attr="x-data=|{labelColor: '${item.spec.color}'}|" :style="'background-color: ' + labelColor"
+                                  class="piw-px-3 piw-py-1 piw-text-xs piw-rounded-full piw-text-white"></span>
+            </th:block>
+        </div>
+        <p th:if="${ #lists.isEmpty(issueVO.spec.labels)}" class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
+            暂无标签
+        </p>
+    </div>
+    <div class="piw-space-y-2 piw-py-3">
+        <div class="piw-flex piw-justify-between piw-items-center">
+            <p class="piw-text-xs piw-tracking-wider piw-font-bold">通知</p>
+<!--            <p class="piw-text-xs piw-tracking-wider piw-font-bold">自定义</p>-->
+        </div>
+        <div class="piw-flex piw-py-2 piw-items-center piw-gap-x-2 piw-justify-center piw-w-full piw-rounded-md piw-bg-slate-100/80 piw-border piw-border-slate-200
+                                hover:piw-cursor-pointer hover:piw-bg-slate-200/80">
+            <span class="piw-icon-[iconamoon--notification] piw-text-base"></span>
+            <span class="piw-text-sm piw-text-neutral-600">订阅</span>
+        </div>
+    </div>
+</th:block>

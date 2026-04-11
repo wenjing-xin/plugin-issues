@@ -1,0 +1,260 @@
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-view
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue权限"
+    rbac.authorization.halo.run/display-name: "Issue查看"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issues:view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issues"]
+    verbs: ["get", "list"]
+  - apiGroups: ["console.api.issue.webjing.com"]
+    resources: ["issues", "labels"]
+    verbs: ["get", "list"]
+  - apiGroups: [ "uc.api.issue.webjing.com" ]
+    resources: [ "issues", "labels", "issuetemplates" ]
+    verbs: [ "get", "list" ]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-manage
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue权限"
+    rbac.authorization.halo.run/display-name: "Issue管理"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issues:manage"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issues"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+  - apiGroups: ["console.api.issue.webjing.com"]
+    resources: ["issues", "labels", "issuestatus"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+  - apiGroups: [ "uc.api.issue.webjing.com" ]
+    resources: [ "issues", "labels", "issuetemplates", "issuestatus" ]
+    verbs: [ "create", "update", "patch" ]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-publish
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue权限"
+    rbac.authorization.halo.run/display-name: "允许用户发布issue"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["uc:plugin:issues:publish"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-view"]
+rules:
+  - apiGroups: ["uc.api.issue.webjing.com"]
+    resources: ["issues", "labels", "issuetemplates", "issuestatus"]
+    verbs: [ "create", "patch", "update"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-delete
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue权限"
+    rbac.authorization.halo.run/display-name: "允许删除自己的Issue"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["uc:plugin:issues:delete"]
+rules:
+  - apiGroups: ["uc.api.issue.webjing.com"]
+    resources: ["issues", "labels"]
+    verbs: ["delete", "deletecollection"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-comment-view
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue评论权限"
+    rbac.authorization.halo.run/display-name: "Issue评论查看"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issues:comment:view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issuecomments"]
+    verbs: ["get", "list"]
+  - apiGroups: ["console.api.issueComment.webjing.com"]
+    resources: ["issuecomments"]
+    verbs: ["get", "list"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-comment-manage
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue评论权限"
+    rbac.authorization.halo.run/display-name: "Issue评论管理"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issues:comment:manage"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-comment-view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issuecomments"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+  - apiGroups: ["console.api.issueComment.webjing.com"]
+    resources: ["issuecomments"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-comment-publish
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue评论权限"
+    rbac.authorization.halo.run/display-name: "允许用户发布issue评论"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["uc:plugin:issues:comment:publish"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-comment-view"]
+rules:
+  - apiGroups: ["uc.api.issueComment.webjing.com"]
+    resources: ["issuecomments"]
+    verbs: ["get", "list", "create", "update"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-comment-delete
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue评论权限"
+    rbac.authorization.halo.run/display-name: "允许删除自己的Issue评论"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["uc:plugin:issues:comment:delete"]
+rules:
+  - apiGroups: ["uc.api.issueComment.webjing.com"]
+    resources: ["issuecomments"]
+    verbs: ["delete", "deletecollection"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-approved
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue权限"
+    rbac.authorization.halo.run/display-name: "发布issue无需审核"
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-uc-issues-publish"]
+rules:
+  - nonResourceURLs: ["*"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-uc-issues-comment-approved
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue评论权限"
+    rbac.authorization.halo.run/display-name: "发布issue评论无需审核"
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-uc-issues-comment-publish"]
+rules:
+  - nonResourceURLs: ["*"]
+---
+# Issue模版
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-template-view
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue模版"
+    rbac.authorization.halo.run/display-name: "Issue模版查看"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issueTemplates:view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issuetemplates"]
+    verbs: ["get", "list"]
+  - apiGroups: ["console.api.issueTemplate.webjing.com"]
+    resources: ["issuetemplates" ]
+    verbs: ["get", "list"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issues-template-manage
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue模版"
+    rbac.authorization.halo.run/display-name: "Issue模版管理"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issueTemplates:manage"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issues-template-view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issuetemplates"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+  - apiGroups: ["console.api.issueTemplate.webjing.com"]
+    resources: ["issuetemplates"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issue-labels-view
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue标签权限"
+    rbac.authorization.halo.run/display-name: "Issue标签查看"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issue:labels:view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issuelabels"]
+    verbs: ["get", "list"]
+  - apiGroups: [ "console.api.issueLabel.webjing.com" ]
+    resources: [ "issuelabels" ]
+    verbs: [ "get", "list" ]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-issue-labels-manage
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Issue标签权限"
+    rbac.authorization.halo.run/display-name: "Issue标签管理"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:issue:labels:manage"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-issue-labels-view"]
+rules:
+  - apiGroups: ["issue.webjing.com"]
+    resources: ["issuelabels"]
+    verbs: ["create", "patch", "update", "delete", "deletecollection"]
+---

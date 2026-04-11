@@ -1,0 +1,149 @@
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: someone-publish-new-issue
+spec:
+  displayName: "有人创建了新的 Issue"
+  description: "当有用户发布了新的issue，创建Issue依托主体的所有参与者都会接受到通知"
+  properties:
+    - name: issueTitle
+      type: string
+      description: "issue标题"
+    - name: issueStatus
+      type: string
+      description: "issue 状态"
+    - name: issueCreatedAt
+      type: string
+      description: "issue创建时间"
+    - name: issueRawContent
+      type: string
+      description: "issue的原生内容"
+    - name: issueHtmlContent
+      type: string
+      description: "issue的HTML内容"
+    - name: issuePermalink
+      type: string
+      description: "issue链接"
+    - name: issueOwner
+      type: string
+      description: "issue发布者"
+    - name: receiveOwner
+      type: string
+      description: "接收通知者"
+    - name: approved
+      type: boolean
+      description: "issue审核状态"
+    - name: subjectDisplayName
+      type: string
+      description: "issue依托主体的标题"
+    - name: subjectType
+      type: string
+      description: "issue依托主体的类型"
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: someone-comment-issue
+spec:
+  displayName: "有人评论了你的Issue"
+  description: "当有人评论了你的 Issue，issue发布者和Issue经办人以及关注着都将会收到一条通知"
+  properties:
+    - name: issueTitle
+      type: string
+      description: "issue 标题"
+    - name: isApproved
+      type: boolean
+      description: "是否审核通过"
+    - name: issueCommentCreatedAt
+      type: string
+      description: "issue评论创建时间"
+    - name: issueCommentRawContent
+      type: string
+      description: "issue评论的原生内容"
+    - name: issueCommentHtmlContent
+      type: string
+      description: "issue评论的HTML内容"
+    - name: issueCommentPermalink
+      type: string
+      description: "issue评论链接"
+    - name: receiveOwner
+      type: string
+      description: "接收者"
+    - name: issueCommentOwner
+      type: string
+      description: "issue评论用户名"
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: someone-reply-issue-comment
+spec:
+  displayName: "有人回复了你的的 Issue 评论"
+  description: "当有用户回复 issue 评论的时候，发布此issue评论的用户和Issue的拥有者以及经办人都会收到通知"
+  properties:
+    - name: notifyTitle
+      type: string
+      description: "通知标题"
+    - name: isApproved
+      type: boolean
+      description: "是否审核通过"
+    - name: issueReplyCommentCreatedAt
+      type: string
+      description: "回复评论的创建时间"
+    - name: issueCommentRawContent
+      type: string
+      description: "issue评论的原生内容"
+    - name: issueCommentHTMLContent
+      type: string
+      description: "issue评论的HTML内容"
+    - name: issueReplyCommentRawContent
+      type: string
+      description: "issue回复评论的原生内容"
+    - name: issueReplyCommentHTMLContent
+      type: string
+      description: "issue回复评论的HTML内容"
+    - name: permalink
+      type: string
+      description: "issue评论回复的查看链接"
+    - name: receiveOwner
+      type: string
+      description: "评论接受者"
+    - name: issueReplyCommentOwner
+      type: string
+      description: "回复创建者"
+---
+apiVersion: notification.halo.run/v1alpha1
+kind: ReasonType
+metadata:
+  name: manager-closed-issue
+spec:
+  displayName: "Issue 已关闭"
+  description: "issue被关闭的时候，issue的拥有者和项目会收到通知"
+  properties:
+    - name: issueTitle
+      type: string
+      description: "issue标题"
+    - name: issueClosedTime
+      type: string
+      description: "issue的关闭时间"
+    - name: closedComment
+      type: string
+      description: "issue的关闭原因"
+    - name: issuePermalink
+      type: string
+      description: "issue永久链接"
+    - name: issueOwner
+      type: string
+      description: "issue的创建者"
+    - name: closedOwner
+      type: string
+      description: "关闭Issue的用户"
+    - name: receiveOwner
+      type: string
+      description: "Issue关闭的通知接收者"
+    - name: subjectDisplayName
+      type: string
+      description: "issue依托主体的标题"
+    - name: subjectType
+      type: string
+      description: "issue依托主体的类型"
