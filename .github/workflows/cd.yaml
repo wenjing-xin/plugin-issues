@@ -16,5 +16,5 @@ jobs:
       node-version: 24
       java-version: 21
       # Remove skip-appstore-release and set app-id if you want to release to the App Store
-      skip-appstore-release: true
-      # app-id: app-xyz
+      skip-appstore-release: false
+      app-id: app-vxihanjo

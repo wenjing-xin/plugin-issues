@@ -24,7 +24,13 @@ import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
 import { useIssueListFetch } from "@/composables/use-consoleIssue";
 import IssueEditModal from "@/components/issue/IssueEditModal.vue";
-import type { Issue, IssueLabelOptions, IssueSubject, ListedIssue } from "@/api/generated";
+import type {
+  Issue,
+  IssueLabelItem,
+  IssueLabelOptions,
+  IssueSubject,
+  ListedIssue,
+} from "@/api/generated";
 import {
   consoleIssueApiClient,
   consoleIssueLabelApiClient,
@@ -72,9 +78,7 @@ provide<Ref<string[]>>("selectedIssueMessageNames", selectedIssueMessageNames);
 const issueTemplateFilterOptions = ref<
   Array<{ label: string | undefined; value: string }>
 >([]);
-const issueLabelFilterOptions = ref<
-  Array<{ label: string | undefined; value: string }>
->([]);
+const issueLabelFilterOptions = ref<Array<IssueLabelItem>>([]);
 
 const editingModal = ref(false);
 const selectedIssueMessage = ref<Issue>();

@@ -1,6 +1,7 @@
 package com.webjing.issues.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.AuthorityUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import run.halo.app.core.extension.Role;
 import run.halo.app.core.extension.User;
 import run.halo.app.extension.MetadataUtil;
 import run.halo.app.extension.ReactiveExtensionClient;
-import run.halo.app.infra.utils.JsonUtils;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -34,6 +34,8 @@ import static run.halo.app.extension.Comparators.compareCreationTimestamp;
 @Component
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final ReactiveExtensionClient client;
 
@@ -117,8 +119,11 @@ public class RoleServiceImpl implements RoleService {
         if (StringUtils.isBlank(str)) {
             return Collections.emptyList();
         }
-        return JsonUtils.jsonToObject(str,
-            new TypeReference<>() {
+        try {
+            return OBJECT_MAPPER.readValue(str, new TypeReference<>() {
             });
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Failed to parse role dependencies.", ex);
+        }
     }
 }

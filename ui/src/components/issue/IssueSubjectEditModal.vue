@@ -17,7 +17,7 @@ import {
   consoleIssueTemplateApiClient,
 } from "@/api";
 import { accepts } from "@/dictionary/index";
-import type { AttachmentLike } from "@halo-dev/ui-shared";
+import { utils, type AttachmentLike } from "@halo-dev/ui-shared";
 import TextEditor from "@/components/editor/index.vue";
 import { submitForm } from "@formkit/core";
 
@@ -176,7 +176,8 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
     return;
   }
 
-  formState.value.spec.subjectIcon = utils.attachment.getUrl(firstAttachment) || "";
+  formState.value.spec.subjectIcon =
+    utils.attachment.getUrl(firstAttachment) || "";
 };
 </script>
 <template>

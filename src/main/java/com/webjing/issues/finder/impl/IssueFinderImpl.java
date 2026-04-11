@@ -245,11 +245,8 @@ public class IssueFinderImpl implements IssueFinder {
                             templateData.add(itemData);
                         }
 
-                        return Mono.just(templateData);
-                    })
-                    .map(data -> {
-                        imv.setTemplateData((List<Map<String, String>>) data);
-                        return imv;
+                        imv.setTemplateData(templateData);
+                        return Mono.just(imv);
                     })
                     .defaultIfEmpty(imv); // 如果模板不存在或出错，保留原始 imv
             })

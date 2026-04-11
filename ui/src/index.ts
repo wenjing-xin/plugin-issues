@@ -8,6 +8,7 @@ import IssueList from "@/views/IssueList.vue";
 import IssueTemplateList from "@/views/IssueTemplateList.vue";
 import IssueTemplateEditor from "@/views/IssueTemplateEditor.vue";
 import IssueLabelList from "@/views/IssueLabelList.vue";
+import "uno.css";
 import "./styles/index.scss";
 export default definePlugin({
   components: {},

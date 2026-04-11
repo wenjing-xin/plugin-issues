@@ -50,9 +50,9 @@ tasks.named('generatePluginComponentsIdx') {
 }
 
 halo {
-    version = '2.23.0'
+    version = '2.23'
     containerName = 'plugin-issues'
-    debug = true
+    debug = false
     port  = 8090
     suspend = true
 }

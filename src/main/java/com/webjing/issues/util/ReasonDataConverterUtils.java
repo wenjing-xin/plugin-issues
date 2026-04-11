@@ -1,8 +1,8 @@
 package com.webjing.issues.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.Assert;
-import run.halo.app.infra.utils.JsonUtils;
 import java.util.Map;
 
 /**
@@ -13,9 +13,11 @@ import java.util.Map;
  */
 public class ReasonDataConverterUtils {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     public static <T> Map<String, Object> toAttributeMap(T data) {
         Assert.notNull(data, "Reason attributes must not be null");
-        return JsonUtils.mapper().convertValue(data, new TypeReference<>() {
+        return OBJECT_MAPPER.convertValue(data, new TypeReference<>() {
         });
     }
 

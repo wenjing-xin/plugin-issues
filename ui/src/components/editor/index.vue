@@ -16,8 +16,8 @@ import {
   ExtensionCommandsMenu,
   ExtensionDocument,
   ExtensionDropcursor,
-  ExtensionFontSize,
-  ExtensionGapCursor,
+    ExtensionFontSize,
+    ExtensionGapCursor,
   ExtensionHardBreak,
   ExtensionHighlight,
   ExtensionHistory,
@@ -40,9 +40,9 @@ import {
   ExtensionTextAlign,
   ExtensionTrailingNode,
   ExtensionUnderline,
-  ExtensionVideo,
-  RichTextEditor,
-  useEditor,
+    ExtensionVideo,
+    RichTextEditor,
+    useEditor,
 } from "@halo-dev/richtext-editor";
 import { watch } from "vue";
 
@@ -117,7 +117,6 @@ const editor = useEditor({
     ExtensionFontSize,
     ExtensionColor,
     ExtensionIndent,
-    ExtensionDraggable,
     ExtensionColumns,
     ExtensionColumn,
     ExtensionNodeSelected,
