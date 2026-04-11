@@ -460,7 +460,7 @@ onMounted(async () => {
       </VSpace>
     </template>
   </VPageHeader>
-  <div class="h-full w-full p-0 md:p-4">
+  <div class=":uno: h-full w-full p-0 md:p-4">
     <div class="h-full w-full flex rounded bg-white divide-x">
       <!-- 左侧基础组件列表 -->
       <div class="h-full w-1/4 p-4">
