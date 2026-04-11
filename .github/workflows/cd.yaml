@@ -7,14 +7,14 @@ on:
 
 jobs:
   cd:
-    uses: halo-sigs/reusable-workflows/.github/workflows/plugin-cd.yaml@v4
+    uses: halo-sigs/reusable-workflows/.github/workflows/plugin-cd.yaml@v3
+    secrets:
+      halo-pat: ${{ secrets.HALO_PAT }}
     permissions:
       contents: write
     with:
-      ui-path: "ui"
-      pnpm-version: 10
-      node-version: 24
-      java-version: 21
-      # Remove skip-appstore-release and set app-id if you want to release to the App Store
-      skip-appstore-release: false
       app-id: app-vxihanjo
+      node-version: 22
+      pnpm-version: 9
+      java-version: 21
+      ui-path: ui
