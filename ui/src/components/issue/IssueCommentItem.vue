@@ -103,16 +103,16 @@ function handleDeleteComment(comment: IssueComment) {
 <template>
   <VEntity
     v-bind="$attrs"
-    class="border-l border-dashed !border-gray-200"
+    class=":uno: border-l border-dashed !border-gray-200"
     :class="{ 'animate-bounce': isHoveredReply }"
   >
     <template #start>
       <VEntityField width="100%">
         <template #description>
-          <div class="flex flex-col gap-2">
-            <div class="mb-1 flex items-center gap-2">
+          <div class=":uno: flex flex-col gap-2">
+            <div class=":uno: mb-1 flex items-center gap-2">
               <div
-                class="-m-1 p-1 inline-flex items-center gap-1.5 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
+                class=":uno: -m-1 p-1 inline-flex items-center gap-1.5 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
               >
                 <VAvatar
                   circle
@@ -120,18 +120,18 @@ function handleDeleteComment(comment: IssueComment) {
                   :alt="comment.contributorVo.displayName"
                   size="xs"
                 />
-                <span class="text-sm font-medium text-gray-900">
+                <span class=":uno: text-sm font-medium text-gray-900">
                   {{ comment.contributorVo.displayName }}
                 </span>
               </div>
-              <span class="text-sm text-gray-900 whitespace-nowrap">
+              <span class=":uno: text-sm text-gray-900 whitespace-nowrap">
                 回复：
               </span>
             </div>
-            <div class="space-y-1 text-sm text-gray-900">
+            <div class=":uno: space-y-1 text-sm text-gray-900">
               <a
                 v-if="quoteIssueComment"
-                class="mr-1 inline-flex flex-row items-center gap-1 rounded bg-slate-100 px-1 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-200 hover:text-slate-800 hover:underline"
+                class=":uno: mr-1 inline-flex flex-row items-center gap-1 rounded bg-slate-100 px-1 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-200 hover:text-slate-800 hover:underline"
                 href="javascript:void(0)"
                 @mouseenter="handleShowQuoteReply(true)"
                 @mouseleave="handleShowQuoteReply(false)"
@@ -141,11 +141,11 @@ function handleDeleteComment(comment: IssueComment) {
               </a>
               <br v-if="quoteIssueComment" />
               <div
-                class="prose !max-w-none break-words prose-pre:p-0 tracking-wider"
+                class=":uno: prose !max-w-none break-words prose-pre:p-0 tracking-wider"
                 v-html="comment?.issueComment.spec.content.html"
               ></div>
             </div>
-            <div class="inline-flex items-center gap-1.5">
+            <div class=":uno: inline-flex items-center gap-1.5">
               <VTag v-bind="{theme:'primary'}" v-tooltip="comment.issueComment.spec.userAgent">
                 {{ os }} {{ browser }}
               </VTag>
@@ -193,4 +193,3 @@ function handleDeleteComment(comment: IssueComment) {
     </template>
   </VEntity>
 </template>
-

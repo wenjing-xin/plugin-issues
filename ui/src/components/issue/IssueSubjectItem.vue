@@ -108,11 +108,11 @@ const handlerIssueSubjectType = (
 </script>
 <template>
   <div
-    class="relative space-y-3 border border-neutral-100 rounded-md p-4 my-2 bg-white transition-shadow duration-300"
+    class=":uno: relative space-y-3 border border-neutral-100 rounded-md p-4 my-2 bg-white transition-shadow duration-300"
     :class="{ 'border border-neutral-300': isSelected }"
   >
-    <div class="flex justify-between items-center">
-      <div class="w-full flex items-center">
+    <div class=":uno: flex justify-between items-center">
+      <div class=":uno: w-full flex items-center">
         <VSpace>
           <VAvatar
             size="xs"
@@ -127,10 +127,10 @@ const handlerIssueSubjectType = (
               },
             }"
             v-tooltip="`查看改依托主体下的Issue`"
-            class="flex items-center"
+            class=":uno: flex items-center"
           >
             <p
-              class="text-sm font-bold text-neutral-700 hover:cursor-pointer hover:text-neutral-500 transition-all duration-300"
+              class=":uno: text-sm font-bold text-neutral-700 hover:cursor-pointer hover:text-neutral-500 transition-all duration-300"
             >
               {{ listedIssueSubject.issueSubject.spec.displayName }}
             </p>
@@ -139,7 +139,7 @@ const handlerIssueSubjectType = (
             v-tooltip="'点击前往主题端访问'"
             target="_blank"
             :href="'/subject/' + listedIssueSubject.issueSubject.metadata.name"
-            class="text-gray-600 transition-all hover:text-gray-900 group-hover:inline-block"
+            class=":uno: text-gray-600 transition-all hover:text-gray-900 group-hover:inline-block"
           >
             <IconExternalLinkLine class="h-3.5 w-3.5" />
           </a>
@@ -193,19 +193,19 @@ const handlerIssueSubjectType = (
         />
       </HasPermission>
     </div>
-    <div class="p-2 bg-neutral-50 rounded-md h-12 flex items-center">
+    <div class=":uno: p-2 bg-neutral-50 rounded-md h-12 flex items-center">
       <p
         v-if="listedIssueSubject.issueSubject.spec?.description"
-        class="text-sm line-clamp-2"
+        class=":uno: text-sm line-clamp-2"
       >
         {{ listedIssueSubject.issueSubject.spec?.description }}
       </p>
-      <p v-else class="text-sm text-gray-500">暂无描述</p>
+      <p v-else class=":uno: text-sm text-gray-500">暂无描述</p>
     </div>
     <!--  统计  -->
-    <div class="flex flex-wrap gap-2 py-1">
+    <div class=":uno: flex flex-wrap gap-2 py-1">
       <div
-        class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+        class=":uno: bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center"
       >
         <TdesignCollection class="mr-1.5" />
         <span class="mr-1 text-sm">Total</span>
@@ -214,7 +214,7 @@ const handlerIssueSubjectType = (
         }}</span>
       </div>
       <div
-        class="bg-blue-100 text-blue-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+        class=":uno: bg-blue-100 text-blue-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
       >
         <MdiProgressClock class="mr-1.5" />
         <span class="mr-1 text-sm">进行中</span>
@@ -223,7 +223,7 @@ const handlerIssueSubjectType = (
         }}</span>
       </div>
       <div
-        class="bg-yellow-100 text-yellow-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+        class=":uno: bg-yellow-100 text-yellow-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
       >
         <VStatusDot state="warning" animate>
           <template #text>
@@ -235,7 +235,7 @@ const handlerIssueSubjectType = (
         </VStatusDot>
       </div>
       <div
-        class="bg-green-100 text-green-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+        class=":uno: bg-green-100 text-green-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
       >
         <VStatusDot state="success">
           <template #text>
@@ -247,7 +247,7 @@ const handlerIssueSubjectType = (
         </VStatusDot>
       </div>
       <div
-        class="bg-purple-100 text-purple-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+        class=":uno: bg-purple-100 text-purple-800 rounded-md px-3 py-1 text-sm font-medium flex items-center"
       >
         <span class="mr-1 text-sm">待审核</span>
         <span class="text-sm">{{
@@ -255,7 +255,7 @@ const handlerIssueSubjectType = (
         }}</span>
       </div>
       <div
-        class="bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center"
+        class=":uno: bg-gray-100 rounded-md px-3 py-1 text-sm font-medium flex items-center"
       >
         <MaterialSymbolsTagRounded class="mr-1.5" />
         <span class="text-sm">{{
@@ -264,8 +264,8 @@ const handlerIssueSubjectType = (
         <span class="ml-1 text-sm">个标签</span>
       </div>
     </div>
-    <div class="w-full flex justify-between items-center">
-      <div class="flex items-center gap-x-2 text-xs text-gray-500">
+    <div class=":uno: w-full flex justify-between items-center">
+      <div class=":uno: flex items-center gap-x-2 text-xs text-gray-500">
         <VAvatarGroup size="xs" circle>
           <VAvatar
             v-tooltip="'创建者：' + listedIssueSubject.createOwner.displayName"
@@ -287,12 +287,12 @@ const handlerIssueSubjectType = (
         }}</span>
       </div>
       <span
-        class="inline-flex items-center gap-x-1.5 rounded-base bg-neutral-100 px-2 py-1 text-xs font-medium outline-none bg-neutral-100"
+        class=":uno: inline-flex items-center gap-x-1.5 rounded-base bg-neutral-100 px-2 py-1 text-xs font-medium outline-none bg-neutral-100"
       >
         <VDropdown>
           <BiThreeDots
             v-tooltip="'操作'"
-            class="cursor-pointer text-black outline-none"
+            class=":uno: cursor-pointer text-black outline-none"
           />
           <template #popper>
             <VDropdownItem @click="handleEdit(listedIssueSubject)"

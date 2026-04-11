@@ -104,25 +104,25 @@ function onDropdownShow() {
 <template>
   <VDropdown ref="dropdown" :classes="['!p-0']" @show="onDropdownShow">
     <div
-      class="flex cursor-pointer select-none items-center text-sm text-gray-700 hover:text-black"
+      class=":uno: flex cursor-pointer select-none items-center text-sm text-gray-700 hover:text-black"
       :class="{ 'font-semibold text-gray-700': modelValue !== undefined }"
     >
-      <span v-if="!selectedUser" class="mr-0.5">
+      <span v-if="!selectedUser" class=":uno: mr-0.5">
         {{ label }}
       </span>
-      <span v-else class="mr-0.5"> {{ label }}：{{ selectedUser.spec.displayName }} </span>
+      <span v-else class=":uno: mr-0.5"> {{ label }}：{{ selectedUser.spec.displayName }} </span>
       <span>
         <IconArrowDown />
       </span>
     </div>
     <template #popper>
-      <div class="h-96 w-80">
-        <div class="border-b border-b-gray-100 bg-white p-4">
+      <div class=":uno: h-96 w-80">
+        <div class=":uno: border-b border-b-gray-100 bg-white p-4">
           <FormKit id="userFilterDropdownInput" v-model="keyword" placeholder="搜索" type="text"></FormKit>
         </div>
         <div>
-          <ul class="box-border h-full w-full divide-y divide-gray-100" role="list">
-            <li v-for="user in users" :key="user.metadata.name" class="cursor-pointer" @click="handleSelect(user)">
+          <ul class=":uno: box-border h-full w-full divide-y divide-gray-100" role="list">
+            <li v-for="user in users" :key="user.metadata.name" class=":uno: cursor-pointer" @click="handleSelect(user)">
               <VEntity :is-selected="modelValue === user.metadata.name">
                 <template #start>
                   <VEntityField>

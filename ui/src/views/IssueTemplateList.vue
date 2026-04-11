@@ -178,23 +178,23 @@ onMounted(() => {
       </VSpace>
     </template>
   </VPageHeader>
-  <div class="m-0 md:m-4">
-    <div class="flex flex-col gap-2 sm:flex-row">
+  <div class=":uno: m-0 md:m-4">
+    <div class=":uno: flex flex-col gap-2 sm:flex-row">
       <div class="w-full">
         <VCard :body-class="['!p-0']">
           <template #header>
             <div class="block w-full divide-y">
               <div
-                class="relative flex flex-col flex-wrap items-start gap-4 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center"
+                class=":uno: relative flex flex-col flex-wrap items-start gap-4 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center"
               >
-                <div class="mr-1 hidden items-center sm:flex">
+                <div class=":uno: mr-1 hidden items-center sm:flex">
                   <input
                     v-model="checkedAll"
                     type="checkbox"
                     @change="handleCheckAllChange"
                   />
                 </div>
-                <div class="w-full flex flex-1 sm:w-auto">
+                <div class=":uno: w-full flex flex-1 sm:w-auto">
                   <VButton
                     v-if="selectedIssueTemplateNames.length > 0"
                     type="danger"
@@ -205,7 +205,7 @@ onMounted(() => {
                   </VButton>
                   <SearchInput v-else v-model="keyword" />
                 </div>
-                <div class="w-auto sm:w-auto">
+                <div class=":uno: w-auto sm:w-auto">
                   <VSpace spacing="sm" class="flex flex-wrap">
                     <FilterCleanButton
                       v-if="hasFilters"

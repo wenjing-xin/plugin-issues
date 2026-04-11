@@ -266,14 +266,14 @@ const handleReset = () => {
     <template #actions>
       <slot name="append-actions" />
     </template>
-    <div class="md:grid md:grid-cols-4 md:gap-6">
-      <div class="mt-2.5 px-3 md:col-span-1">
+    <div class=":uno: md:grid md:grid-cols-4 md:gap-6">
+      <div class=":uno: mt-2.5 px-3 md:col-span-1">
         <div class="sticky top-0">
           <span class="text-base text-gray-900 font-medium"> Issue详情 </span>
         </div>
       </div>
       <!-- 提交表单  -->
-      <div class="divide-gray-25 mt-5 px-3 md:col-span-3 md:mt-3 divide-y">
+      <div class=":uno: divide-gray-25 mt-5 px-3 md:col-span-3 md:mt-3 divide-y">
         <FormKit
           id="issue-message"
           type="form"
@@ -352,15 +352,15 @@ const handleReset = () => {
     <!--  动态渲染的模版  -->
     <div
       v-if="formState.spec.issueTemplate"
-      class="md:grid md:grid-cols-4 md:gap-6"
+      class=":uno: md:grid md:grid-cols-4 md:gap-6"
     >
-      <div class="px-3 md:col-span-1">
+      <div class=":uno: px-3 md:col-span-1">
         <div class="sticky top-0">
           <span class="text-base text-gray-900 font-medium"> Issue模版 </span>
         </div>
       </div>
       <div
-        class="divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y"
+        class=":uno: divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y"
       >
         <template
           v-for="itemComponent in issueTemplateRenderData"
@@ -467,14 +467,14 @@ const handleReset = () => {
     <div class="py-5">
       <div class="border-t border-gray-200"></div>
     </div>
-    <div class="md:grid md:grid-cols-4 md:gap-6">
-      <div class="px-3 md:col-span-1">
+    <div class=":uno: md:grid md:grid-cols-4 md:gap-6">
+      <div class=":uno: px-3 md:col-span-1">
         <div class="sticky top-0">
           <span class="text-base text-gray-900 font-medium"> 元数据 </span>
         </div>
       </div>
       <div
-        class="divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y"
+        class=":uno: divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y"
       >
         <AnnotationsForm
           v-if="visible"
