@@ -53,12 +53,6 @@ interface Component {
   attrs: TemplateField;
 }
 
-interface LayoutChangeEvent {
-  added?: {
-    element: Component;
-  };
-}
-
 const router = useRouter();
 const initIssueTemplate = ref<IssueTemplate>({
   apiVersion: "issue.webjing.com/v1alpha1",
@@ -226,7 +220,7 @@ watchEffect(() => {
       currentUserDetail?.value?.metadata.name;
   }
 });
-const onLayoutChange = (event: LayoutChangeEvent) => {
+const onLayoutChange = (event: any) => {
   if (event.added) {
     const uniqueKey = `${event.added.element.id}${Date.now()}`;
     event.added.element.attrs.key = uniqueKey;
@@ -284,6 +278,7 @@ const handlerSaveTemplate = () => {
   }
   if (isUpdateMode.value) {
     // 更新issue模版
+    initIssueTemplate.value.metadata;
     issueTemplateApiClient.issueTemplate
       .updateIssueTemplate({
         name: currentEditTemplate.value as string,

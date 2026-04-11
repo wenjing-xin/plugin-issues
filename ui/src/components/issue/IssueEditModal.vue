@@ -116,7 +116,7 @@ watch(
   },
 );
 const issueTemplateRenderData = ref<Array<TemplateField>>();
-const handlerTemplateChange = (selectedOption: Array<{ value: string }>) => {
+const handlerTemplateChange = (selectedOption: any) => {
   nextTick(() => {
     if (selectedOption.length) {
       handlerRenderTemplate(selectedOption[0].value);

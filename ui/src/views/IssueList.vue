@@ -24,10 +24,11 @@ import "vue-datepicker-next/index.css";
 import "vue-datepicker-next/locale/zh-cn.es";
 import { useIssueListFetch } from "@/composables/use-consoleIssue";
 import IssueEditModal from "@/components/issue/IssueEditModal.vue";
-import type { Issue, IssueLabelItem, IssueLabelOptions, ListedIssue } from "@/api/generated";
+import type { Issue, IssueLabelOptions, IssueSubject, ListedIssue } from "@/api/generated";
 import {
   consoleIssueApiClient,
   consoleIssueLabelApiClient,
+  issueApiClient,
   issueTemplateApiClient,
 } from "@/api";
 
@@ -72,7 +73,7 @@ const issueTemplateFilterOptions = ref<
   Array<{ label: string | undefined; value: string }>
 >([]);
 const issueLabelFilterOptions = ref<
-  Array<IssueLabelItem>
+  Array<{ label: string | undefined; value: string }>
 >([]);
 
 const editingModal = ref(false);
@@ -130,6 +131,9 @@ const handlerIssueLabelOptions = () => {
       ];
     });
 };
+const releaseCurIssue = () => {};
+
+const cancelReleaseCurIssue = () => {};
 
 const handleCheckAllChange = (e: Event) => {
   const { checked } = e.target as HTMLInputElement;
@@ -157,6 +161,39 @@ const checkSelection = (listedIssue: ListedIssue) => {
   }
   return false;
 };
+const handleEndIssueInBatch = async () => {
+  Dialog.warning({
+    title: "关闭所选issue",
+    description: "关闭所选issue",
+    confirmType: "primary",
+    confirmText: "确定",
+    cancelText: "取消",
+    onConfirm: async () => {
+      try {
+        const promises = selectedIssueMessageNames.value.map((name: string) => {
+          return issueApiClient.issue.patchIssue({
+            name: name,
+            jsonPatchInner: [
+              {
+                op: "add",
+                path: "/status/state",
+                value: "CLOSED",
+              },
+            ],
+          });
+        });
+        await Promise.all(promises);
+        selectedIssueMessageNames.value = [];
+        Toast.success("关闭issue成功");
+      } catch (e) {
+        console.error("Failed to end issue in batch", e);
+      } finally {
+        refetch();
+      }
+    },
+  });
+};
+
 const handleDeleteInBatch = async () => {
   Dialog.warning({
     title: "删除所选issue",

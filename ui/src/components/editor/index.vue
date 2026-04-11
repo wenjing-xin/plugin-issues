@@ -117,6 +117,7 @@ const editor = useEditor({
     ExtensionFontSize,
     ExtensionColor,
     ExtensionIndent,
+    ExtensionDraggable,
     ExtensionColumns,
     ExtensionColumn,
     ExtensionNodeSelected,

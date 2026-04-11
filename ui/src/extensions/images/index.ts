@@ -1,6 +1,6 @@
 import {
   type Editor,
-  ExtensionImage, 
+  ExtensionImage,
   type ExtensionOptions,
   type Range,
 } from "@halo-dev/richtext-editor";

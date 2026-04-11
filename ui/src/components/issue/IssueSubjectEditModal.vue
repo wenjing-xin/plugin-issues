@@ -17,7 +17,6 @@ import {
   consoleIssueTemplateApiClient,
 } from "@/api";
 import { accepts } from "@/dictionary/index";
-import { utils } from "@halo-dev/ui-shared";
 import type { AttachmentLike } from "@halo-dev/ui-shared";
 import TextEditor from "@/components/editor/index.vue";
 import { submitForm } from "@formkit/core";

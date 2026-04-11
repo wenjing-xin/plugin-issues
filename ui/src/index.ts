@@ -1,14 +1,14 @@
-import { definePlugin } from '@halo-dev/ui-shared'
-import PajamasIssueTypeObjective from '~icons/pajamas/issue-type-objective'
-import FluentMailTemplate20Regular from '~icons/fluent/mail-template-20-regular'
-import PepiconsPrintLabelCircle from '~icons/pepicons-print/label-circle'
-import { markRaw } from 'vue'
-import IssueSubjectList from '@/views/IssueSubjectList.vue'
-import IssueList from '@/views/IssueList.vue'
-import IssueTemplateList from '@/views/IssueTemplateList.vue'
-import IssueTemplateEditor from '@/views/IssueTemplateEditor.vue'
-import IssueLabelList from '@/views/IssueLabelList.vue'
-import './styles/index.scss'
+import { definePlugin} from "@halo-dev/ui-shared";
+import PajamasIssueTypeObjective from '~icons/pajamas/issue-type-objective';
+import FluentMailTemplate20Regular from "~icons/fluent/mail-template-20-regular";
+import PepiconsPrintLabelCircle from '~icons/pepicons-print/label-circle';
+import { markRaw } from "vue";
+import IssueSubjectList from "@/views/IssueSubjectList.vue";
+import IssueList from "@/views/IssueList.vue";
+import IssueTemplateList from "@/views/IssueTemplateList.vue";
+import IssueTemplateEditor from "@/views/IssueTemplateEditor.vue";
+import IssueLabelList from "@/views/IssueLabelList.vue";
+import "./styles/index.scss";
 export default definePlugin({
   components: {},
   routes: [
@@ -91,4 +91,4 @@ export default definePlugin({
   ],
   extensionPoints: {
   },
-})
+});
