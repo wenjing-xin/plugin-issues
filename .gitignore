@@ -77,7 +77,6 @@ application-local.properties
 
 /ui/build/
 /workplace/
-/src/main/resources/console/
 /old_project/
 .claude
 CLAUDE.md

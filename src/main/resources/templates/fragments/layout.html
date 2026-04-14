@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
     <meta charset="UTF-8">
     <title th:text="${title}">Issues</title>
-    <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/dist/style.css?v={version}(version=${version})}" />
-    <script th:src="@{/plugins/PluginIssues/assets/static/dist/main.iife.js?v={version}(version=${version})}" type="text/javascript"></script>
+    <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/webAssets/style.css?v={version}(version=${version})}" />
+    <script th:src="@{/plugins/PluginIssues/assets/static/webAssets/main.iife.js?v={version}(version=${version})}" type="text/javascript"></script>
     <th:block th:if="${head != null}">
         <th:block th:replace="${head}" />
     </th:block>
