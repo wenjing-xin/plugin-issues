@@ -1,0 +1,4 @@
+<th:block xmlns:th="https://www.thymeleaf.org" th:fragment="head(version)">
+    <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/webAssets/style.css(v=${version})}" />
+    <script defer th:src="@{/plugins/PluginIssues/assets/static/webAssets/main.iife.js(v=${version})}"></script>
+</th:block>

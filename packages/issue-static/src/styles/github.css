@@ -1,0 +1,217 @@
+/* GitHub / Primer inspired presentation for the public Issue surface. */
+.piw-app.piw-github {
+    --piw-surface: #ffffff;
+    --piw-muted: #f6f8fa;
+    --piw-text: #1f2328;
+    --piw-muted-text: #656d76;
+    --piw-border: #d0d7de;
+    --piw-primary: #1f883d;
+    --piw-primary-foreground: #ffffff;
+    --piw-accent: #0969da;
+    --piw-ring: #0969da;
+    --piw-card-radius: 6px;
+    border: 0;
+    border-radius: 0;
+    background: #ffffff;
+    color: #1f2328;
+}
+.piw-app.piw-github .piw-subject-header {
+    background: #ffffff;
+    border-bottom: 1px solid #d0d7de;
+}
+.piw-app.piw-github .piw-container { max-width: 1280px; }
+.piw-app.piw-github .piw-header-top { min-height: 60px; }
+.piw-app.piw-github .piw-breadcrumb { color: #1f2328; font-size: 14px; }
+.piw-app.piw-github .piw-breadcrumb-title { font-weight: 600; }
+.piw-app.piw-github .piw-tabs { gap: 20px; }
+.piw-app.piw-github .piw-tab { padding-bottom: 12px; color: #656d76; font-weight: 400; }
+.piw-app.piw-github .piw-tab-active { color: #1f2328; border-bottom-color: #fd8c73; font-weight: 600; }
+.piw-app.piw-github .piw-page { padding-block: 24px; }
+.piw-app.piw-github .piw-stack { gap: 24px; }
+.piw-app.piw-github .piw-page-title { color: #1f2328; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+.piw-app.piw-github .piw-description { color: #656d76; font-size: 14px; }
+.piw-app.piw-github .piw-button { border-radius: 6px; font-size: 14px; font-weight: 500; }
+.piw-app.piw-github .piw-button-primary {
+    background: #1f883d;
+    border-color: rgb(31 35 40 / 0.15);
+    box-shadow: 0 1px 0 rgb(31 35 40 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.03);
+}
+.piw-app.piw-github .piw-button-primary:hover { background: #1a7f37; }
+.piw-app.piw-github .piw-button-outline { border-color: #d0d7de; background: #f6f8fa; }
+.piw-app.piw-github .piw-button-outline:hover { background: #eef1f4; }
+.piw-app.piw-github .piw-card,
+.piw-app.piw-github .piw-stat,
+.piw-app.piw-github .piw-sidebar,
+.piw-app.piw-github .piw-editor-shell {
+    border-color: #d0d7de;
+    border-radius: 6px;
+    box-shadow: none;
+}
+.piw-app.piw-github .piw-stat { padding: 16px; }
+.piw-app.piw-github .piw-stat-label { color: #656d76; font-size: 12px; }
+.piw-app.piw-github .piw-stat-value { color: #1f2328; font-size: 24px; }
+.piw-app.piw-github .piw-card-header { padding: 16px 16px 0; }
+.piw-app.piw-github .piw-card-content { padding: 16px; }
+.piw-app.piw-github .piw-card-content .markdown-body { font-size: 14px; }
+.piw-app.piw-github .piw-person { gap: 8px; }
+.piw-app.piw-github .piw-badge,
+.piw-app.piw-github .piw-count { border-radius: 999px; }
+.piw-app.piw-github .piw-search-row { gap: 8px; }
+.piw-app.piw-github .piw-search-field {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 40px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    background: #ffffff;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.piw-app.piw-github .piw-search-field:focus-within {
+    border-color: #0969da !important;
+    box-shadow: 0 0 0 3px rgb(9 105 218 / 0.2) !important;
+}
+.piw-app.piw-github .piw-search-field input[type="search"] {
+    flex: 1;
+    min-width: 0;
+    min-height: 38px;
+    border: 0 !important;
+    border-radius: 6px;
+    background: transparent;
+    box-shadow: none;
+    outline: none;
+}
+.piw-app.piw-github .piw-search-field input[type="search"]:focus {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.piw-app.piw-github .piw-search-field > span { color: #656d76; }
+.piw-app.piw-github .piw-search-condition {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 28px;
+    margin: 0 4px 0 32px;
+    flex: none;
+    padding: 3px 5px 3px 9px;
+    border: 1px solid #54aeff;
+    border-radius: 6px;
+    background: #ddf4ff;
+    color: #0969da;
+    font-size: 12px;
+    font-weight: 500;
+}
+.piw-app.piw-github .piw-search-field.piw-has-condition input[type="search"] { padding-left: 8px !important; }
+.piw-app.piw-github .piw-search-condition-label { color: #656d76; }
+.piw-app.piw-github .piw-search-condition-value { font-weight: 600; }
+.piw-app.piw-github .piw-search-condition-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #0969da;
+}
+.piw-app.piw-github .piw-search-condition-remove:hover { background: rgb(9 105 218 / 0.12); }
+.piw-app.piw-github .piw-filters { padding: 8px 12px; background: #f6f8fa; }
+.piw-app.piw-github .issue-wrapper-stats { border-radius: 6px; color: #656d76; }
+.piw-app.piw-github .issue-wrapper-stats.piw-filter-active { border-color: transparent; color: inherit; background: transparent; box-shadow: none; }
+.piw-app.piw-github .piw-issue-row { padding: 16px; background: #ffffff; }
+.piw-app.piw-github .piw-issue-row:hover { background: #f6f8fa; }
+.piw-app.piw-github .piw-issue-row a,
+.piw-app.piw-github .piw-card a { color: #0969da; }
+.piw-app.piw-github .piw-issue-row a:hover,
+.piw-app.piw-github .piw-card a:hover { text-decoration: underline; }
+.piw-app.piw-github .issue-detail-state { border: 1px solid currentColor; background: transparent !important; }
+.piw-app.piw-github .issue-detail-state.piw-bg-green-700 { color: #1a7f37; }
+.piw-app.piw-github .issue-detail-state.piw-bg-indigo-600 { color: #8250df; }
+.piw-app.piw-github .issue-detail-state.piw-bg-slate-400 { color: #656d76; }
+.piw-app.piw-github .piw-sidebar { padding: 16px; background: #ffffff; }
+.piw-app.piw-github .piw-editor-shell { background: #ffffff; overflow: visible; }
+.piw-app.piw-github .piw-editor-shell > :first-child { background: #f6f8fa; border-bottom: 1px solid #d0d7de; }
+.piw-app.piw-github .tab-button { padding-inline: 12px; }
+.piw-app.piw-github .tab-button-active { background: #ffffff; }
+.piw-app.piw-github .CodeMirror { min-height: 220px; background: #ffffff; }
+.piw-app.piw-github .issue-editor-toolbar { color: #656d76; }
+.piw-app.piw-github .issue-editor-toolbar:hover { color: #1f2328; background: #eaeef2; }
+.piw-app.piw-github .piw-editor-toolbar-strip {
+    overflow: visible !important;
+    flex-wrap: wrap;
+    align-content: center;
+}
+.piw-app.piw-github .editor-heading-list,
+.piw-app.piw-github .editor-heading-list-iue { z-index: 60; }
+.piw-app.piw-github .editor-heading { min-width: 36px; padding: 5px 4px; color: #1f2328; }
+.piw-app.piw-github .editor-heading:hover { background: #ddf4ff; color: #0969da; }
+.piw-app.piw-github .piw-empty { min-height: 240px; }
+.piw-app.piw-github :is(input, textarea, select) { border-color: #d0d7de; border-radius: 6px; }
+.piw-app.piw-github :is(input, textarea, select):focus { border-color: #0969da; box-shadow: 0 0 0 3px rgb(9 105 218 / 0.15); }
+@media (max-width: 640px) {
+    .piw-app.piw-github .piw-page { padding-block: 16px; }
+    .piw-app.piw-github .piw-search-row { align-items: stretch; flex-direction: column; }
+    .piw-app.piw-github .piw-search-row .piw-button { width: 100%; }
+}
+
+/* Repository Code-style overview. */
+.piw-app.piw-github .piw-repo-page { padding-block: 24px 48px; }
+.piw-app.piw-github .piw-repo-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 8px 0 20px; }
+.piw-app.piw-github .piw-repo-heading-main { display: flex; min-width: 0; align-items: flex-start; gap: 12px; }
+.piw-app.piw-github .piw-repo-icon { width: 48px; height: 48px; flex: none; border: 1px solid #d0d7de; border-radius: 6px; object-fit: cover; }
+.piw-app.piw-github .piw-repo-heading-copy { min-width: 0; }
+.piw-app.piw-github .piw-repo-title-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.piw-app.piw-github .piw-repo-title { margin: 0; color: #1f2328; font-size: 20px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.piw-app.piw-github .piw-repo-visibility { padding: 2px 7px; border: 1px solid #d0d7de; border-radius: 999px; color: #656d76; font-size: 12px; }
+.piw-app.piw-github .piw-repo-description { margin-top: 6px; color: #656d76; font-size: 14px; }
+.piw-app.piw-github .piw-repo-owner { margin-top: 8px; color: #656d76; font-size: 12px; }
+.piw-app.piw-github .piw-repo-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #d0d7de; border-bottom: 1px solid #d0d7de; }
+.piw-app.piw-github .piw-repo-toolbar-left { display: flex; min-width: 0; align-items: center; gap: 12px; }
+.piw-app.piw-github .piw-repo-branch-button { font-weight: 600; }
+.piw-app.piw-github .piw-repo-toolbar-muted { overflow: hidden; color: #656d76; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.piw-app.piw-github .piw-repo-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; align-items: start; gap: 24px; padding-top: 24px; }
+.piw-app.piw-github .piw-repo-main { display: flex; min-width: 0; flex-direction: column; gap: 24px; }
+.piw-app.piw-github .piw-repo-file-card,
+.piw-app.piw-github .piw-repo-stats-card { border: 1px solid #d0d7de; border-radius: 6px; background: #ffffff; }
+.piw-app.piw-github .piw-repo-file-header { display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #d0d7de; background: #f6f8fa; }
+.piw-app.piw-github .piw-repo-file-name { display: inline-flex; align-items: center; gap: 8px; color: #1f2328; font-size: 14px; font-weight: 600; }
+.piw-app.piw-github .piw-repo-readme { min-height: 220px; padding: 24px; font-size: 14px; }
+.piw-app.piw-github .piw-repo-readme > :first-child { margin-top: 0; }
+.piw-app.piw-github .piw-repo-section-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid #d0d7de; }
+.piw-app.piw-github .piw-repo-section-header h2,
+.piw-app.piw-github .piw-repo-about h2 { margin: 0; color: #1f2328; font-size: 14px; font-weight: 600; }
+.piw-app.piw-github .piw-repo-section-header a { color: #0969da; font-size: 12px; }
+.piw-app.piw-github .piw-repo-stat-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.piw-app.piw-github .piw-repo-stat-row { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid #d8dee4; color: #656d76; font-size: 13px; }
+.piw-app.piw-github .piw-repo-stat-row:nth-child(odd) { border-right: 1px solid #d8dee4; }
+.piw-app.piw-github .piw-repo-stat-row:nth-last-child(-n+2) { border-bottom: 0; }
+.piw-app.piw-github .piw-repo-stat-row:hover { background: #f6f8fa; text-decoration: none; }
+.piw-app.piw-github .piw-repo-stat-row strong { margin-left: auto; color: #1f2328; font-variant-numeric: tabular-nums; }
+.piw-app.piw-github .piw-repo-stat-dot { width: 10px; height: 10px; border-radius: 50%; }
+.piw-app.piw-github .piw-repo-stat-dot-all { background: #656d76; }
+.piw-app.piw-github .piw-repo-stat-dot-progress { background: #1a7f37; }
+.piw-app.piw-github .piw-repo-stat-dot-await { background: #9a6700; }
+.piw-app.piw-github .piw-repo-stat-dot-closed { background: #8250df; }
+.piw-app.piw-github .piw-repo-sidebar { display: flex; flex-direction: column; gap: 24px; }
+.piw-app.piw-github .piw-repo-about { padding-bottom: 20px; border-bottom: 1px solid #d0d7de; }
+.piw-app.piw-github .piw-repo-about-description { margin-top: 12px; color: #656d76; font-size: 13px; line-height: 1.6; }
+.piw-app.piw-github .piw-repo-about-line { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: #656d76; font-size: 12px; }
+.piw-app.piw-github .piw-repo-avatar-list { display: flex; flex-wrap: wrap; gap: 4px; padding-top: 12px; }
+.piw-app.piw-github .piw-repo-avatar-list img,
+.piw-app.piw-github .piw-repo-avatar-list > div { width: 32px; height: 32px; }
+@media (max-width: 900px) {
+    .piw-app.piw-github .piw-repo-layout { grid-template-columns: minmax(0, 1fr); }
+    .piw-app.piw-github .piw-repo-sidebar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+    .piw-app.piw-github .piw-repo-heading { flex-direction: column; gap: 16px; }
+    .piw-app.piw-github .piw-repo-heading .piw-button { width: 100%; }
+    .piw-app.piw-github .piw-repo-toolbar { align-items: stretch; flex-direction: column; }
+    .piw-app.piw-github .piw-repo-toolbar-left { justify-content: space-between; }
+    .piw-app.piw-github .piw-repo-layout { padding-top: 16px; }
+    .piw-app.piw-github .piw-repo-sidebar { display: flex; }
+    .piw-app.piw-github .piw-repo-stat-list { grid-template-columns: 1fr; }
+    .piw-app.piw-github .piw-repo-stat-row:nth-child(odd) { border-right: 0; }
+    .piw-app.piw-github .piw-repo-stat-row:nth-last-child(2) { border-bottom: 1px solid #d8dee4; }
+}

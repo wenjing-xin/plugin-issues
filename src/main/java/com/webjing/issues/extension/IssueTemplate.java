@@ -80,9 +80,20 @@ public class IssueTemplate extends AbstractExtension {
 
         private String requiredMode;
 
+        @Schema(description = "Show this field only when another visible field equals the configured value")
+        private FieldCondition showWhen;
+
         @Schema(requiredMode = REQUIRED, defaultValue = "TEXT")
         private TemplateFieldTypeEnum type;
 
+    }
+
+    @Data
+    public static class FieldCondition {
+        @Schema(requiredMode = REQUIRED)
+        private String fieldKey;
+        @Schema(requiredMode = REQUIRED)
+        private String value;
     }
 
     public enum TemplateFieldTypeEnum{
@@ -92,6 +103,7 @@ public class IssueTemplate extends AbstractExtension {
         RADIO,// radio 单选
         PASSWORD,//密码
         EMAIL, // 邮箱
+        POST, // 已公开文章选择器
     }
 
     public enum IssueTemplateScope{

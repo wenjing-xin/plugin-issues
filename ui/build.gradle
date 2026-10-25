@@ -5,6 +5,12 @@ plugins {
 
 group = 'com.webjing.issues.ui'
 
+node {
+    version = '22.12.0'
+    pnpmVersion = '10.12.4'
+    download = true
+}
+
 tasks.register('pnpmBuild', PnpmTask) {
     group = 'build'
     description = 'Build the UI project using pnpm'
@@ -14,6 +20,7 @@ tasks.register('pnpmBuild', PnpmTask) {
     inputs.files(fileTree(
         dir: layout.projectDirectory,
         includes: ['*.cjs', '*.ts', '*.js', '*.json', '*.yaml']))
+    inputs.dir(rootProject.file('packages/issue-shared'))
     outputs.dir(layout.buildDirectory.dir('dist'))
 }
 

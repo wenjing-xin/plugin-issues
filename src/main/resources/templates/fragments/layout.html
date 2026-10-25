@@ -1,18 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" th:fragment="layoutHtml(title, content, version, head)">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
-    <meta charset="UTF-8">
+<!-- Compatibility adapter for themes that used the original layoutHtml fragment. -->
+<html xmlns:th="https://www.thymeleaf.org"
+      th:fragment="layoutHtml(title, content, version, head)"
+      th:replace="~{layout :: html(head = ~{::pageHead}, content = ~{::pageContent})}">
+<th:block th:fragment="pageHead">
     <title th:text="${title}">Issues</title>
-    <link rel="stylesheet" th:href="@{/plugins/PluginIssues/assets/static/webAssets/style.css?v={version}(version=${version})}" />
-    <script th:src="@{/plugins/PluginIssues/assets/static/webAssets/main.iife.js?v={version}(version=${version})}" type="text/javascript"></script>
-    <th:block th:if="${head != null}">
-        <th:block th:replace="${head}" />
-    </th:block>
-</head>
-<body class="piw-relative piw-w-full" th:attr="x-data=|{size: ${diceBarAvatarSize}, avatarStyle: '${diceBarAvatarStyle}'}|">
+    <th:block th:replace="~{plugin:PluginIssues:fragments/assets :: head(version=${version})}" />
+    <th:block th:if="${head != null}"><th:block th:replace="${head}" /></th:block>
+</th:block>
+<section th:fragment="pageContent" class="piw-app" data-piw-root x-ignore x-data="piwApp"
+         th:attr="data-avatar-size=${diceBarAvatarSize},data-avatar-style=${diceBarAvatarStyle}">
     <th:block th:replace="${content}" />
-</body>
+</section>
 </html>

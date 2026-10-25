@@ -7,6 +7,7 @@ import {
   onMounted,
   computed,
 } from "vue";
+import { validateFieldConditions } from "../../../packages/issue-shared/template-fields";
 import draggable from "vuedraggable";
 import FluentMailTemplate20Regular from "~icons/fluent/mail-template-20-regular";
 import {
@@ -200,10 +201,28 @@ const basicComponents = ref<Component[]>([
   },
 ]);
 
+basicComponents.value.push({
+  id: "formPost", name: "文章选择器", value: "postSelect", icon: UilText,
+  attrs: { key: "", title: "文章", type: TemplateFieldTypeEnum.Post, requiredMode: "", fieldOptions: [] },
+});
 const isUpdateMode = ref(false);
 const templateLayout = ref<Component[]>([]);
 const selectedComponent = ref<Component | null>(null);
 
+const conditionFieldOptions = computed(() => templateLayout.value
+  .filter(item => item.attrs.key !== selectedComponent.value?.attrs.key)
+  .map(item => ({ label: item.attrs.title, value: item.attrs.key })));
+const conditionEnabled = computed({
+  get: () => !!selectedComponent.value?.attrs.showWhen,
+  set: (enabled: boolean) => {
+    if (!selectedComponent.value) return;
+    selectedComponent.value.attrs.showWhen = enabled ? { fieldKey: "", value: "" } : undefined;
+  },
+});
+const conditionValueOptions = computed(() => {
+  const parent = templateLayout.value.find(item => item.attrs.key === selectedComponent.value?.attrs.showWhen?.fieldKey);
+  return parent?.attrs.fieldOptions?.map(option => ({ label: option.label, value: option.generateVal })) || [];
+});
 const subjectOptions = ref<Array<{ label: string | undefined; value: string }>>(
   [],
 );
@@ -220,7 +239,7 @@ watchEffect(() => {
       currentUserDetail?.value?.metadata.name;
   }
 });
-const onLayoutChange = (event: any) => {
+const onLayoutChange = (event: { added?: { element: Component } }) => {
   if (event.added) {
     const uniqueKey = `${event.added.element.id}${Date.now()}`;
     event.added.element.attrs.key = uniqueKey;
@@ -254,6 +273,9 @@ const templateSlectTypeOptions = computed(() =>
  * 新增或更新issue模版
  */
 const handlerSaveTemplate = () => {
+  const conditionError = validateFieldConditions(templateLayout.value.map(item => item.attrs));
+  if (conditionError) { Toast.warning(conditionError); return; }
+  fieldList.value = {};
   // 获取所有设置的模版字段
   templateLayout.value?.forEach((item) => {
     fieldList.value[item.attrs.key] = item.attrs;
@@ -278,7 +300,6 @@ const handlerSaveTemplate = () => {
   }
   if (isUpdateMode.value) {
     // 更新issue模版
-    initIssueTemplate.value.metadata;
     issueTemplateApiClient.issueTemplate
       .updateIssueTemplate({
         name: currentEditTemplate.value as string,
@@ -311,7 +332,7 @@ const handlerSaveTemplate = () => {
 
 const handlerDeleteComponent = (component: Component) => {
   const index = templateLayout.value.findIndex(
-    (item) => item.id === component.id,
+    (item) => item.attrs.key === component.attrs.key,
   );
   if (index !== -1) {
     templateLayout.value.splice(index, 1);
@@ -324,7 +345,8 @@ const cloneComponent = (original: Component) => {
     ...original,
     attrs: {
       ...original.attrs,
-      fieldOptions: original.attrs.fieldOptions,
+      fieldOptions: original.attrs.fieldOptions?.map(option => ({ ...option })),
+      showWhen: original.attrs.showWhen ? { ...original.attrs.showWhen } : undefined,
     },
   };
 };
@@ -393,6 +415,8 @@ const getFormKitType = (type: TemplateFieldTypeEnum): string => {
       return "select";
     case TemplateFieldTypeEnum.Password:
       return "password";
+    case TemplateFieldTypeEnum.Post:
+      return "postSelect";
     case TemplateFieldTypeEnum.Email:
       return "email";
     default:
@@ -658,6 +682,12 @@ onMounted(async () => {
                 name="helpText"
                 type="text"
               ></FormKit>
+              <FormKit v-model="conditionEnabled" type="checkbox" label="按条件显示此字段" />
+              <template v-if="selectedComponent.attrs.showWhen">
+                <FormKit v-model="selectedComponent.attrs.showWhen.fieldKey" type="select" label="条件字段" :options="conditionFieldOptions" />
+                <FormKit v-if="conditionValueOptions.length" v-model="selectedComponent.attrs.showWhen.value" type="select" label="等于以下选项时显示" :options="conditionValueOptions" />
+                <FormKit v-else v-model="selectedComponent.attrs.showWhen.value" type="text" label="等于以下值时显示" help="匹配实际保存的字段值；上级字段隐藏时，此字段也会隐藏。" />
+              </template>
               <!--   针对文本元素的最大和最小长度设置  -->
               <FormKit
                 v-if="

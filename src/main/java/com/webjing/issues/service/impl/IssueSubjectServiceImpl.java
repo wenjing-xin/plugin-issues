@@ -8,6 +8,7 @@ import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import com.webjing.issues.query.IssueSubjectQuery;
 import com.webjing.issues.service.IssueSubjectService;
 import com.webjing.issues.service.RoleService;
+import com.webjing.issues.service.IssueLabelService;
 import com.webjing.issues.vo.ContributorVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,8 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
     private final ReactiveExtensionClient client;
 
     private final RoleService roleService;
+
+    private final IssueLabelService issueLabelService;
 
     private final NotificationSubscriptionHelper notificationSubscriptionHelper;
 
@@ -118,37 +121,36 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
 
         return client.listAll(Issue.class, ListOptions.builder().fieldQuery(equal("spec.subjectName", issueSubjectName))
                     .build(), Sort.by(Sort.Order.desc("metadata.creationTimestamp")))
-            .filter(issue -> issue.getSpec().getApproved())
+            .filter(issue -> issue.getMetadata().getDeletionTimestamp() == null)
             .collectList()
             .map(issues -> {
                 int progress = (int) issues.stream()
-                    .filter(i -> Issue.IssueState.PROGRESS == i.getStatus().getState() && i.getSpec()
-                        .getApproved())
+                    .filter(i -> i.getStatus() != null && Issue.IssueState.PROGRESS == i.getStatus().getState() && Boolean.TRUE.equals(i.getSpec().getApproved()))
                     .count();
                 int await = (int) issues.stream()
-                    .filter(i -> Issue.IssueState.AWAIT == i.getStatus().getState() && i.getSpec().getApproved())
+                    .filter(i -> i.getStatus() != null && Issue.IssueState.AWAIT == i.getStatus().getState() && Boolean.TRUE.equals(i.getSpec().getApproved()))
                     .count();
                 int closed = (int) issues.stream()
-                    .filter(i -> Issue.IssueState.CLOSED == i.getStatus().getState() && i.getSpec().getApproved())
+                    .filter(i -> i.getStatus() != null && Issue.IssueState.CLOSED == i.getStatus().getState() && Boolean.TRUE.equals(i.getSpec().getApproved()))
                     .count();
                 int awaitApproved = (int) issues.stream()
-                    .filter(i -> !i.getSpec().getApproved())
+                    .filter(i -> !Boolean.TRUE.equals(i.getSpec().getApproved()))
                     .count();
 
-                // 新增标签统计逻辑
-                Set<String> uniqueLabels = issues.stream()
-                    .filter(issue -> issue.getSpec().getLabels() != null)
-                    .flatMap(issue -> issue.getSpec().getLabels().stream())
-                    .collect(Collectors.toSet());
                 return IssueSubjectStats.builder()
-                    .totalIssue(issues.size())
+                    .totalIssue(progress + await + closed)
                     .progressIssue(progress)
                     .awaitIssue(await)
                     .closedIssue(closed)
                     .awaitApproved(awaitApproved)
-                    .labels(uniqueLabels.size())
+                    .labels(0)
                     .build();
             })
+            .flatMap(stats -> issueLabelService.listSubjectIssueLabels(issueSubjectName, null)
+                .map(options -> {
+                    stats.setLabels(options.getIssueLabelOptions().size());
+                    return stats;
+                }))
             .defaultIfEmpty(IssueSubjectStats.empty());
     }
 

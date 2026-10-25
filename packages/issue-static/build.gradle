@@ -1,0 +1,56 @@
+plugins {
+    id 'base'
+    id 'com.github.node-gradle.node' version '7.1.0'
+}
+
+node {
+    version = '22.12.0'
+    pnpmVersion = '10.12.4'
+    download = true
+    workDir = rootProject.layout.projectDirectory.dir('ui/.gradle/nodejs').asFile
+    pnpmWorkDir = rootProject.layout.projectDirectory.dir('ui/.gradle/pnpm').asFile
+}
+
+// Reuse UI's downloaded toolchain without two tasks writing the same directories.
+tasks.named('nodeSetup') {
+    dependsOn ':ui:nodeSetup'
+    enabled = false
+}
+tasks.named('pnpmSetup') {
+    dependsOn ':ui:pnpmSetup'
+    enabled = false
+}
+
+tasks.named('pnpmInstall') {
+    args = ['--frozen-lockfile']
+    inputs.files('package.json', 'pnpm-lock.yaml')
+    outputs.dir('node_modules')
+}
+
+tasks.register('pnpmBuild', PnpmTask) {
+    group = 'build'
+    description = 'Build the public Issue templates assets'
+    args = ['build']
+    dependsOn tasks.named('pnpmInstall')
+    inputs.dir('src')
+    inputs.dir(rootProject.file('ui/src/api/generated/models'))
+    inputs.dir(rootProject.file('src/main/resources/templates'))
+    inputs.dir(rootProject.file('src/main/resources/static/libs'))
+    inputs.files(fileTree(dir: projectDir, includes: ['*.cjs', '*.js', '*.ts', '*.json', '*.yaml']))
+    inputs.dir(rootProject.file('packages/issue-shared'))
+    outputs.dir(layout.buildDirectory.dir('dist'))
+}
+
+tasks.named('assemble') {
+    dependsOn tasks.named('pnpmBuild')
+}
+
+tasks.register('testStyles', PnpmTask) {
+    group = 'verification'
+    args = ['test:styles']
+    dependsOn tasks.named('pnpmInstall')
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('testStyles')
+}

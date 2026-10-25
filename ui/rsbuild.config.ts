@@ -1,4 +1,4 @@
-import { rsbuildConfig } from '@halo-dev/ui-plugin-bundler-kit';
+import { rsbuildConfig } from '@halo-dev/ui-plugin-bundler-kit/rsbuild';
 import Icons from "unplugin-icons/rspack";
 import { pluginSass } from "@rsbuild/plugin-sass";
 import type { RsbuildConfig } from "@rsbuild/core";

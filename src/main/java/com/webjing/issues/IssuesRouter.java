@@ -3,6 +3,7 @@ package com.webjing.issues;
 import com.webjing.issues.finder.IssueFinder;
 import com.webjing.issues.finder.IssueSubjectFinder;
 import com.webjing.issues.service.RoleService;
+import com.webjing.issues.service.IssuePermissionService;
 import com.webjing.issues.service.SettingConfigGetter;
 import com.webjing.issues.vo.IssueVO;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import run.halo.app.plugin.PluginContext;
 import run.halo.app.theme.TemplateNameResolver;
+import run.halo.app.theme.router.ModelConst;
 import run.halo.app.theme.router.PageUrlUtils;
 import run.halo.app.theme.router.UrlContextListResult;
 
@@ -50,6 +52,8 @@ public class IssuesRouter {
 
     private final RoleService roleService;
 
+    private final IssuePermissionService issuePermissionService;
+
     @Bean
     RouterFunction<ServerResponse> issueRouterFunction() {
         return route(GET("/subject/{subjectName}"), this::handlerIssueSubjectFunction)
@@ -64,7 +68,12 @@ public class IssuesRouter {
         return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"issue")
             .flatMap(templateName -> {
                 Map<String, Object> model = new HashMap<>(7);
-                model.put("issueVO", issueFinder.get(issueName));
+                var issue = issueFinder.get(issueName).cache();
+                model.put("issueVO", issue);
+                model.put("issueCanManage", issuePermissionService.canManage());
+                model.put("issueCanChangeStatus", issue.flatMap(value -> issuePermissionService
+                    .canChangeStatus(value.getSpec().getOwner(), value.getSpec().getAssignees())));
+                model.put(ModelConst.TEMPLATE_ID, "plugin:PluginIssues:issue");
                 model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                 model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
                 model.put("issueComments", issueFinder.listAllIssueComments(issueName));
@@ -80,6 +89,7 @@ public class IssuesRouter {
             .flatMap(templateName -> {
                 Map<String, Object> model = new HashMap<>(3);
                 model.put("issueSubjectVO", issueSubjectFinder.get(subjectName));
+                model.put(ModelConst.TEMPLATE_ID, "plugin:PluginIssues:subject");
                 buildCommonVariables(model);
                 return ServerResponse.ok().render(templateName, model);
             });
@@ -99,6 +109,7 @@ public class IssuesRouter {
                             "newIssue")
                         .flatMap(templateName -> {
                             Map<String, Object> model = new HashMap<>(3);
+                            model.put(ModelConst.TEMPLATE_ID, "plugin:PluginIssues:newIssue");
                             model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                             model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
                             buildCommonVariables(model);
@@ -114,6 +125,8 @@ public class IssuesRouter {
         return templateNameResolver.resolveTemplateNameOrDefault(request.exchange(),"issues")
             .flatMap(templateName -> {
                 Map<String, Object> model = new HashMap<>(4);
+                model.put(ModelConst.TEMPLATE_ID, "plugin:PluginIssues:issues");
+                model.put("issueState", request.queryParam("issueState").orElse("PROGRESS"));
                 model.put("issueSubjectInfo", issueSubjectFinder.getSubjectBasicInfo(subjectName));
                 model.put("issueSubjectStats", issueSubjectFinder.getSubjectStats(subjectName));
                 model.put("issueItems", issuePageList(request, subjectName));

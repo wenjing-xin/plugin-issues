@@ -22,6 +22,7 @@ index.ts
 models/add-operation.ts
 models/contributor-vo.ts
 models/copy-operation.ts
+models/field-condition.ts
 models/index.ts
 models/issue-comment-content.ts
 models/issue-comment-list.ts
@@ -35,6 +36,7 @@ models/issue-label-options-list.ts
 models/issue-label-options.ts
 models/issue-label-spec.ts
 models/issue-label.ts
+models/issue-labels-update-request.ts
 models/issue-list.ts
 models/issue-media.ts
 models/issue-spec.ts

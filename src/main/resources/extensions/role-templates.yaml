@@ -43,6 +43,9 @@ rules:
   - apiGroups: [ "uc.api.issue.webjing.com" ]
     resources: [ "issues", "labels", "issuetemplates", "issuestatus" ]
     verbs: [ "create", "update", "patch" ]
+  - apiGroups: ["uc.api.issue.webjing.com"]
+    resources: ["issues/labels"]
+    verbs: ["get", "update"]
 ---
 apiVersion: v1alpha1
 kind: Role

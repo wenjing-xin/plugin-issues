@@ -9,6 +9,7 @@ import com.webjing.issues.extension.IssueTemplate;
 import com.webjing.issues.finder.IssueSubjectFinder;
 import com.webjing.issues.notify.NotificationSubscriptionHelper;
 import com.webjing.issues.service.RoleService;
+import com.webjing.issues.service.TemplateSubmissionService;
 import com.webjing.issues.util.MeterUtils;
 import com.webjing.issues.exception.NotFoundException;
 import com.webjing.issues.extension.Issue;
@@ -62,6 +63,8 @@ public class IssueServiceImpl implements IssueService {
 
     private final RoleService roleService;
 
+    private final TemplateSubmissionService templateSubmissionService;
+
     private final NotificationReasonEmitter notificationReasonEmitter;
 
     private final ExternalLinkProcessor externalLinkProcessor;
@@ -89,7 +92,7 @@ public class IssueServiceImpl implements IssueService {
         return roleService.getContextUser()
             .flatMap(user -> {
                 issue.getSpec().setOwner(user.getMetadata().getName());
-                return client.create(issue);
+                return templateSubmissionService.prepare(issue).flatMap(client::create);
             });
     }
 
@@ -120,7 +123,7 @@ public class IssueServiceImpl implements IssueService {
 
     @Override
     public Mono<Issue> updateBy(Issue issue) {
-        return client.update(issue);
+        return templateSubmissionService.prepare(issue).flatMap(client::update);
     }
 
     @Override
@@ -235,7 +238,7 @@ public class IssueServiceImpl implements IssueService {
                         issueSubjectInfo.subjectType, closedComment, closedOwner).thenReturn(updatedIssue));
                 });
         }
-        return client.update(issue);
+        return templateSubmissionService.prepare(issue).flatMap(client::update);
     }
 
     @Override
@@ -259,7 +262,7 @@ public class IssueServiceImpl implements IssueService {
         // 更新状态
         var issueAnnotations = nullSafeAnnotations(issue);
         issueAnnotations.put(Constant.CLOSED_ISSUE_NOTIFIED_ANNO, "false");
-        return client.update(issue);
+        return templateSubmissionService.prepare(issue).flatMap(client::update);
     }
 
     @Override
@@ -278,7 +281,7 @@ public class IssueServiceImpl implements IssueService {
             var issueAnnotations = nullSafeAnnotations(issue);
             issueAnnotations.put(Constant.CLOSED_ISSUE_NOTIFIED_ANNO, "false");
         }
-        return client.update(issue);
+        return templateSubmissionService.prepare(issue).flatMap(client::update);
     }
 
     /**

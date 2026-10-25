@@ -155,19 +155,27 @@ const handleReset = () => {
   isEditorEmpty.value = true;
 };
 
-// 监听 subjectType 变化，debounce 避免频繁请求
+// Refresh on opening and when switching subjects, even if their types are identical.
 watch(
-  () => formState.value.spec.subjectType,
-  (newVal: string) => {
-    consoleIssueTemplateApiClient.issueTemplate
+  [() => props.visible, () => formState.value.spec.subjectType, () => formState.value.metadata.name],
+  async ([visible, subjectType, subjectName], _previous, onCleanup) => {
+    let stale = false;
+    onCleanup(() => { stale = true; });
+    if (!visible || !subjectType) return;
+    issueTemplateFilterOptions.value = [];
+    try {
+      const { data } = await consoleIssueTemplateApiClient.issueTemplate
       .listIssueTemplateOptions({
-        subjectType: newVal,
-        subjectName: props.issueSubject?.metadata.name,
-      })
-      .then(({ data }) => {
-        issueTemplateFilterOptions.value = data.issueTemplateOptions;
+        subjectType,
+        subjectName: subjectName || undefined,
       });
+      if (!stale) issueTemplateFilterOptions.value = data.issueTemplateOptions || [];
+    } catch (error) {
+      if (!stale) Toast.error("加载 Issue 模板失败，请重试");
+      console.error(error);
+    }
   },
+  { immediate: true },
 );
 
 const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
@@ -253,6 +261,7 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
           <FormKit
             v-model="formState.spec.description"
             label="描述"
+            help="支持 Markdown 和安全 HTML，展示在主体概览标题下方。主体内容作为下方的详细介绍。"
             type="textarea"
             rows="1"
           />
@@ -263,9 +272,9 @@ const onAttachmentsSelect = async (attachments: AttachmentLike[]) => {
             multiple
             clearable
             searchable
-            action="/apis/api.console.halo.run/v1alpha1/users?fieldSelector=name!=anonymousUser&fieldSelector=name!=ghost"
+            action="/apis/api.console.halo.run/v1alpha1/users?fieldSelector=metadata.name!=anonymousUser&fieldSelector=metadata.name!=ghost"
             :request-option="{
-              method: 'get',
+              method: 'GET',
               pageField: 'page',
               sizeField: 'size',
               totalField: 'total',

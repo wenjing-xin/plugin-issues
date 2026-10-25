@@ -1,5 +1,5 @@
 <th:block th:fragment="issueItem(issueVO)">
-    <div class="piw-w-full piw-bg-white piw-px-4 piw-py-3 piw-flex piw-justify-between piw-items-center last:piw-rounded-b-md">
+    <div class="piw-issue-row piw-w-full piw-bg-white piw-px-4 piw-py-3 piw-flex piw-justify-between piw-items-center last:piw-rounded-b-md">
         <div class="piw-space-y-2">
             <div class="piw-flex piw-items-center piw-gap-x-3">
                 <a class="piw-text-base piw-font-medium piw-text-neutral-800"
@@ -13,7 +13,7 @@
                     </th:block>
                 </div>
             </div>
-            <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-neutral-500" x-data="dateUtils">
+            <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-neutral-500" x-data="piwDateUtils">
                 <span th:text="${'#' + issueVO.metadata.name}" class="piw-text-xs"></span>
                 <p class="piw-inline-flex piw-items-center piw-gap-x-2" th:attr="x-data=|{publishTime: '${issueVO.spec.releaseTime}'}|">
                     <span class="piw-text-sm" th:text="${issueVO.contributorVo.displayName}"></span>

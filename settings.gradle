@@ -5,3 +5,5 @@ pluginManagement {
 }
 rootProject.name = 'plugin-issues'
 include 'ui'
+include 'issue-static'
+project(':issue-static').projectDir = file('packages/issue-static')

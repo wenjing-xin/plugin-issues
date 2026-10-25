@@ -106,75 +106,23 @@ Issue标签管理
 
 > 若是引用了本插件的代码，请务必保留本插件的版权声明。记住，真正的力量来自于创造！
 
-### 开发环境
+### 开发与主题适配
 
-插件开发的详细文档请查阅：<https://docs.halo.run/developer-guide/plugin/introduction>
+版本更新见 [更新记录](CHANGELOG.md) 和 [v1.0.0 发版说明](docs/releases/v1.0.0.md)。发布流程见 [GitHub Actions 自动构建与应用市场发布](docs/release-process.md)。
 
-所需环境：
+前台视觉规范见 [shadcn/ui 设计规则](docs/design/README.md)。完整开发说明见 [前台构建与主题适配文档](docs/theme-development.md)，包含 Halo 2.26+ 布局契约、Thymeleaf 页面覆盖与公共片段、CSS 变量和 Finder 示例。
 
-1. Java 17
-2. Node 20
-3. pnpm 9
-4. Docker (可选)
-
-克隆项目：
+开发环境：Java 21；Gradle 自动下载 Node.js 22.12.0 和 pnpm 10.12.4。使用开发容器需要 Docker。
 
 ```bash
-git clone git@github.com:halo-sigs/plugin-starter.git
-
-# 或者当你 fork 之后
-
-git clone git@github.com:{your_github_id}/plugin-starter.git
-```
-
-```bash
-cd path/to/plugin-starter
-```
-
-### 运行方式 1（推荐）
-
-> 此方式需要本地安装 Docker
-
-```bash
-# macOS / Linux
-./gradlew pnpmInstall
-
-# Windows
-./gradlew.bat pnpmInstall
-```
-
-```bash
-# macOS / Linux
+# 自动构建 Console 与 packages/issue-static，启动 Halo
 ./gradlew haloServer
 
-# Windows
-./gradlew.bat haloServer
-```
+# 修改后重新构建并重载插件
+./gradlew reloadPlugin
 
-执行此命令后，会自动创建一个 Halo 的 Docker 容器并加载当前的插件，更多文档可查阅：<https://docs.halo.run/developer-guide/plugin/basics/devtools>
-
-### 运行方式 2
-
-> 此方式需要使用源码运行 Halo
-
-编译插件：
-
-```bash
-# macOS / Linux
+# 打包，产物位于 build/libs/
 ./gradlew build
-
-# Windows
-./gradlew.bat build
 ```
 
-修改 Halo 配置文件：
-
-```yaml
-halo:
-  plugin:
-    runtime-mode: development
-    fixedPluginPath:
-      - "/path/to/plugin-starter"
-```
-
-最后重启 Halo 项目即可。
+前台静态资源无需手动复制。构建时会将 `packages/issue-static/build/dist` 打包进插件的 `static/webAssets`；旧的源码目录内静态构建产物不再参与打包。

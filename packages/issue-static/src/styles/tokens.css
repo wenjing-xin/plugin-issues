@@ -1,0 +1,33 @@
+/* shadcn/ui semantic roles, scoped and prefixed for Halo theme coexistence. */
+.piw-app {
+    --piw-surface-default: #ffffff;
+    --piw-muted-default: #f4f4f5;
+    --piw-text-default: #18181b;
+    --piw-subtle-default: #71717a;
+    --piw-border-default: #e4e4e7;
+    --piw-primary-default: #18181b;
+    --piw-primary-foreground-default: #fafafa;
+    --piw-accent-default: #18181b;
+    --piw-danger-default: #dc2626;
+    --piw-positive-default: #15803d;
+    --piw-ring-default: #a1a1aa;
+    --piw-shadow-default: 0 1px 2px rgb(0 0 0 / 0.04);
+    --piw-control-radius: 6px;
+    --piw-card-radius: var(--piw-radius, 10px);
+}
+:where(.dark, [data-color-scheme="dark"], [data-theme="dark"]) .piw-app,
+.piw-app[data-color-scheme="dark"] {
+    --piw-surface-default: #09090b;
+    --piw-muted-default: #18181b;
+    --piw-text-default: #fafafa;
+    --piw-subtle-default: #a1a1aa;
+    --piw-border-default: #27272a;
+    --piw-primary-default: #fafafa;
+    --piw-primary-foreground-default: #18181b;
+    --piw-accent-default: #fafafa;
+    --piw-danger-default: #f87171;
+    --piw-positive-default: #4ade80;
+    --piw-ring-default: #71717a;
+    --piw-shadow-default: none;
+    color-scheme: dark;
+}

@@ -1,4 +1,4 @@
-<div class="piw-w-full piw-rounded-md piw-border">
+<div class="piw-editor-shell piw-w-full">
     <div class="piw-w-full piw-flex piw-items-center max-md:piw-flex-col-reverse piw-gap-x-0 piw-bg-slate-100 piw-rounded-t-md">
         <div class="piw-w-full piw-h-9">
             <button :class="{ 'tab-button-active piw-border-r piw-border-slate-200 piw-rounded-tr-md': activeTabIue === 'editor'}"
@@ -12,13 +12,13 @@
                 <span class="piw-text-sm piw-whitespace-nowrap">预览</span>
             </button>
         </div>
-        <div x-show="activeTabIue === 'editor'" class="piw-w-full piw-h-full piw-h-9 piw-border-b piw-flex piw-items-center md:piw-justify-end piw-justify-start
-                piw-rounded-tr-md piw-gap-x-1 piw-px-1.5 piw-transition-all piw-duration-500 piw-overflow-x-scroll no-scrollbar">
-            <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100 editor-heading-list-iue" x-data="dropdown"
-                 @mouseenter="main.showTooltip('插入标题', $event);open();main.triggerLazyAnimation('.editor-heading-list-iue ')"
-                 @mouseleave="main.hideTooltip(); close();">
+        <div x-show="activeTabIue === 'editor'" class="piw-editor-toolbar-strip piw-w-full piw-h-full piw-h-9 piw-border-b piw-flex piw-items-center md:piw-justify-end piw-justify-start
+                piw-rounded-tr-md piw-gap-x-1 piw-px-1.5 piw-transition-all piw-duration-500">
+            <div class="piw-relative piw-p-1 piw-flex piw-items-center piw-rounded-md hover:piw-bg-slate-200 piw-transition-all piw-duration-300 piw-border piw-border-slate-100 editor-heading-list-iue" x-data="piwDropdown"
+                 @mouseenter="PluginIssues.showTooltip('插入标题', $event);open();PluginIssues.triggerLazyAnimation('.editor-heading-list-iue ')"
+                 @mouseleave="PluginIssues.hideTooltip(); close();">
                 <span class="piw-icon-[ci--heading] piw-text-lg"></span>
-                <div x-show="show" class="piw-w-12 piw-absolute piw-top-7 -piw-right-2 piw-z-10 piw-bg-white piw-border piw-border-slate-200
+                <div x-cloak x-show="show" class="piw-w-12 piw-absolute piw-top-7 -piw-right-2 piw-z-10 piw-bg-white piw-border piw-border-slate-200
                 piw-rounded-md piw-flex piw-flex-col piw-items-center piw-p-1 piw-divide-y piw-divide-slate-200">
                     <div class="editor-heading t-lazy-item" @click="headingIue(1);close();">
                         <span class="piw-text-sm">H1</span>
@@ -41,48 +41,48 @@
                 </div>
             </div>
 
-            <div class="issue-editor-toolbar" @click="boldIue()" @mouseenter="main.showTooltip('加粗', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="boldIue()" @mouseenter="PluginIssues.showTooltip('加粗', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[tabler--bold] piw-text-lg"></span>
             </div>
-            <div class="issue-editor-toolbar" @click="italicIue()" @mouseenter="main.showTooltip('斜体', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="italicIue()" @mouseenter="PluginIssues.showTooltip('斜体', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[mingcute--italic-fill]"></span>
             </div>
 
             <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
 
-            <div class="issue-editor-toolbar" @click="insertBlockquoteIue()" @mouseenter="main.showTooltip('引用块', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="insertBlockquoteIue()" @mouseenter="PluginIssues.showTooltip('引用块', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[ri--quote-text] piw-text-lg"></span>
             </div>
-            <div class="issue-editor-toolbar" @click="insertInlineCodeIue()" @mouseenter="main.showTooltip('行内代码', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="insertInlineCodeIue()" @mouseenter="PluginIssues.showTooltip('行内代码', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[material-symbols--code-rounded] piw-text-lg"></span>
             </div>
-            <div class="issue-editor-toolbar" @click="insertLinkIue()" @mouseenter="main.showTooltip('插入链接', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="insertLinkIue()" @mouseenter="PluginIssues.showTooltip('插入链接', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[ci--link] piw-text-xl"></span>
             </div>
             <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
 
-            <div class="issue-editor-toolbar" @click="unorderedListIue()" @mouseenter="main.showTooltip('无序列表', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="unorderedListIue()" @mouseenter="PluginIssues.showTooltip('无序列表', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[ci--list-unordered] piw-text-xl"></span>
             </div>
-            <div class="issue-editor-toolbar" @click="orderedListIue()" @mouseenter="main.showTooltip('有序列表', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="orderedListIue()" @mouseenter="PluginIssues.showTooltip('有序列表', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[lucide--list-ordered] piw-text-lg"></span>
             </div>
-            <div class="issue-editor-toolbar" @click="insertTaskListIue()" @mouseenter="main.showTooltip('任务列表', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="insertTaskListIue()" @mouseenter="PluginIssues.showTooltip('任务列表', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[octicon--tasklist-24] piw-text-lg"></span>
             </div>
 
             <div class="piw-h-4/5 piw-border-l piw-border-slate-200"></div>
 
-            <div class="issue-editor-toolbar" @click="insertImageIue()" @mouseenter="main.showTooltip('外链图片', $event)"
-                 @mouseleave="main.hideTooltip()">
+            <div class="issue-editor-toolbar" @click="insertImageIue()" @mouseenter="PluginIssues.showTooltip('外链图片', $event)"
+                 @mouseleave="PluginIssues.hideTooltip()">
                 <span class="piw-icon-[stash--image-light] piw-text-lg"></span>
             </div>
         </div>

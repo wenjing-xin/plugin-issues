@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id "io.freefair.lombok" version "9.2.0"
-    id "run.halo.plugin.devtools" version "0.6.2"
+    id "run.halo.plugin.devtools" version "0.8.0"
 }
 
 group = 'com.webjing.issues'
@@ -11,11 +11,12 @@ repositories {
 }
 
 dependencies {
-    implementation platform('run.halo.tools.platform:plugin:2.23.0')
+    implementation platform('run.halo.tools.platform:plugin:2.26.0')
     compileOnly 'run.halo.app:api'
 
     testImplementation 'run.halo.app:api'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -36,7 +37,7 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.register('processUiResources', Copy) {
     from project(':ui').layout.buildDirectory.dir('dist')
-    into layout.buildDirectory.dir('resources/main/console')
+    into layout.buildDirectory.dir('resources/main/ui')
     dependsOn project(':ui').tasks.named('assemble')
     shouldRunAfter tasks.named('processResources')
 }
@@ -45,12 +46,21 @@ tasks.named('classes') {
     dependsOn tasks.named('processUiResources')
 }
 
+// Only package freshly built theme assets, never the historical checked-in bundle.
+sourceSets.main.resources.exclude('static/webAssets/**')
+tasks.named('processResources') {
+    dependsOn ':issue-static:pnpmBuild'
+    from(project(':issue-static').layout.buildDirectory.dir('dist')) {
+        into 'static/webAssets'
+    }
+}
+
 tasks.named('generatePluginComponentsIdx') {
     notCompatibleWithConfigurationCache('This task invokes "Task.project" at execution time, which is not supported with configuration cache.')
 }
 
 halo {
-    version = '2.23'
+    version = '2.26'
     containerName = 'plugin-issues'
     debug = false
     port  = 8090
@@ -80,8 +90,14 @@ haloPlugin {
         }
         groupedApiMappings = ['/v3/api-docs/issuesApi': 'issuesApi.json']
         generator {
-            // 默认配置可缺省
             outputDir = file("${projectDir}/ui/src/api/generated")
+            additionalProperties = [
+                useES6: 'true',
+                useSingleRequestParameter: 'true',
+                withSeparateModelsAndApi: 'true',
+                apiPackage: 'api',
+                modelPackage: 'models'
+            ]
         }
     }
 }

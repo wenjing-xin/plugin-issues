@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { isFieldVisible, prepareTemplateValues, requiredField } from "../../../../packages/issue-shared/template-fields";
 import { VModal, VButton, VSpace, Toast } from "@halo-dev/components";
 import { consoleApiClient } from "@halo-dev/api-client";
 import {
@@ -116,7 +117,9 @@ watch(
   },
 );
 const issueTemplateRenderData = ref<Array<TemplateField>>();
-const handlerTemplateChange = (selectedOption: any) => {
+const visibleTemplateFields = computed(() => (issueTemplateRenderData.value || []).filter(field =>
+  isFieldVisible(field, issueTemplateRenderData.value || [], annotationsFormRef.value?.customAnnotations || {})));
+const handlerTemplateChange = (selectedOption: Array<{ value: string }>) => {
   nextTick(() => {
     if (selectedOption.length) {
       handlerRenderTemplate(selectedOption[0].value);
@@ -139,7 +142,7 @@ const handlerRenderTemplate = (templateName: string) => {
                 annotationsFormRef.value.customAnnotations = {};
               }
               (res.data.annotationFields || []).forEach((field) => {
-                annotationsFormRef.value.customAnnotations[field] = "";
+                annotationsFormRef.value.customAnnotations[field] = res.data.components?.find(item => item.key === field)?.defaultValue || "";
               });
               // 先初始化 customAnnotations，再赋值，保证渲染时 v-model 一定有对象
               issueTemplateRenderData.value = res.data.components;
@@ -201,10 +204,11 @@ const onSubmit = async () => {
     if (customFormInvalid || specFormInvalid) {
       return;
     }
-    formState.value.metadata.annotations = {
-      ...annotations,
-      ...customAnnotations,
-    };
+    const missing = visibleTemplateFields.value.find(field => requiredField(field) && !String(customAnnotations?.[field.key] ?? "").trim());
+    if (missing) { Toast.warning(`请填写：${missing.title}`); return; }
+    formState.value.metadata.annotations = prepareTemplateValues(issueTemplateRenderData.value || [], {
+      ...annotations, ...customAnnotations,
+    }) as Record<string, string>;
     const currentUser = await consoleApiClient.user.getCurrentUserDetail();
     const curUserName = currentUser.data.user.metadata.name;
     formState.value.spec.assignees = formState.value.spec.assignees?.filter(assignee => assignee !== curUserName);
@@ -320,9 +324,9 @@ const handleReset = () => {
             multiple
             clearable
             searchable
-            action="/apis/api.console.halo.run/v1alpha1/users?fieldSelector=name!=anonymousUser&fieldSelector=name!=ghost"
+            action="/apis/api.console.halo.run/v1alpha1/users?fieldSelector=metadata.name!=anonymousUser&fieldSelector=metadata.name!=ghost"
             :request-option="{
-              method: 'get',
+              method: 'GET',
               pageField: 'page',
               sizeField: 'size',
               totalField: 'total',
@@ -363,11 +367,14 @@ const handleReset = () => {
         class=":uno: divide-gray-25 mt-5 w-full px-3 md:col-span-3 md:mt-0 divide-y"
       >
         <template
-          v-for="itemComponent in issueTemplateRenderData"
+          v-for="itemComponent in visibleTemplateFields"
           :key="itemComponent.key"
         >
+          <FormKit v-if="itemComponent.type === 'POST' && annotationsFormRef?.customAnnotations"
+            v-model="annotationsFormRef.customAnnotations[itemComponent.key]" type="postSelect"
+            :label="itemComponent.title" :help="itemComponent.helpText" :validation="requiredField(itemComponent) ? 'required' : ''" clearable />
           <FormKit
-            v-if="
+            v-else-if="
               itemComponent.type === 'TEXT' &&
               annotationsFormRef?.customAnnotations
             "
@@ -377,7 +384,7 @@ const handleReset = () => {
             :placeholder="itemComponent.placeholder"
             :help="itemComponent.helpText"
             :validation="
-              itemComponent.requiredMode === 'REQUIRED' ? 'required' : ''
+              requiredField(itemComponent) ? 'required' : ''
             "
             :min="itemComponent.minLength"
             :max="itemComponent.maxLength"
@@ -385,14 +392,13 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'SELECT' &&
-              annotationsFormRef?.customAnnotations &&
-              itemComponent.fieldOptions
+              annotationsFormRef?.customAnnotations
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             type="select"
             :label="itemComponent.title"
             :options="
-              itemComponent?.fieldOptions.map((o) => ({
+              itemComponent?.fieldOptions?.map((o) => ({
                 label: o.label,
                 value: o.generateVal,
               }))
@@ -402,14 +408,13 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'RADIO' &&
-              annotationsFormRef?.customAnnotations &&
-              itemComponent.fieldOptions
+              annotationsFormRef?.customAnnotations
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             type="radio"
             :label="itemComponent.title"
             :options="
-              itemComponent?.fieldOptions.map((o) => ({
+              itemComponent?.fieldOptions?.map((o) => ({
                 label: o.label,
                 value: o.generateVal,
               }))
@@ -418,8 +423,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'TEXT_AREA' &&
-              annotationsFormRef?.customAnnotations &&
-              itemComponent.fieldOptions
+              annotationsFormRef?.customAnnotations
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
@@ -434,8 +438,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'PASSWORD' &&
-              annotationsFormRef?.customAnnotations &&
-              itemComponent.fieldOptions
+              annotationsFormRef?.customAnnotations
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"
@@ -449,8 +452,7 @@ const handleReset = () => {
           <FormKit
             v-else-if="
               itemComponent.type === 'EMAIL' &&
-              annotationsFormRef?.customAnnotations &&
-              itemComponent.fieldOptions
+              annotationsFormRef?.customAnnotations
             "
             v-model="annotationsFormRef.customAnnotations[itemComponent.key]"
             outer-class="w-[91%] mx-auto"

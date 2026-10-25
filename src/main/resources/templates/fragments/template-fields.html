@@ -1,0 +1,54 @@
+<div class="piw-space-y-4">
+    <p x-show="templateLoading" role="status">正在加载模板…</p>
+    <p x-show="templateError" x-text="templateError" role="alert" class="piw-text-red-500"></p>
+    <template x-for="component in issueTemplateRender.components" :key="component.key">
+        <template x-if="fieldVisible(component)">
+            <div class="piw-space-y-2">
+                <label class="piw-block piw-text-sm piw-font-medium" :for="'piw-field-' + component.key">
+                    <span x-text="component.title"></span><span class="piw-text-red-500" x-show="fieldRequired(component)"> *</span>
+                </label>
+                <template x-if="['TEXT','EMAIL','PASSWORD'].includes(component.type)">
+                    <input :id="'piw-field-' + component.key" :type="component.type === 'TEXT' ? 'text' : component.type.toLowerCase()"
+                           x-model="issueForm.metadata.annotations[component.key]" :required="fieldRequired(component)"
+                           :placeholder="component.placeholder || ''" :minlength="component.minLength || null" :maxlength="component.maxLength || null" />
+                </template>
+                <template x-if="component.type === 'TEXT_AREA'">
+                    <textarea :id="'piw-field-' + component.key" x-model="issueForm.metadata.annotations[component.key]"
+                              :required="fieldRequired(component)" :rows="component.rows || 3" :placeholder="component.placeholder || ''"
+                              :minlength="component.minLength || null" :maxlength="component.maxLength || null"></textarea>
+                </template>
+                <template x-if="component.type === 'SELECT'">
+                    <select :id="'piw-field-' + component.key" x-model="issueForm.metadata.annotations[component.key]" :required="fieldRequired(component)">
+                        <option value="">请选择</option>
+                        <template x-for="option in component.fieldOptions || []" :key="option.generateVal">
+                            <option :value="option.generateVal" x-text="option.label"></option>
+                        </template>
+                    </select>
+                </template>
+                <template x-if="component.type === 'RADIO'">
+                    <fieldset class="piw-flex piw-flex-wrap piw-gap-3" :aria-label="component.title">
+                        <template x-for="option in component.fieldOptions || []" :key="option.generateVal">
+                            <label class="piw-inline-flex piw-items-center piw-gap-2">
+                                <input type="radio" :name="'piw-field-' + component.key" :value="option.generateVal"
+                                       x-model="issueForm.metadata.annotations[component.key]" :required="fieldRequired(component)" />
+                                <span x-text="option.label"></span>
+                            </label>
+                        </template>
+                    </fieldset>
+                </template>
+                <template x-if="component.type === 'POST'">
+                    <div class="piw-space-y-2">
+                        <select :id="'piw-field-' + component.key" x-model="issueForm.metadata.annotations[component.key]" :required="fieldRequired(component)" :disabled="postsLoading">
+                            <option value="">请选择已公开文章</option>
+                            <template x-for="post in postOptions" :key="post.value"><option :value="post.value" x-text="post.label"></option></template>
+                        </select>
+                        <button type="button" class="piw-button piw-button-outline" x-show="postsHasMore" :disabled="postsLoading" @click="loadMorePosts()">加载更多文章</button>
+                        <p x-show="postsError" x-text="postsError" role="alert"></p>
+                        <button type="button" class="piw-button piw-button-ghost" x-show="postsError" @click="loadMorePosts()">重试</button>
+                    </div>
+                </template>
+                <p class="piw-caption" x-show="component.helpText" x-text="component.helpText"></p>
+            </div>
+        </template>
+    </template>
+</div>

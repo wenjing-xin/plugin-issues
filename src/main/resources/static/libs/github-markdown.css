@@ -1,5 +1,6 @@
 /* https://github.com/sindresorhus/github-markdown-css */
-[data-color-scheme="dark"] .dark .markdown-body {
+:where(.dark, [data-color-scheme="dark"], [data-theme="dark"]) .piw-app .markdown-body,
+.piw-app[data-color-scheme="dark"] .markdown-body {
   /*dark*/
   color-scheme: dark;
   --color-prettylights-syntax-comment: #8b949e;
@@ -48,7 +49,7 @@
   --color-done-fg: #a371f7;
 }
 
-[data-color-scheme="light"] .light .markdown-body {
+.markdown-body {
   /*light*/
   color-scheme: light;
   --color-prettylights-syntax-comment: #6e7781;

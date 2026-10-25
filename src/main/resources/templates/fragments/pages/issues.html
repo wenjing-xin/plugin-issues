@@ -1,0 +1,118 @@
+<section xmlns:th="https://www.thymeleaf.org" th:fragment="content"
+         class="piw-app piw-github" data-piw-root x-ignore x-data="piwApp"
+         th:attr="data-avatar-size=${diceBarAvatarSize},data-avatar-style=${diceBarAvatarStyle}">
+<th:block>
+    <th:block th:replace="~{plugin:PluginIssues:fragments/header::header(subjectType = ${issueSubjectInfo.subjectType}, title = ${issueSubjectInfo.title}, name = ${issueSubjectInfo.name},
+    totalIssue = ${issueSubjectStats.awaitIssue + issueSubjectStats.progressIssue}, activeTab = 'issues' )}" />
+    <section class="piw-page piw-container piw-mx-auto piw-py-6 piw-stack" x-data="{issueTemplateModal: false, searchResShow:false, searchHits: {}}">
+        <div class="piw-heading-copy"><h1 class="piw-page-title">Issues</h1><p class="piw-description">查看问题与反馈，跟进每一次讨论。</p></div>
+        <!-- 选项卡内容 -->
+        <div class="piw-search-row">
+            <div class="piw-search-field" x-data="{keyword:'', selectedState: PluginIssues.getSpecialParam('issueState')}"
+                 :class="{'piw-has-condition': selectedState && selectedState !== 'all'}"
+                 x-effect="if(!keyword){searchResShow = false}">
+                <div class="piw-search-condition" x-show="selectedState && selectedState !== 'all'" x-cloak>
+                    <span class="piw-search-condition-label">状态</span>
+                    <span class="piw-search-condition-value"
+                          x-text="{PROGRESS: '处理中', AWAIT: '等待中', CLOSED: '已关闭'}[selectedState] || selectedState"></span>
+                    <button type="button" class="piw-search-condition-remove" aria-label="移除状态筛选"
+                            @click="window.location.href = window.location.pathname + '?issueState=all'">
+                        <span class="piw-icon-[lucide--x]" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <input type="search"
+                       aria-label="搜索 Issue" placeholder="搜索 Issue…"
+                       x-model="keyword" name="keyword"
+                       @keydown.enter="searchHits = await PluginIssues.searchIssueByKeyword(keyword);searchResShow=true;"
+                       class="piw-w-full piw-pl-10 piw-pr-4 piw-py-1.5 piw-border piw-border-gray-300 piw-rounded-lg piw-text-sm piw-transition-all piw-duration-300">
+                <span class="piw-size-4 piw-text-gray-400 piw-absolute piw-left-3 piw-top-2 piw-icon-[lucide--search]"></span>
+            </div>
+            <a th:if="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" th:href="${'/subject/' + issueSubjectInfo.name + '/issues/new'}"
+               class="piw-button piw-button-primary"><span class="piw-icon-[lucide--plus]" aria-hidden="true"></span>新建 Issue</a>
+            <button th:unless="${ #lists.isEmpty(issueSubjectInfo.issueTemplates) }" class="piw-button piw-button-primary" @click="issueTemplateModal = true"><span class="piw-icon-[lucide--plus]" aria-hidden="true"></span>新建 Issue</button>
+        </div>
+
+        <th:block th:if="${ not #lists.isEmpty(issueSubjectInfo.issueTemplates)}">
+            <th:block th:replace="~{plugin:PluginIssues:fragments/issue-template-select}" />
+        </th:block>
+
+        <div class="piw-card" x-show="!searchResShow">
+            <div class="piw-filter-bar">
+                <div class="piw-filters" x-data="{curIssueState: PluginIssues.getSpecialParam('issueState')}">
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=all'}">
+                        <span class="piw-text-sm piw-font-bold">全部</span>
+                        <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.totalIssue}"></span>
+                    </a>
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=PROGRESS'}">
+                        <span class="piw-text-sm piw-font-bold">处理中</span>
+                        <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.progressIssue}"></span>
+                    </a>
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=AWAIT'}">
+                        <span class="piw-text-sm piw-font-bold">等待中</span>
+                        <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.awaitIssue}"></span>
+                    </a>
+                    <a class="issue-wrapper-stats" th:href="${'/subject/' + issueSubjectInfo.name + '/issues?issueState=CLOSED'}">
+                        <span class="piw-text-sm piw-font-bold">已关闭</span>
+                        <span class="issue-wrapper-stats-num" th:text="${issueSubjectStats.closedIssue}"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="piw-divide-y piw-divide-slate-200">
+                <th:block th:each="issueItem : ${issueItems.items}" th:unless="${#lists.isEmpty(issueItems.items)}">
+                    <th:block th:replace="~{plugin:PluginIssues:fragments/macro/issue-item::issueItem(issueVO=${issueItem})}" />
+                </th:block>
+                <th:block th:if="${#lists.isEmpty(issueItems.items)}">
+                    <div class="piw-empty">
+                        <div class="piw-empty-icon"><span class="piw-icon-[lucide--circle-dot]" aria-hidden="true"></span></div>
+                        <h2>暂无相关 Issue</h2><p>当前状态下还没有问题。<br>可以切换状态，或新建一个 Issue 发起讨论。</p>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+        <div class="piw-w-full piw-space-y-2" x-show="searchResShow" x-data="piwDateUtils">
+            <p class="piw-text-sm piw-text-neutral-700" x-text="`已搜索到相关的Issue${searchHits.total}条，共消耗时间${searchHits.processingTimeMillis}毫秒`"></p>
+            <div x-show="searchHits.hits && searchHits.hits.length == 0" class="piw-card piw-empty">
+                <div class="piw-empty-icon"><span class="piw-icon-[lucide--search]" aria-hidden="true"></span></div>
+                <p class="piw-text-neutral-500 piw-text-sm">没有找到匹配的 Issue，试试其他关键词。</p>
+            </div>
+            <div x-show="searchHits.hits && searchHits.hits.length > 0" class="piw-w-full piw-space-y-1 piw-border-x piw-border-b piw-border-neutral-200 piw-rounded piw-divide-y piw-divide-slate-200">
+                <template x-for="searchItem in searchHits.hits">
+                    <div class="piw-issue-row piw-w-full piw-bg-white piw-px-4 piw-py-3 piw-flex piw-justify-between piw-items-center last:piw-rounded-b-md">
+                        <div class="piw-space-y-2">
+                            <div class="piw-flex piw-items-center piw-gap-x-3">
+                                <a class="piw-text-base piw-font-medium piw-text-neutral-800"
+                                   :href="searchItem.permalink"
+                                   x-html="searchItem.title"></a>
+                                <div class="piw-flex piw-items-center piw-gap-1.5 piw-overflow-hidden"
+                                    x-show="searchItem.tags.length > 0" >
+                                    <template x-for="item in searchItem.tags">
+                                        <span x-data="{color: '', label: '' }"
+                                              x-init="const splitStr = item.split(',');label = splitStr[0];color = splitStr[1];"
+                                              x-text="label" :style="'background-color:' + color"
+                                              class="piw-px-2 piw-py-1 piw-text-xs piw-rounded-full piw-text-white"></span>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="piw-flex piw-items-center piw-gap-x-2 piw-text-neutral-500">
+                                <span :text="searchItem.metadataName" class="piw-text-xs"></span>
+                                <p class="piw-inline-flex piw-items-center piw-gap-x-2">
+                                    <span class="piw-text-sm" x-text="searchItem.ownerName"></span>
+                                    <span class="piw-text-sm">发布于</span>
+                                    <span class="piw-text-xs piw-text-neutral-500" x-text="formatDatetime(searchItem.updateTimestamp)"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="piw-inline-flex piw-items-center piw-gap-x-2">
+                            <span class="piw-icon-[fluent--comment-24-regular]"></span>
+                            <span class="piw-text-sm piw-text-neutral-600">2</span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div class="piw-w-full piw-flex piw-justify-center piw-items-center" x-show="!searchResShow">
+            <th:block th:replace="~{plugin:PluginIssues:fragments/pagination::pagination(context = '/subject/' + ${issueSubjectInfo.name} + '/issues/', prevUrl = ${issueItems.prevUrl}, nextUrl = ${issueItems.nextUrl}, totalPages = ${issueItems.totalPages}, page = ${issueItems.page}, hasPrevious = ${issueItems.hasPrevious()}, hasNext = ${issueItems.hasNext()})}" />
+        </div>
+    </section>
+</th:block>
+</section>

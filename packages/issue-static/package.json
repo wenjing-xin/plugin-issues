@@ -1,4 +1,8 @@
 {
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "description": "A development starter theme with modern front-end technology stack for Halo",
   "keywords": [
     "halo",
@@ -26,19 +30,23 @@
     }
   ],
   "scripts": {
+    "test:styles": "node --test tests/*.test.cjs",
+    "type-check": "tsc --noEmit",
     "build": "tsc && vite build",
     "dev": "vite build --watch",
-    "lint": "eslint ./src --ext .js,.cjs,.mjs,.ts,.cts,.mts --ignore-path .gitignore",
+    "lint": "eslint ./src --ext .js,.cjs,.mjs,.ts,.cts,.mts --ignore-path ../../.gitignore",
     "prettier": "prettier --write \"./src/**/*.{js,ts,css,json,ml,yaml,html}\" \"./templates/**/*.html\"",
     "prepare": "husky"
   },
   "dependencies": {
     "@dicebear/collection": "^9.2.3",
     "@dicebear/core": "^9.2.3",
-    "@halo-dev/api-client": "^2.20.0",
+    "@halo-dev/api-client": "^2.26.0",
     "alpinejs": "^3.14.3",
+    "axios": "1.16.1",
     "codemirror": "^5.65.11",
     "dayjs": "^1.11.13",
+    "dompurify": "^3.4.17",
     "marked": "^15.0.12"
   },
   "lint-staged": {
@@ -75,7 +83,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/alpinejs": "^3.13.11",
     "@types/codemirror": "^5.60.16",
-    "@types/node": "^18.19.64",
+    "@types/node": "^22.0.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "autoprefixer": "^10.4.21",
@@ -85,10 +93,12 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
     "postcss": "^8.5.3",
+    "postcss-selector-parser": "^6.1.2",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "tailwindcss": "^3.4.17",
-    "typescript": "^4.9.5",
+    "typescript": "~5.8.3",
     "vite": "^5.4.11"
-  }
+  },
+  "packageManager": "pnpm@10.12.4"
 }

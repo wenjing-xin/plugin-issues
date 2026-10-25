@@ -4,7 +4,7 @@ export * from './issueComment';
 export * from './issue';
 
 export function searchIssue(keywordStr: string) {
-    let param = {
+    const param = {
         highlightPostTag: "</mark>",
         highlightPreTag :  "<mark>",
         includeTypes: ["issue.issue.webjing.com"],

@@ -81,3 +81,8 @@ application-local.properties
 .claude
 CLAUDE.md
 .agents
+.playwright-cli/
+/docs/*
+!/docs/releases/
+/docs/releases/*
+!/docs/releases/v*.md

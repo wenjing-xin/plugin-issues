@@ -4,7 +4,7 @@ import { initials, adventurerNeutral, funEmoji, glass, notionistsNeutral, lorele
 export default (avatarType:string, size:number) => ({
     createAvatarByUserName(username:string){
         let avatar = null;
-        let config = {
+        const config = {
             seed: username,
             size: size
         }

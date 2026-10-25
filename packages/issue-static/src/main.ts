@@ -1,17 +1,12 @@
 import "./styles/tailwind.css";
 import "./styles/main.css";
-import Alpine from "alpinejs";
-import dropdown from "./alpine-data/dropdown";
-import colorSchemeSwitcher from "./alpine-data/color-scheme-switcher";
-import uiPermission from "./alpine-data/ui-permission";
-import halo from "./alpine-data/halo";
-import upvote from "./alpine-data/upvote";
+import "../../../src/main/resources/static/libs/github-markdown.css";
+import "./styles/tokens.css";
+import "./styles/layout.css";
+import "./styles/components.css";
+import "./styles/github.css";
 import message from "./alpine-data/message";
-import dateUtils from "./alpine-data/date";
-import issueEditor from "./alpine-data/issue-editor";
-import issueUpdateEditor from "./alpine-data/issue-update-editor";
-import issueSubmit from "./alpine-data/issue-submit";
-import dicebear from "./alpine-data/dicebear";
+export { mount } from "./runtime";
 import {IssueComment, IssueCommentContent, IssueContent} from "./types";
 import {
     createIssueComment,
@@ -22,20 +17,6 @@ import {
     searchIssue
 } from "./api";
 
-
-window.Alpine = Alpine;
-Alpine.data("dropdown", dropdown);
-Alpine.data("colorSchemeSwitcher", colorSchemeSwitcher);
-Alpine.data("halo", halo);
-Alpine.data("uiPermission", uiPermission);
-Alpine.data("upvote", upvote);
-Alpine.data("messageBox", message);
-Alpine.data("dateUtils", dateUtils);
-Alpine.data("issueEditor", issueEditor);
-Alpine.data("issueSubmit", issueSubmit);
-Alpine.data("issueUpdateEditor", issueUpdateEditor);
-Alpine.data("diceBearAvatar", dicebear)
-Alpine.start();
 
 const messageUtils = message();
 type ColorSchemeType = "system" | "dark" | "light";
@@ -93,7 +74,7 @@ export function publishIssueComment(issueId: string, rawContent: string, htmlCon
         messageUtils.showMessage("warning", '请填写Issue的内容', 2000);
         return;
     }
-    let initComment: IssueComment = {
+    const initComment: IssueComment = {
         kind: "IssueComment",
         apiVersion: "issue.webjing.com/v1alpha1",
         metadata: {
@@ -206,7 +187,7 @@ export function triggerLazyAnimation(targetSelector: string) {
         if (el.style.opacity === '1') return;
 
         const delay = getDelay(el);
-        el.style.animation = `radialReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}s forwards`;
+        el.style.animation = `piw-radialReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}s forwards`;
         el.dataset.loaded = 'true';
     };
 
@@ -246,7 +227,7 @@ export function triggerLazyAnimation(targetSelector: string) {
 // 生成随机颜色
 export function generateColors(labelsStr: string, maxColors?: number): { label: string, bgColor: string }[] {
     // 处理标签列表
-    let labels: string[] = labelsStr.replace("[", "").replace("]", "").split(",")
+    const labels: string[] = labelsStr.replace("[", "").replace("]", "").split(",")
 
     // HSL 颜色生成策略 (更易控制美观度)
     const generateHSL = (hue: number): string => {
@@ -307,7 +288,7 @@ export function generateColors(labelsStr: string, maxColors?: number): { label: 
             parseFloat(matches![1]),
             parseFloat(matches![2])
         );
-        let randomColorLabel = { label: labels[i], bgColor: rgb }
+        const randomColorLabel = { label: labels[i], bgColor: rgb }
         colors.push(randomColorLabel);
         currentHue = (currentHue + hueStep) % 360;
     }
@@ -562,3 +543,5 @@ export async function searchIssueByKeyword(keyword:string){
     }
     console.log(result.data)
 }
+
+export { renderDescription } from "./description";

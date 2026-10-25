@@ -8,15 +8,15 @@
                         <img class="piw-size-9 piw-rounded-full piw-border piw-border-slate-200" th:src="${avatar}" draggable="false"
                              th:alt="${name}"
                              th:attr="x-data=|{assignUsername: '${assignUser.name}'}|"
-                             @mouseenter="main.showTooltip(assignUsername, $event)"
-                             @mouseleave="main.hideTooltip()"/>
+                             @mouseenter="PluginIssues.showTooltip(assignUsername, $event)"
+                             @mouseleave="PluginIssues.hideTooltip()"/>
                     </th:block>
                     <th:block th:if="${ #strings.isEmpty(avatar) }">
                         <th:block th:if="${ #strings.equals(issueAvatarMode, 'default') }">
                             <div class="piw-size-9 piw-rounded-full piw-flex piw-items-center piw-justify-center piw-bg-neutral-100 piw-border piw-border-slate-200"
                                  th:attr="x-data=|{assignUsername: '${assignUser.name}'}|"
-                                 @mouseenter="main.showTooltip(assignUsername, $event)"
-                                 @mouseleave="main.hideTooltip()">
+                                 @mouseenter="PluginIssues.showTooltip(assignUsername, $event)"
+                                 @mouseleave="PluginIssues.hideTooltip()">
                                 <span class="piw-font-normal piw-text-3xl piw-text-neutral-800" th:text="${#strings.substring(assignUser.name, 0, 1)}"></span>
                             </div>
                         </th:block>
@@ -26,8 +26,8 @@
                                  th:attr="x-data=|{assignUsername: '${assignUser.name}', avatarUri: ''}|"
                                  :src="avatarUri"
                                  x-init="avatarUri = createAvatarByUserName(assignUsername)"
-                                 @mouseenter="main.showTooltip(assignUsername, $event)"
-                                 @mouseleave="main.hideTooltip()"/>
+                                 @mouseenter="PluginIssues.showTooltip(assignUsername, $event)"
+                                 @mouseleave="PluginIssues.hideTooltip()"/>
                         </th:block>
                     </th:block>
                 </th:block>
@@ -49,6 +49,17 @@
         <p th:if="${ #lists.isEmpty(issueVO.spec.labels)}" class="piw-text-sm piw-tracking-wider piw-text-neutral-400">
             暂无标签
         </p>
+    </div>
+    <div th:if="${issueCanManage}" class="piw-space-y-2 piw-py-3"
+         th:attr="data-issue-name=${issueVO.metadata.name},data-labels=${issueVO.spec.labels == null ? '' : #strings.setJoin(issueVO.spec.labels, ',')}"
+         x-data="piwIssueLabels($el.dataset.issueName, $el.dataset.labels)">
+        <p class="piw-section-title">设置标签</p>
+        <p x-show="loading" role="status">正在加载标签…</p>
+        <template x-for="option in options" :key="option.value">
+            <label class="piw-flex piw-items-center piw-gap-2"><input type="checkbox" :value="option.value" x-model="selected" /><span x-text="option.label"></span></label>
+        </template>
+        <p x-show="error" x-text="error" role="alert"></p>
+        <button type="button" class="piw-button piw-button-outline" :disabled="loading || saving || !!error" @click="save()">保存标签</button>
     </div>
     <div class="piw-space-y-2 piw-py-3">
         <div class="piw-flex piw-justify-between piw-items-center">

@@ -51,7 +51,8 @@ public class IssueLabelServiceImpl implements IssueLabelService {
         // 获取标签名称和主体名称
         String labelName = issueLabel.getSpec().getLabelName();
         String subjectName = issueLabel.getSpec().getSubjectName();
-        String subjectType = issueLabel.getSpec().getSubjectType().name();
+        String subjectType = issueLabel.getSpec().getSubjectType() == null
+            ? null : issueLabel.getSpec().getSubjectType().name();
         IssueLabel.LabelScope tagScope = issueLabel.getSpec().getScope();
         // 构建重复检测查询
         Mono<Boolean> duplicateCheck;
@@ -107,37 +108,26 @@ public class IssueLabelServiceImpl implements IssueLabelService {
 
     @Override
     public Mono<IssueLabelOptions> listSubjectIssueLabels(String subjectName, String keyword) {
-        // 查询全局标签 (isGlobal = true)
-        Flux<IssueLabel> globalLabels = client.listAll(IssueLabel.class,
-            buildQueryParam("GLOBAL", "", "", keyword),
-            Sort.by(Sort.Order.desc("metadata.creationTimestamp"))
-        ).map(issueLabel -> {
-            String labelName = issueLabel.getSpec().getLabelName();
-            issueLabel.getSpec().setLabelName(labelName + " - 全局标签");
-            return issueLabel;
+        return client.get(IssueSubject.class, subjectName).flatMap(subject -> {
+            var sort = Sort.by(Sort.Order.desc("metadata.creationTimestamp"));
+            var specific = client.listAll(IssueLabel.class,
+                buildQueryParam("SUBJECT", "", subjectName, keyword), sort);
+            var byType = client.listAll(IssueLabel.class,
+                buildQueryParam("SUBJECT_TYPE", subject.getSpec().getSubjectType().name(), "", keyword), sort);
+            var global = client.listAll(IssueLabel.class,
+                buildQueryParam("GLOBAL", "", "", keyword), sort);
+            // A more specific scope overrides a same-named label, without mutating stored specs.
+            return Flux.concat(specific, byType, global)
+                .filter(label -> label.getMetadata().getDeletionTimestamp() == null)
+                .distinct(label -> label.getSpec().getLabelName())
+                .map(IssueLabelOptions.IssueLabelItem::from)
+                .collectList()
+                .map(items -> {
+                    var result = new IssueLabelOptions();
+                    result.setIssueLabelOptions(items);
+                    return result;
+                });
         });
-
-        // 查询指定主体类型的标签 (isGlobal = false 且 subjectType 匹配)
-        Flux<IssueLabel> subjectTypeLabels = client.get(IssueSubject.class, subjectName)
-            .flatMapMany(issueSubject -> client.listAll(IssueLabel.class, 
-                buildQueryParam("SUBJECT_TYPE", issueSubject.getSpec().getSubjectType().name(), "", keyword),
-                Sort.by(Sort.Order.desc("metadata.creationTimestamp"))));
-
-        // 查询指定主体的标签 (isGlobal = false 且 subjectName 匹配)
-        Flux<IssueLabel> subjectLabels = client.listAll(IssueLabel.class,
-            buildQueryParam("SUBJECT", "", subjectName, keyword),
-            Sort.by(Sort.Order.desc("metadata.creationTimestamp"))
-        );
-
-        // 合并三个结果流并转换为 IssueLabelOptions
-        return Flux.merge(globalLabels, subjectTypeLabels, subjectLabels)
-            .map(issueLabel -> IssueLabelOptions.IssueLabelItem.from(issueLabel))
-            .collectList()
-            .map(issueLabelItems -> {
-                IssueLabelOptions issueLabelOptions = new IssueLabelOptions();
-                issueLabelOptions.setIssueLabelOptions(issueLabelItems);
-                return issueLabelOptions;
-            });
     }
 
     private Mono<ListedIssueLabel> toListedIssueLabel(IssueLabel issueLabel) {

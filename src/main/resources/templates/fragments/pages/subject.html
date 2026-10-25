@@ -1,0 +1,119 @@
+<section xmlns:th="https://www.thymeleaf.org" th:fragment="content"
+         class="piw-app piw-github" data-piw-root x-ignore x-data="piwApp"
+         th:attr="data-avatar-size=${diceBarAvatarSize},data-avatar-style=${diceBarAvatarStyle}">
+    <th:block th:replace="~{plugin:PluginIssues:fragments/header :: header(subjectType=${issueSubjectVO.spec.subjectType}, title=${issueSubjectVO.spec.displayName}, name=${issueSubjectVO.metadata.name}, totalIssue=${issueSubjectVO.issueSubjectStats.awaitIssue + issueSubjectVO.issueSubjectStats.progressIssue}, activeTab='subject')}" />
+
+    <main class="piw-repo-page piw-container" x-data="piwDiceBearAvatar(avatarStyle,size)">
+        <header class="piw-repo-heading">
+            <div class="piw-repo-heading-main">
+                <img th:if="${not #strings.isEmpty(issueSubjectVO.spec.subjectIcon)}"
+                     th:src="${issueSubjectVO.spec.subjectIcon}"
+                     th:alt="${issueSubjectVO.spec.displayName}"
+                     class="piw-repo-icon" />
+                <div class="piw-repo-heading-copy">
+                    <div class="piw-repo-title-line">
+                        <h1 class="piw-repo-title" th:text="${issueSubjectVO.spec.displayName}"></h1>
+                        <span class="piw-repo-visibility" th:text="${#strings.equals(issueSubjectVO.spec.subjectVisible + '', 'PRIVATE') ? '私有' : '公共'}"></span>
+                    </div>
+                    <p class="piw-repo-description">
+                        <span th:if="${#strings.isEmpty(issueSubjectVO.spec.description)}">在这里交流想法、反馈问题，跟进每一次改进。</span>
+                        <span th:unless="${#strings.isEmpty(issueSubjectVO.spec.description)}" th:text="${issueSubjectVO.spec.description}"></span>
+                    </p>
+                    <p class="piw-repo-owner">
+                        <span th:text="${issueSubjectVO.createOwner.displayName}"></span> 创建了此主体
+                    </p>
+                </div>
+            </div>
+            <a class="piw-button piw-button-primary" th:href="${'/subject/' + issueSubjectVO.metadata.name + '/issues'}">
+                <span class="piw-icon-[lucide--circle-dot]" aria-hidden="true"></span>查看 Issues
+            </a>
+        </header>
+
+        <div class="piw-repo-toolbar">
+            <div class="piw-repo-toolbar-left">
+                <button type="button" class="piw-button piw-button-outline piw-repo-branch-button">
+                    <span class="piw-icon-[lucide--book-open]" aria-hidden="true"></span>概览
+                    <span class="piw-icon-[lucide--chevrons-up-down]" aria-hidden="true"></span>
+                </button>
+                <span class="piw-repo-toolbar-muted">主体信息与协作成员</span>
+            </div>
+            <a class="piw-button piw-button-outline" th:href="${'/subject/' + issueSubjectVO.metadata.name + '/issues'}">
+                <span class="piw-icon-[lucide--circle-dot]" aria-hidden="true"></span>
+                Issues
+                <span class="piw-count" th:text="${issueSubjectVO.issueSubjectStats.totalIssue}"></span>
+            </a>
+        </div>
+
+        <div class="piw-repo-layout">
+            <div class="piw-repo-main">
+                <section class="piw-repo-file-card">
+                    <div class="piw-repo-file-header">
+                        <div class="piw-repo-file-name">
+                            <span class="piw-icon-[lucide--file-text]" aria-hidden="true"></span>
+                            <span>README</span>
+                        </div>
+                        <span class="piw-caption">主体介绍</span>
+                    </div>
+                    <article class="piw-repo-readme markdown-body"
+                             th:classappend="${contentStyle == 'github' ? 'markdown-body' : 'tailwind-typography'}">
+                        <th:block th:if="${issueSubjectVO.spec.subjectType + '' == 'POST'}"
+                                  th:with="postVO=${postFinder.getByName(issueSubjectVO.spec.content.uid)}">
+                            <div th:utext="${postVO.content.content}"></div>
+                        </th:block>
+                        <th:block th:unless="${issueSubjectVO.spec.subjectType + '' == 'POST'}">
+                            <div th:if="${issueSubjectVO.spec.content != null and not #strings.isEmpty(issueSubjectVO.spec.content.htmlContent)}"
+                                 th:utext="${issueSubjectVO.spec.content.htmlContent}"></div>
+                            <p class="piw-muted-text"
+                               th:if="${issueSubjectVO.spec.content == null or #strings.isEmpty(issueSubjectVO.spec.content.htmlContent)}">
+                                暂未添加主体介绍。
+                            </p>
+                        </th:block>
+                    </article>
+                </section>
+
+                <section class="piw-repo-stats-card" aria-label="Issue 统计">
+                    <div class="piw-repo-section-header">
+                        <h2>Issue 状态</h2>
+                        <a th:href="${'/subject/' + issueSubjectVO.metadata.name + '/issues'}">查看全部</a>
+                    </div>
+                    <div class="piw-repo-stat-list">
+                        <a class="piw-repo-stat-row" th:href="${'/subject/' + issueSubjectVO.metadata.name + '/issues?issueState=all'}">
+                            <span class="piw-repo-stat-dot piw-repo-stat-dot-all"></span><span>全部</span><strong th:text="${issueSubjectVO.issueSubjectStats.totalIssue}"></strong>
+                        </a>
+                        <a class="piw-repo-stat-row" th:href="${'/subject/' + issueSubjectVO.metadata.name + '/issues?issueState=PROGRESS'}">
+                            <span class="piw-repo-stat-dot piw-repo-stat-dot-progress"></span><span>处理中</span><strong th:text="${issueSubjectVO.issueSubjectStats.progressIssue}"></strong>
+                        </a>
+                        <a class="piw-repo-stat-row" th:href="${'/subject/' + issueSubjectVO.metadata.name + '/issues?issueState=AWAIT'}">
+                            <span class="piw-repo-stat-dot piw-repo-stat-dot-await"></span><span>等待中</span><strong th:text="${issueSubjectVO.issueSubjectStats.awaitIssue}"></strong>
+                        </a>
+                        <a class="piw-repo-stat-row" th:href="${'/subject/' + issueSubjectVO.metadata.name + '/issues?issueState=CLOSED'}">
+                            <span class="piw-repo-stat-dot piw-repo-stat-dot-closed"></span><span>已关闭</span><strong th:text="${issueSubjectVO.issueSubjectStats.closedIssue}"></strong>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="piw-repo-sidebar">
+                <section class="piw-repo-about">
+                    <h2>About</h2>
+                    <p class="piw-repo-about-description">用于收集、跟进和讨论与此主体相关的 Issue。</p>
+                    <p class="piw-repo-about-line"><span class="piw-icon-[lucide--tag]" aria-hidden="true"></span><span th:text="${issueSubjectVO.issueSubjectStats.labels + ' 个可用标签'}"></span></p>
+                    <p class="piw-repo-about-line"><span class="piw-icon-[lucide--users]" aria-hidden="true"></span><span th:text="${issueSubjectVO.participateUsers.size() + 1 + ' 位参与者'}"></span></p>
+                    <p class="piw-repo-about-line"><span class="piw-icon-[lucide--shield-check]" aria-hidden="true"></span><span th:text="${#strings.equals(issueSubjectVO.spec.subjectVisible + '', 'PRIVATE') ? '私有主体' : '公开主体'}"></span></p>
+                </section>
+
+                <section class="piw-repo-contributors">
+                    <div class="piw-repo-section-header"><h2>参与者</h2><span class="piw-caption" th:text="${issueSubjectVO.participateUsers.size() + 1}"></span></div>
+                    <div class="piw-repo-avatar-list">
+                        <th:block th:with="owner = ${issueSubjectVO.createOwner}">
+                            <th:block th:replace="~{plugin:PluginIssues:fragments/macro/ownerAvatar :: ownerAvatar(avatar=${owner.avatar}, name=${owner.name})}" />
+                        </th:block>
+                        <th:block th:each="user : ${issueSubjectVO.participateUsers}" th:if="${user.name != issueSubjectVO.createOwner.name}">
+                            <th:block th:replace="~{plugin:PluginIssues:fragments/macro/ownerAvatar :: ownerAvatar(avatar=${user.avatar}, name=${user.name})}" />
+                        </th:block>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </main>
+</section>

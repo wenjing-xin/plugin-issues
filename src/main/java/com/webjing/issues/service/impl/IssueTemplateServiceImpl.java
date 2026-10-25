@@ -63,22 +63,19 @@ public class IssueTemplateServiceImpl implements IssueTemplateService {
                     equal("spec.subjectType", subjectTypeName)))
                 .build(),
             Sort.by(Sort.Order.desc("metadata.creationTimestamp"))
-        ).map(issueTemplate -> {
-            String templateName = issueTemplate.getSpec().getName();
-            issueTemplate.getSpec().setName(templateName + " - " + IssueSubject.parseSubjectType(IssueSubject.SubjectType.valueOf(subjectTypeName)));
-            return issueTemplate;
-        });
+        );
 
         // 查询指定主体类型的模版
-        Flux<IssueTemplate> specialSubjectTemplates = client.listAll(IssueTemplate.class,
+        Flux<IssueTemplate> specialSubjectTemplates = org.springframework.util.StringUtils.hasText(subjectName) ? client.listAll(IssueTemplate.class,
             ListOptions.builder().fieldQuery(and(
                     equal("spec.scope", IssueTemplate.IssueTemplateScope.SUBJECT.name()),
                     equal("spec.subjectName", subjectName)))
                 .build(),
-            Sort.by(Sort.Order.desc("metadata.creationTimestamp")));
+            Sort.by(Sort.Order.desc("metadata.creationTimestamp"))) : Flux.empty();
 
         // 合并两个结果流并转换为 IssueLabelOptions
-        return Flux.merge(specialTypeTemplates, specialSubjectTemplates)
+        return Flux.concat(specialTypeTemplates, specialSubjectTemplates)
+            .filter(template -> template.getMetadata().getDeletionTimestamp() == null)
             .map(issueTemplate -> IssueTemplateOptions.IssueTemplateItem.from(issueTemplate))
             .collectList()
             .map(issueLabelItems -> {

@@ -206,6 +206,8 @@ public class IssueFinderImpl implements IssueFinder {
                             return Mono.just(imv); // 没有字段定义也直接返回
                         }
                         for (Map.Entry<String, IssueTemplate.TemplateField> entry : fields.entrySet()) {
+                            if (imv.getMetadata().getAnnotations() == null
+                                || !imv.getMetadata().getAnnotations().containsKey(entry.getKey())) continue;
                             Map<String, String> itemData = new HashMap<>();
                             IssueTemplate.TemplateField field = entry.getValue();
                             itemData.put("title", field.getTitle());
@@ -213,7 +215,7 @@ public class IssueFinderImpl implements IssueFinder {
                             itemData.put("value", imv.getMetadata().getAnnotations().get(entry.getKey()));
                             itemData.put("type", field.getType().name());
                             if (field.getType().equals(IssueTemplate.TemplateFieldTypeEnum.TEXT_AREA)) {
-                                itemData.put("rows", field.getRows().toString());
+                                itemData.put("rows", String.valueOf(field.getRows() == null ? 3 : field.getRows()));
                             }
                             if (field.getType().equals(IssueTemplate.TemplateFieldTypeEnum.SELECT)) {
                                 for(Map<String, String> option: field.getFieldOptions()){
@@ -227,7 +229,9 @@ public class IssueFinderImpl implements IssueFinder {
                             }
                             if (field.getType().equals(IssueTemplate.TemplateFieldTypeEnum.RADIO)) {
                                 if(StringUtils.isNotEmpty(imv.getMetadata().getAnnotations().get(field.getKey()))){
-                                    List<String> checkBoxArray = HaloUtils.convertStrToList(imv.getMetadata().getAnnotations().get(field.getKey()));
+                                    String storedValue = imv.getMetadata().getAnnotations().get(field.getKey());
+                                    List<String> checkBoxArray = storedValue.trim().startsWith("[")
+                                        ? HaloUtils.convertStrToList(storedValue) : List.of(storedValue);
                                     String labels = "";
                                     for (String value : checkBoxArray) {
                                         for (Map<String, String> option : field.getFieldOptions()) {

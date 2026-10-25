@@ -1,49 +1,10 @@
-* {
-  padding: 0;
-  margin: 0;
-}
-
+/* All selectors are scoped to .piw-app by postcss-scope.cjs. */
 :root {
   --tw-bg-opacity: 1;
-  --mi-post-line-height: 2.5rem;
-  --mi-post-letter-spacing: 0.07em;
+  --mi-post-line-height: 2rem;
+  --mi-post-letter-spacing: 0.02em;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-body {
-  padding: 0;
-  margin: 0;
-}
-
-*::-webkit-scrollbar-track-piece {
-  -webkit-border-radius: 2em;
-  -moz-border-radius: 2em;
-  border-radius: 2em;
-  @apply piw-bg-slate-50 dark:piw-bg-slate-800
-}
-
-*::-webkit-scrollbar {
-  width: 0px;
-  height: 8px;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-clip: padding-box;
-  -webkit-border-radius: 2em;
-  -moz-border-radius: 2em;
-  border-radius: 2em;
-  @apply piw-bg-gradient-to-b piw-from-primary piw-to-secondary
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background-color: #bbb;
-}
-
-ul {
-  list-style: decimal;
-}
 .tailwind-typography {
   @apply piw-prose piw-prose-base piw-mt-4 dark:piw-prose-invert prose-pre:piw-p-0;
 }
@@ -115,7 +76,7 @@ ul {
     @apply piw-box-border piw-p-0
 }
 .issue-editor textarea, .CodeMirror {
-    @apply piw-w-full !piw-h-40 !piw-overflow-y-auto piw-border-none piw-text-sm piw-leading-6 piw-p-3 piw-box-border
+    @apply piw-w-full !piw-overflow-y-auto piw-border-none piw-text-sm piw-leading-6 piw-p-3 piw-box-border
 }
 
 
@@ -170,4 +131,9 @@ ul {
 .no-scrollbar {
     -ms-overflow-style: none;  /* IE 和 Edge */
     scrollbar-width: none;  /* Firefox */
+}
+
+/* The heading menu is positioned outside the toolbar flow. Keep it visible. */
+.piw-editor-toolbar-strip {
+    overflow: visible !important;
 }

@@ -10,6 +10,11 @@ import com.webjing.issues.entity.IssueTemplateRender;
 import com.webjing.issues.extension.Issue;
 import com.webjing.issues.query.IssueQuery;
 import com.webjing.issues.service.IssueService;
+import com.webjing.issues.service.IssuePermissionService;
+import com.webjing.issues.service.IssueLabelService;
+import com.webjing.issues.entity.IssueLabelOptions;
+import java.util.List;
+import java.util.HashSet;
 import com.webjing.issues.service.IssueTemplateService;
 import com.webjing.issues.service.RoleService;
 import com.webjing.issues.util.AuthorityUtils;
@@ -53,6 +58,10 @@ public class UcIssueEndpoint implements CustomEndpoint {
     private final String tag = groupVersion() + "/Issue";
 
     private final IssueService issueService;
+
+    private final IssuePermissionService issuePermissionService;
+
+    private final IssueLabelService issueLabelService;
 
     private final RoleService roleService;
 
@@ -171,6 +180,15 @@ public class UcIssueEndpoint implements CustomEndpoint {
                     .response(responseBuilder()
                         .implementationArray(String.class)
                     ))
+            .GET("issues/{name}/labels", this::getIssueLabelOptions, builder -> builder
+                .operationId("GetIssueLabelOptions").tag(tag)
+                .parameter(parameterBuilder().name("name").in(ParameterIn.PATH).required(true).implementation(String.class))
+                .response(responseBuilder().implementation(IssueLabelOptions.class)))
+            .PUT("issues/{name}/labels", this::updateIssueLabels, builder -> builder
+                .operationId("UpdateIssueLabels").tag(tag)
+                .parameter(parameterBuilder().name("name").in(ParameterIn.PATH).required(true).implementation(String.class))
+                .requestBody(requestBodyBuilder().required(true).implementation(IssueLabelsUpdateRequest.class))
+                .response(responseBuilder().implementation(Issue.class)))
             .PUT("issuestatus", this::updateMyIssueStatus,
                 builder -> builder.operationId("UpdateMyIssueStatus")
                     .description("Update a My Issue status.")
@@ -307,51 +325,67 @@ public class UcIssueEndpoint implements CustomEndpoint {
             .flatMap(result -> ServerResponse.ok().bodyValue(result));
     }
 
-    private Mono<ServerResponse> updateMyIssueStatus(ServerRequest request){
-        // 从请求体获取 IssueClosedParam 对象
+    private Mono<ServerResponse> updateMyIssueStatus(ServerRequest request) {
         return request.bodyToMono(IssueStatusChangeParam.class)
-            .flatMap(issueStatusChangeParam -> {
-                String issueName = issueStatusChangeParam.getIssueName();
-                if(issueStatusChangeParam.getIssueState().equals(Issue.IssueState.CLOSED)){
-                    if (StringUtils.isBlank(issueStatusChangeParam.getChangeComment())) {
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "未填写关闭原因"));
-                    }
-                    return client.fetch(Issue.class, issueName)
-                        .flatMap(issue -> roleService.getCurrentUser()
-                            .flatMap(curUser -> {
-                                boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
-                                if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
-                                    return issueService.closeIssue(issue, issueStatusChangeParam.getChangeComment(), curUser.getName());
-                                } else {
-                                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can close it"));
-                                }
-                            }));
-                }else if (issueStatusChangeParam.getIssueState().equals(Issue.IssueState.PROGRESS)){
-                    return client.get(Issue.class, issueName)
-                        .flatMap(issue -> roleService.getCurrentUser()
-                            .flatMap(curUser -> {
-                                boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
-                                if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
-                                    return issueService.reopenIssue(issue, curUser.getName());
-                                } else {
-                                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can reopen it"));
-                                }
-                            }));
-                }else{
-                    // 添加默认情况，返回错误响应
-                    return client.get(Issue.class, issueName)
-                        .flatMap(issue -> roleService.getCurrentUser()
-                            .flatMap(curUser -> {
-                                boolean isAssignedOwner = issue.getSpec().getAssignees().size() > 0 && issue.getSpec().getAssignees().contains(curUser.getName());
-                                if (curUser.getName().equals(issue.getSpec().getOwner()) || isAssignedOwner) {
-                                    return issueService.setAwaitIssue(issue, curUser.getName());
-                                } else {
-                                    return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only issue owner and assignee can set await status"));
-                                }
-                            }));
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing status request")))
+            .flatMap(change -> {
+                if (StringUtils.isBlank(change.getIssueName()) || change.getIssueState() == null) {
+                    return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Issue name and state are required"));
                 }
+                return client.get(Issue.class, change.getIssueName())
+                    .flatMap(issue -> roleService.getCurrentUser()
+                        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN)))
+                        .flatMap(user -> issuePermissionService.canChangeStatus(
+                            issue.getSpec().getOwner(), issue.getSpec().getAssignees(), user)
+                            .flatMap(allowed -> {
+                                if (!allowed) return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
+                                    "Only the issue owner, assignee or issue manager can change its status"));
+                                return switch (change.getIssueState()) {
+                                    case CLOSED -> StringUtils.isBlank(change.getChangeComment())
+                                        ? Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "请填写关闭原因"))
+                                        : issueService.closeIssue(issue, change.getChangeComment(), user.getName());
+                                    case PROGRESS -> issueService.reopenIssue(issue, user.getName());
+                                    case AWAIT -> issueService.setAwaitIssue(issue, user.getName());
+                                };
+                            })));
             })
-            .flatMap(updatedRes -> ServerResponse.ok().bodyValue(updatedRes));
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
+    }
+
+    private Mono<Issue> getManagedIssue(String name) {
+        return issuePermissionService.canManage().flatMap(allowed -> allowed
+            ? client.get(Issue.class, name)
+            : Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Issue management permission is required")));
+    }
+
+    private Mono<ServerResponse> getIssueLabelOptions(ServerRequest request) {
+        return getManagedIssue(request.pathVariable("name"))
+            .flatMap(issue -> issueLabelService.listSubjectIssueLabels(issue.getSpec().getSubjectName(), null))
+            .flatMap(options -> ServerResponse.ok().bodyValue(options));
+    }
+
+    private Mono<ServerResponse> updateIssueLabels(ServerRequest request) {
+        return getManagedIssue(request.pathVariable("name"))
+            .flatMap(issue -> request.bodyToMono(IssueLabelsUpdateRequest.class)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing labels request")))
+                .flatMap(body -> {
+                    if (body.getLabels() == null) return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Labels must be an array"));
+                    return issueLabelService.listSubjectIssueLabels(issue.getSpec().getSubjectName(), null)
+                        .flatMap(options -> {
+                            var allowed = new HashSet<String>();
+                            options.getIssueLabelOptions().forEach(option -> allowed.add(option.getValue()));
+                            if (!allowed.containsAll(body.getLabels())) return Mono.error(new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST, "标签不属于当前主体的可用范围"));
+                            issue.getSpec().setLabels(new java.util.LinkedHashSet<>(body.getLabels()));
+                            return client.update(issue);
+                        });
+                }))
+            .flatMap(issue -> ServerResponse.ok().bodyValue(issue));
+    }
+
+    @Data
+    public static class IssueLabelsUpdateRequest {
+        private List<String> labels;
     }
 
 

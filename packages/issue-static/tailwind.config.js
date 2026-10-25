@@ -3,7 +3,7 @@ import { addDynamicIconSelectors } from "@iconify/tailwind";
 
 module.exports = {
   content: ["../../src/main/resources/templates/**/*.html", "./src/**/*.ts"],
-  darkMode: ['selector', '[data-color-scheme="dark"]'],
+  darkMode: ['selector', ':is(.dark, [data-color-scheme="dark"], [data-theme="dark"])'],
   prefix: "piw-",
   theme: {
     container: {

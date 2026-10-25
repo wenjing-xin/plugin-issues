@@ -1,6 +1,7 @@
 export * from './add-operation';
 export * from './contributor-vo';
 export * from './copy-operation';
+export * from './field-condition';
 export * from './issue';
 export * from './issue-comment';
 export * from './issue-comment-content';
@@ -14,6 +15,7 @@ export * from './issue-label-list';
 export * from './issue-label-options';
 export * from './issue-label-options-list';
 export * from './issue-label-spec';
+export * from './issue-labels-update-request';
 export * from './issue-list';
 export * from './issue-media';
 export * from './issue-spec';
