@@ -32,6 +32,9 @@ tasks.register('pnpmBuild', PnpmTask) {
     description = 'Build the public Issue templates assets'
     args = ['build']
     dependsOn tasks.named('pnpmInstall')
+    // The generated API client is shared from ui/src and resolves its axios
+    // dependency through ui/node_modules during TypeScript compilation.
+    dependsOn ':ui:pnpmInstall'
     inputs.dir('src')
     inputs.dir(rootProject.file('ui/src/api/generated/models'))
     inputs.dir(rootProject.file('src/main/resources/templates'))

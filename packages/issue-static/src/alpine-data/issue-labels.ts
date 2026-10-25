@@ -1,4 +1,5 @@
 import { axiosInstance } from "@halo-dev/api-client";
+import type { IssueLabelItem } from "../../../../ui/src/api/generated";
 import { UcApiIssueWebjingComV1alpha1IssueApi } from "../../../../ui/src/api/generated";
 
 const issueApi = new UcApiIssueWebjingComV1alpha1IssueApi(undefined, "", axiosInstance);
@@ -13,8 +14,8 @@ export default (issueName: string, initialLabels = "") => ({
         try {
             const { data } = await issueApi.getIssueLabelOptions({ name: issueName });
             this.options = (data.issueLabelOptions || [])
-                .filter(option => option.value && option.label)
-                .map(option => ({ label: option.label!, value: option.value! }));
+                .filter((option: IssueLabelItem) => option.value && option.label)
+                .map((option: IssueLabelItem) => ({ label: option.label!, value: option.value! }));
             this.selected = this.selected.filter(value => this.options.some(option => option.value === value));
         } catch {
             this.error = "无法加载标签，请确认具有 Issue 管理权限后重试。";
