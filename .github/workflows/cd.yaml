@@ -32,7 +32,7 @@ jobs:
     uses: halo-sigs/reusable-workflows/.github/workflows/plugin-ci.yaml@v5
     with:
       ui-path: "ui"
-      pnpm-version: ""
+      pnpm-version: "10.12.4"
       node-version: "22.12.0"
       java-version: "21"
 
@@ -46,7 +46,7 @@ jobs:
     with:
       app-id: app-vxihanjo
       node-version: "22.12.0"
-      pnpm-version: ""
+      pnpm-version: "10.12.4"
       java-version: "21"
       ui-path: "ui"
       artifacts-path: "build/libs"
