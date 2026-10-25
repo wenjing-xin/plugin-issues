@@ -185,8 +185,8 @@ public class IssueFinderImpl implements IssueFinder {
                     .thenReturn(imv);
             })
             .flatMap(imv -> {
-                Set<String> labels = imv.getSpec().getLabels();
-                return Flux.fromStream(labels.stream())
+                Set<String> labels = imv.getSpec() == null ? null : imv.getSpec().getLabels();
+                return Flux.fromIterable(labels == null ? List.of() : labels)
                     .flatMap(label -> client.fetch(IssueLabel.class, label))
                     .collectList()
                     .doOnNext(imv::setIssueLabels)

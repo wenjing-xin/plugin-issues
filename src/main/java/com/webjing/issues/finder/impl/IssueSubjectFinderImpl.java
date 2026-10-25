@@ -17,6 +17,7 @@ import run.halo.app.theme.finders.Finder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Objects;
 
 /**
  * @description:
@@ -47,7 +48,7 @@ public class IssueSubjectFinderImpl implements IssueSubjectFinder {
                 issueSubjectBasicInfo.setTitle(issueSubject.getSpec().getDisplayName());
             return issueSubjectBasicInfo;
         }) .flatMap(isv -> client.fetch(IssueSubject.class, issueSubjectName)
-            .flatMap(issueSubject -> fetchIssueTemplateInfos(issueSubject.getSpec().getIssueTemplates()))
+            .flatMap(issueSubject -> fetchIssueTemplateInfos(issueSubject.getSpec() == null ? null : issueSubject.getSpec().getIssueTemplates()))
             .doOnNext(isv::setIssueTemplates)
             .thenReturn(isv)
         );
@@ -74,7 +75,7 @@ public class IssueSubjectFinderImpl implements IssueSubjectFinder {
                     .doOnNext(isv::setCreateOwner)
                     .thenReturn(isv);
             })
-            .flatMap(isv -> setParticipateUsers(issueSubject.getSpec().getParticipateUsers(), isv))
+            .flatMap(isv -> setParticipateUsers(Objects.requireNonNullElse(issueSubject.getSpec().getParticipateUsers(), List.of()), isv))
             .defaultIfEmpty(issueSubjectVO);
     }
 
@@ -95,7 +96,7 @@ public class IssueSubjectFinderImpl implements IssueSubjectFinder {
     }
 
     private Mono<List<IssueTemplateInfo>> fetchIssueTemplateInfos(Set<String> issueTemplateNames){
-        return Flux.fromIterable(issueTemplateNames)
+        return Flux.fromIterable(Objects.requireNonNullElse(issueTemplateNames, Set.of()))
             .flatMap(templateName -> client.fetch(IssueTemplate.class, templateName)
                 .map(issueTemplate -> {
                     IssueTemplateInfo info = new IssueTemplateInfo();

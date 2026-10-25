@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static run.halo.app.extension.index.query.Queries.equal;
 
@@ -78,7 +79,7 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
                 .doOnNext(li::setIssueSubjectStats)
                 .thenReturn(li))
             .flatMap(li -> setOwner(issueSubject.getSpec().getOwner(), li))
-            .flatMap(li -> setParticipateUsers(issueSubject.getSpec().getParticipateUsers(), li));
+            .flatMap(li -> setParticipateUsers(Objects.requireNonNullElse(issueSubject.getSpec().getParticipateUsers(), List.of()), li));
     }
 
     /**
@@ -159,8 +160,8 @@ public class IssueSubjectServiceImpl implements IssueSubjectService {
         return client.fetch(IssueSubject.class, issueSubject.getMetadata().getName())
             .doOnNext(oldIssueSubject -> {
                 // 比对下Issue主体的的参与者
-                Set<String> oldParticipateUsers = new HashSet<>(oldIssueSubject.getSpec().getParticipateUsers());
-                Set<String> newParticipateUsers = new HashSet<>(issueSubject.getSpec().getParticipateUsers());
+                Set<String> oldParticipateUsers = new HashSet<>(Objects.requireNonNullElse(oldIssueSubject.getSpec().getParticipateUsers(), List.of()));
+                Set<String> newParticipateUsers = new HashSet<>(Objects.requireNonNullElse(issueSubject.getSpec().getParticipateUsers(), List.of()));
                 // 找出新增的参与人
                 if (newParticipateUsers != null && newParticipateUsers.size() > 0) {
                     Set<String> addedParticipateUsers = new HashSet<>(newParticipateUsers);

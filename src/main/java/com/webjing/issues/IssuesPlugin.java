@@ -32,15 +32,15 @@ public class IssuesPlugin extends BasePlugin {
     public void start() {
         schemeManager.register(IssueSubject.class, indexSpecs -> {
             indexSpecs.add(IndexSpecs.<IssueSubject, String>single("spec.displayName", String.class)
-                .indexFunc(issueSubject -> issueSubject.getSpec().getDisplayName()));
+                .indexFunc(issueSubject -> issueSubject.getSpec() == null ? null : issueSubject.getSpec().getDisplayName()));
             indexSpecs.add(IndexSpecs.<IssueSubject, String>single("spec.description", String.class)
-                .indexFunc(issueSubject -> issueSubject.getSpec().getDescription()));
+                .indexFunc(issueSubject -> issueSubject.getSpec() == null ? null : issueSubject.getSpec().getDescription()));
             indexSpecs.add(IndexSpecs.<IssueSubject, String>single("spec.subjectType", String.class)
-                .indexFunc(issueSubject -> issueSubject.getSpec().getSubjectType().name()));
+                .indexFunc(issueSubject -> issueSubject.getSpec() == null || issueSubject.getSpec().getSubjectType() == null ? null : issueSubject.getSpec().getSubjectType().name()));
             indexSpecs.add(IndexSpecs.<IssueSubject, String>single("spec.subjectVisible", String.class)
-                .indexFunc(issueSubject -> issueSubject.getSpec().getSubjectVisible().name()));
+                .indexFunc(issueSubject -> issueSubject.getSpec() == null || issueSubject.getSpec().getSubjectVisible() == null ? null : issueSubject.getSpec().getSubjectVisible().name()));
             indexSpecs.add(IndexSpecs.<IssueSubject, String>single("spec.owner", String.class)
-                .indexFunc(issueSubject -> issueSubject.getSpec().getOwner()));
+                .indexFunc(issueSubject -> issueSubject.getSpec() == null ? null : issueSubject.getSpec().getOwner()));
             indexSpecs.add(IndexSpecs.<IssueSubject, String>multi("spec.issueTemplates", String.class)
                 .indexFunc(issueSubject -> {
                     var templates = issueSubject.getSpec().getIssueTemplates();
@@ -50,15 +50,15 @@ public class IssuesPlugin extends BasePlugin {
 
         schemeManager.register(IssueLabel.class, indexSpecs -> {
             indexSpecs.add(IndexSpecs.<IssueLabel, String>single("spec.labelName", String.class)
-                .indexFunc(issueLabel -> issueLabel.getSpec().getLabelName()));
+                .indexFunc(issueLabel -> issueLabel.getSpec() == null ? null : issueLabel.getSpec().getLabelName()));
             indexSpecs.add(IndexSpecs.<IssueLabel, String>single("spec.description", String.class)
-                .indexFunc(issueLabel -> issueLabel.getSpec().getDescription()));
+                .indexFunc(issueLabel -> issueLabel.getSpec() == null ? null : issueLabel.getSpec().getDescription()));
             indexSpecs.add(IndexSpecs.<IssueLabel, String>single("spec.scope", String.class)
-                .indexFunc(issueLabel -> issueLabel.getSpec().getScope().name()));
+                .indexFunc(issueLabel -> issueLabel.getSpec() == null || issueLabel.getSpec().getScope() == null ? null : issueLabel.getSpec().getScope().name()));
             indexSpecs.add(IndexSpecs.<IssueLabel, String>single("spec.subjectType", String.class)
-                .indexFunc(issueLabel -> issueLabel.getSpec().getSubjectType().name()));
+                .indexFunc(issueLabel -> issueLabel.getSpec() == null || issueLabel.getSpec().getSubjectType() == null ? null : issueLabel.getSpec().getSubjectType().name()));
             indexSpecs.add(IndexSpecs.<IssueLabel, String>single("spec.subjectName", String.class)
-                .indexFunc(issueLabel -> issueLabel.getSpec().getSubjectName()));
+                .indexFunc(issueLabel -> issueLabel.getSpec() == null ? null : issueLabel.getSpec().getSubjectName()));
         });
 
         schemeManager.register(IssueComment.class, indexSpecs -> {
@@ -82,15 +82,15 @@ public class IssuesPlugin extends BasePlugin {
                     return name == null ? null : name.toString();
                 }));
             indexSpecs.add(IndexSpecs.<IssueTemplate, String>single("spec.description", String.class)
-                .indexFunc(issueTemplate -> issueTemplate.getSpec().getDescription()));
+                .indexFunc(issueTemplate -> issueTemplate.getSpec() == null ? null : issueTemplate.getSpec().getDescription()));
             indexSpecs.add(IndexSpecs.<IssueTemplate, String>single("spec.owner", String.class)
-                .indexFunc(issueTemplate -> issueTemplate.getSpec().getOwner()));
+                .indexFunc(issueTemplate -> issueTemplate.getSpec() == null ? null : issueTemplate.getSpec().getOwner()));
             indexSpecs.add(IndexSpecs.<IssueTemplate, String>single("spec.scope", String.class)
-                .indexFunc(issueTemplate -> issueTemplate.getSpec().getScope().name()));
+                .indexFunc(issueTemplate -> issueTemplate.getSpec() == null || issueTemplate.getSpec().getScope() == null ? null : issueTemplate.getSpec().getScope().name()));
             indexSpecs.add(IndexSpecs.<IssueTemplate, String>single("spec.subjectName", String.class)
-                .indexFunc(issueTemplate -> issueTemplate.getSpec().getSubjectName()));
+                .indexFunc(issueTemplate -> issueTemplate.getSpec() == null ? null : issueTemplate.getSpec().getSubjectName()));
             indexSpecs.add(IndexSpecs.<IssueTemplate, String>single("spec.subjectType", String.class)
-                .indexFunc(issueTemplate -> issueTemplate.getSpec().getSubjectType().name()));
+                .indexFunc(issueTemplate -> issueTemplate.getSpec() == null || issueTemplate.getSpec().getSubjectType() == null ? null : issueTemplate.getSpec().getSubjectType().name()));
         });
 
         schemeManager.register(Issue.class, indexSpecs -> {
@@ -104,22 +104,22 @@ public class IssuesPlugin extends BasePlugin {
                         : null;
                 }));
             indexSpecs.add(IndexSpecs.<Issue, String>single("spec.title", String.class)
-                .indexFunc(issue -> issue.getSpec().getTitle()));
+                .indexFunc(issue -> issue.getSpec() == null ? null : issue.getSpec().getTitle()));
             indexSpecs.add(IndexSpecs.<Issue, String>single("spec.owner", String.class)
-                .indexFunc(issue -> issue.getSpec().getOwner()));
+                .indexFunc(issue -> issue.getSpec() == null ? null : issue.getSpec().getOwner()));
             indexSpecs.add(IndexSpecs.<Issue, String>multi("spec.labels", String.class)
                 .indexFunc(issue -> {
-                    var labels = issue.getSpec().getLabels();
+                    var labels = issue.getSpec() == null ? null : issue.getSpec().getLabels();
                     return labels == null ? Set.of() : labels;
                 }));
             indexSpecs.add(IndexSpecs.<Issue, String>single("spec.releaseTime", String.class)
                 .indexFunc(issue -> {
-                    var releaseTime = issue.getSpec().getReleaseTime();
+                    var releaseTime = issue.getSpec() == null ? null : issue.getSpec().getReleaseTime();
                     return releaseTime == null ? null : releaseTime.toString();
                 }));
             indexSpecs.add(IndexSpecs.<Issue, String>single("spec.approved", String.class)
                 .indexFunc(issue -> {
-                    var approved = issue.getSpec().getApproved();
+                    var approved = issue.getSpec() == null ? null : issue.getSpec().getApproved();
                     return approved == null ? null : approved.toString();
                 }));
             indexSpecs.add(IndexSpecs.<Issue, Boolean>single(Issue.REQUIRE_SYNC_ON_STARTUP_INDEX_NAME, Boolean.class)
@@ -134,12 +134,12 @@ public class IssuesPlugin extends BasePlugin {
                 }));
             indexSpecs.add(IndexSpecs.<Issue, String>single("spec.issueTemplate", String.class)
                 .indexFunc(issue -> {
-                    var issueTemplate = issue.getSpec().getIssueTemplate();
+                    var issueTemplate = issue.getSpec() == null ? null : issue.getSpec().getIssueTemplate();
                     return issueTemplate == null ? null : issueTemplate.toString();
                 }));
             indexSpecs.add(IndexSpecs.<Issue, String>single("spec.subjectName", String.class)
                 .indexFunc(issue -> {
-                    var subjectName = issue.getSpec().getSubjectName();
+                    var subjectName = issue.getSpec() == null ? null : issue.getSpec().getSubjectName();
                     return subjectName == null ? null : subjectName.toString();
                 }));
         });
